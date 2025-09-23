@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Mathias (UnderTaker)</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+            <div class="container">
+                <a class="navbar-brand" href="index.html">
+                    <i class="bi bi-stars me-2"></i>UnderTaker
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="index.html">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="about.html">About</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="contact.html">Contact</a>
+                        </li>
+                        <li class="nav-item">
+                            <button class="btn btn-outline-light ms-2" id="navDarkMode">
+                                <i class="bi" id="darkModeIcon"></i>
+                                <span id="darkModeText">Dark Mode</span>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mt-5 pt-5">
+        <!-- Hero Section -->
+        <section class="row align-items-center min-vh-80 py-5">
+            <div class="col-lg-6">
+                <div class="fade-in">
+                    <h1 class="display-4 fw-bold mb-3">Mathias <span class="text-primary">"UnderTaker"</span></h1>
+                    <p class="lead text-muted mb-4">Apprentice • Gamer • Fitness Enthusiast • F1 Fan</p>
+                    <div class="d-flex gap-3 flex-wrap">
+                        <a href="#about" class="btn btn-primary btn-lg">My Story</a>
+                        <a href="#interests" class="btn btn-outline-primary btn-lg">My Interests</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <div class="avatar-placeholder">
+                    <i class="bi bi-person-circle" style="font-size: 15rem; color: var(--bs-primary);"></i>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="py-5">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <h2 class="h1 mb-4">About Me</h2>
+                    <div class="card border-0 shadow-lg">
+                        <div class="card-body p-5">
+                            <p class="fs-5 mb-4">Hey! I'm Mathias, but online I go by <strong>UnderTaker</strong>. I'm currently working as an apprentice, learning the ropes and building my skills for the future.</p>
+                            
+                            <p class="fs-5 mb-4">When I'm not working or studying, you'll usually find me gaming, hitting the gym, or watching Formula 1 races. I love the combination of technology, competition, and self-improvement.</p>
+                            
+                            <p class="fs-5">This site is where I connect with friends and share a bit about what I'm into. Feel free to reach out if you want to game together or just chat!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interests Section -->
+        <section id="interests" class="py-5 bg-light rounded-3">
+            <div class="container">
+                <h2 class="h1 text-center mb-5">My Passions</h2>
+                <div class="row g-4">
+                    <!-- Gaming -->
+                    <div class="col-md-4">
+                        <div class="card h-100 border-0 shadow-sm hover-lift">
+                            <div class="card-body text-center p-4">
+                                <i class="bi bi-joystick display-4 text-primary mb-3"></i>
+                                <h3 class="h4">Gaming</h3>
+                                <p class="text-muted">Competitive gaming is my escape. Always looking for new challenges and teammates to play with.</p>
+                                <span class="badge bg-primary">UnderTaker5918</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Fitness -->
+                    <div class="col-md-4">
+                        <div class="card h-100 border-0 shadow-sm hover-lift">
+                            <div class="card-body text-center p-4">
+                                <i class="bi bi-heart-pulse display-4 text-success mb-3"></i>
+                                <h3 class="h4">Fitness</h3>
+                                <p class="text-muted">The gym is my second home. Always working on getting stronger and healthier.</p>
+                                <span class="badge bg-success">Progressing</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Formula 1 -->
+                    <div class="col-md-4">
+                        <div class="card h-100 border-0 shadow-sm hover-lift">
+                            <div class="card-body text-center p-4">
+                                <i class="bi bi-speedometer2 display-4 text-danger mb-3"></i>
+                                <h3 class="h4">Formula 1</h3>
+                                <p class="text-muted">The speed, the strategy, the competition. F1 Sundays are sacred for me.</p>
+                                <span class="badge bg-danger">Team Red Bull</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="py-5">
+            <div class="container">
+                <div class="row g-4 text-center">
+                    <div class="col-md-3">
+                        <div class="display-4 fw-bold text-primary">100%</div>
+                        <p class="text-muted">Dedicated</p>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="display-4 fw-bold text-success">24/7</div>
+                        <p class="text-muted">Available for Games</p>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="display-4 fw-bold text-warning">∞</div>
+                        <p class="text-muted">Energy Drinks</p>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="display-4 fw-bold text-info">#1</div>
+                        <p class="text-muted">F1 Fan</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-dark text-light py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2024 Mathias "UnderTaker". All rights reserved.</p>
+            <div class="mt-2">
+                <a href="mailto:me@mathi4s.com" class="text-light me-3"><i class="bi bi-envelope"></i></a>
+                <a href="https://discord.com/channels/@me/397647326199676928" class="text-light me-3"><i class="bi bi-discord"></i></a>
+                <a href="https://www.instagram.com/vyse_undertaker/" class="text-light me-3"><i class="bi bi-instagram"></i></a>
+                <a href="https://github.com/UnderTaker-dev" class="text-light"><i class="bi bi-github"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
