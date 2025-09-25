@@ -1,0 +1,211 @@
+/* ========== BASE ========== */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding-top: 60px; /* navbar height offset */
+    transition: background 0.3s, color 0.3s;
+}
+
+/* ========== LIGHT & DARK MODES ========== */
+body.light {
+    background: #f5f5f5;
+    color: #222;
+}
+
+body.dark {
+    background: #121212;
+    color: #eee;
+}
+
+/* ========== NAVBAR ========== */
+.navbar {
+    padding: 1rem 2rem;
+    transition: background 0.3s, color 0.3s;
+}
+
+body.light .navbar {
+    background: rgba(255, 255, 255, 0.95);
+    color: #222;
+}
+
+body.dark .navbar {
+    background: rgba(20, 20, 20, 0.95);
+    color: #eee;
+}
+
+.navbar a.nav-link {
+    color: inherit;
+    transition: color 0.3s;
+}
+.navbar a.nav-link:hover {
+    color: #0d6efd;
+}
+
+/* ========== HERO ========== */
+.hero {
+    display: flex;
+    align-items: center;
+    padding: 4rem 2rem 2rem 2rem;
+}
+
+.hero.min-height-100 {
+    min-height: 100vh;
+}
+
+.hero h1 {
+    font-weight: 800;
+    font-size: 3rem;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    line-height: 1.6;
+}
+
+.hero-buttons .btn {
+    transition: all 0.2s ease;
+}
+
+.hero-buttons .btn:hover {
+    transform: translateY(-2px);
+}
+
+/* Status Dot */
+.status-dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 0.5rem;
+    vertical-align: middle;
+}
+.status-dot.online { background: #28a745; }
+
+/* Status Text */
+.status-text {
+    font-weight: 500;
+    color: inherit;
+}
+
+/* ========== STATS ========== */
+.stats {
+    padding: 4rem 2rem;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2rem;
+    border-radius: 12px;
+    transition: transform 0.3s, background 0.3s;
+    text-align: center;
+}
+
+body.light .stat-card {
+    background: rgba(0, 123, 255, 0.05);
+}
+
+body.dark .stat-card {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-icon {
+    font-size: 2rem;
+}
+
+.stat-number {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0.5rem 0;
+}
+
+.stat-label {
+    font-size: 1rem;
+}
+
+/* ========== FEATURES ========== */
+.features {
+    padding: 4rem 2rem;
+}
+
+.section-title {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.feature-card {
+    background: rgba(255,255,255,0.05);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: transform 0.3s, box-shadow 0.3s;
+    text-align: center;
+}
+
+body.light .feature-card {
+    background: rgba(0, 123, 255, 0.05);
+}
+
+body.dark .feature-card {
+    background: rgba(255,255,255,0.05);
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+.feature-icon {
+    font-size: 2rem;
+}
+
+.feature-badge {
+    display: inline-block;
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: #0d6efd;
+}
+
+/* ========== FOOTER ========== */
+.footer {
+    padding: 2rem;
+    text-align: center;
+    transition: background 0.3s, color 0.3s;
+}
+
+body.light .footer {
+    background: #e9ecef;
+    color: #222;
+}
+
+body.dark .footer {
+    background: #1a1a1a;
+    color: #eee;
+}
+
+.social-links {
+    margin-top: 1rem;
+}
+
+.social-links a {
+    margin: 0 0.5rem;
+    color: inherit;
+    font-size: 1.5rem;
+    transition: color 0.3s, transform 0.2s;
+}
+
+.social-links a:hover {
+    color: #0d6efd;
+    transform: translateY(-3px);
+}
+
+/* ========== THEME TOGGLE BUTTON ========== */
+.theme-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: inherit;
+    font-size: 1.2rem;
+}
