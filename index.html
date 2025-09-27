@@ -3,142 +3,109 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mathias - Gamer • Gym Rat • F1 Fan</title>
-<link rel="stylesheet" href="styles.css">
+<title>Coming Soon</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+/* ====== BASE STYLES ====== */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    overflow: hidden;
+}
+
+.main-message {
+    max-width: 600px;
+    z-index: 10;
+    animation: fadeIn 1.5s ease forwards;
+}
+
+.main-message h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.main-message p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    line-height: 1.5;
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; transform: translateY(-20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+/* ====== BUTTON ====== */
+.btn-contact {
+    background-color: #1abc9c;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    font-size: 1rem;
+    border-radius: 5px;
+    color: #fff;
+    transition: transform 0.2s, background 0.3s;
+}
+
+.btn-contact:hover {
+    transform: scale(1.05);
+    background-color: #16a085;
+}
+
+/* ====== FOOTER ====== */
+.footer {
+    position: absolute;
+    bottom: 10px;
+    text-align: center;
+    width: 100%;
+    font-size: 0.9rem;
+    color: #ccc;
+}
+
+/* ====== SUBTLE BACKGROUND ANIMATION ====== */
+.background-circle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.2;
+    background: #fff;
+    animation: floatCircle 20s linear infinite;
+}
+
+@keyframes floatCircle {
+    0% { transform: translateY(100vh) rotate(0deg); }
+    100% { transform: translateY(-50vh) rotate(360deg); }
+}
+
+/* Random positions for background circles */
+#circle1 { width: 120px; height: 120px; left: 10%; animation-duration: 25s; }
+#circle2 { width: 80px; height: 80px; left: 50%; animation-duration: 30s; }
+#circle3 { width: 150px; height: 150px; left: 80%; animation-duration: 35s; }
+</style>
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg fixed-top">
-<div class="container">
-  <a class="navbar-brand" href="index.html"><i class="bi bi-controller me-2"></i>Mathias</a>
-  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarNav">
-    <ul class="navbar-nav ms-auto">
-      <li class="nav-item"><a class="nav-link active" href="index.html">Home</a></li>
-      <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
-      <li class="nav-item"><a class="nav-link" href="socials.html">Socials</a></li>
-      <li class="nav-item">
-        <button class="btn theme-toggle" id="themeToggle"><i class="bi bi-moon" id="themeIcon"></i></button>
-      </li>
-    </ul>
-  </div>
-</div>
-</nav>
+<!-- Background circles -->
+<div class="background-circle" id="circle1"></div>
+<div class="background-circle" id="circle2"></div>
+<div class="background-circle" id="circle3"></div>
 
-<section class="hero d-flex align-items-center">
-<div class="container">
-  <div class="row align-items-center min-vh-100">
-    <div class="col-lg-6">
-      <h1>Mathias</h1>
-      <p class="lead mb-4 gaming-subtitle">🎮 Gamer • 💪 Gym Rat • 🏎️ F1 Fanatic • 👨‍💻 IT Apprentice</p>
-      <div class="status mb-4">
-        <span class="status-dot online"></span>
-        <span class="status-text">Online & Available</span>
-      </div>
-      <div class="hero-buttons">
-        <a href="about.html" class="btn btn-primary btn-lg me-3">About Me</a>
-        <a href="socials.html" class="btn btn-outline btn-lg">Socials</a>
-      </div>
-    </div>
-    <div class="col-lg-6 text-center">
-      <div class="avatar-circle"><i class="bi bi-person-fill"></i></div>
-    </div>
-  </div>
+<div class="main-message">
+    <h1>Coming Soon</h1>
+    <p>Our website is currently under development. Stay tuned for updates. In the meantime, feel free to reach out via email for inquiries or information.</p>
+    <a href="mailto:me@mathi4s.com" class="btn-contact">Contact Us</a>
 </div>
-</section>
 
-<!-- Stats -->
-<section class="stats py-5">
-<div class="container">
-  <div class="row g-4 text-center">
-    <div class="col-md-3 col-6">
-      <div class="stat-card">
-        <div class="stat-icon">🎮</div>
-        <div class="stat-number">1000+</div>
-        <div class="stat-label">Hours Gaming</div>
-      </div>
-    </div>
-    <div class="col-md-3 col-6">
-      <div class="stat-card">
-        <div class="stat-icon">💪</div>
-        <div class="stat-number">5/7</div>
-        <div class="stat-label">Gym Days</div>
-      </div>
-    </div>
-    <div class="col-md-3 col-6">
-      <div class="stat-card">
-        <div class="stat-icon">🏎️</div>
-        <div class="stat-number">128</div>
-        <div class="stat-label">Races Watched</div>
-      </div>
-    </div>
-    <div class="col-md-3 col-6">
-      <div class="stat-card">
-        <div class="stat-icon">💻</div>
-        <div class="stat-number">∞</div>
-        <div class="stat-label">Code Bugs</div>
-      </div>
-    </div>
-  </div>
-</div>
-</section>
-
-<!-- Features -->
-<section class="features py-5">
-<div class="container">
-  <h2 class="text-center mb-5 section-title">What I'm About</h2>
-  <div class="row g-4">
-    <div class="col-md-4">
-      <a href="about.html" class="feature-link">
-        <div class="feature-card">
-          <div class="feature-icon">👤</div>
-          <h3>My Story</h3>
-          <p>Learn about my journey as an IT apprentice and my passions.</p>
-          <span class="feature-badge">View Profile</span>
-        </div>
-      </a>
-    </div>
-    <div class="col-md-4">
-      <a href="socials.html" class="feature-link">
-        <div class="feature-card">
-          <div class="feature-icon">💬</div>
-          <h3>Connect</h3>
-          <p>Ready to game or chat? Here's how to reach me.</p>
-          <span class="feature-badge">Hit Me Up</span>
-        </div>
-      </a>
-    </div>
-    <div class="col-md-4">
-      <a href="about.html#interests" class="feature-link">
-        <div class="feature-card">
-          <div class="feature-icon">🎯</div>
-          <h3>My Passions</h3>
-          <p>Gaming, fitness, F1 - see what I'm passionate about.</p>
-          <span class="feature-badge">Explore</span>
-        </div>
-      </a>
-    </div>
-  </div>
-</div>
-</section>
-
-<!-- Footer -->
-<footer class="footer mt-auto">
-<div class="container text-center">
-  <p class="mb-2">© <span id="footer-year">2025</span> Mathias. Powered by gaming, gains, and caffeine</p>
-  <div class="social-links">
-    <a href="mailto:me@mathi4s.com"><i class="bi bi-envelope"></i></a>
-    <a href="https://discord.com/users/397647326199676928"><i class="bi bi-discord"></i></a>
-    <a href="https://www.instagram.com/vyse_undertaker/"><i class="bi bi-instagram"></i></a>
-  </div>
-</div>
+<footer class="footer">
+    © 2025 Mathias | Powered by Monster and innovation
 </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="app.js"></script>
 </body>
 </html>
