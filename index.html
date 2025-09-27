@@ -5,106 +5,112 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Coming Soon</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
 <style>
-/* ====== BASE STYLES ====== */
+/* ========== BASE ========== */
 body, html {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-    color: #fff;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    overflow: hidden;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  color: #fff;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 
 .main-message {
-    max-width: 600px;
-    z-index: 10;
-    animation: fadeIn 1.5s ease forwards;
+  z-index: 10;
+  animation: bounce 2s ease-in-out infinite;
 }
 
 .main-message h1 {
-    font-size: 3rem;
-    margin-bottom: 1rem;
+  font-size: 3rem;
+  margin-bottom: 1rem;
 }
 
 .main-message p {
-    font-size: 1.2rem;
-    margin-bottom: 2rem;
-    line-height: 1.5;
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
 }
 
-@keyframes fadeIn {
-    0% { opacity: 0; transform: translateY(-20px); }
-    100% { opacity: 1; transform: translateY(0); }
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 
-/* ====== BUTTON ====== */
-.btn-contact {
-    background-color: #1abc9c;
-    border: none;
-    padding: 0.6rem 1.2rem;
-    font-size: 1rem;
-    border-radius: 5px;
-    color: #fff;
-    transition: transform 0.2s, background 0.3s;
-}
-
-.btn-contact:hover {
-    transform: scale(1.05);
-    background-color: #16a085;
-}
-
-/* ====== FOOTER ====== */
 .footer {
-    position: absolute;
-    bottom: 10px;
-    text-align: center;
-    width: 100%;
-    font-size: 0.9rem;
-    color: #ccc;
+  position: absolute;
+  bottom: 10px;
+  text-align: center;
+  width: 100%;
+  font-size: 0.9rem;
+  color: #ccc;
 }
 
-/* ====== SUBTLE BACKGROUND ANIMATION ====== */
-.background-circle {
-    position: absolute;
-    border-radius: 50%;
-    opacity: 0.2;
-    background: #fff;
-    animation: floatCircle 20s linear infinite;
+/* ========== FLOATING ICONS ========== */
+.floating-icon {
+  position: absolute;
+  font-size: 2rem;
+  opacity: 0.6;
+  animation: floatUp linear infinite;
 }
 
-@keyframes floatCircle {
-    0% { transform: translateY(100vh) rotate(0deg); }
-    100% { transform: translateY(-50vh) rotate(360deg); }
+@keyframes floatUp {
+  0% { transform: translateY(100vh) rotate(0deg); }
+  100% { transform: translateY(-10vh) rotate(360deg); }
 }
 
-/* Random positions for background circles */
-#circle1 { width: 120px; height: 120px; left: 10%; animation-duration: 25s; }
-#circle2 { width: 80px; height: 80px; left: 50%; animation-duration: 30s; }
-#circle3 { width: 150px; height: 150px; left: 80%; animation-duration: 35s; }
+/* Random positions + different speeds */
+#icon1 { left: 5%; animation-duration: 12s; }
+#icon2 { left: 25%; animation-duration: 16s; }
+#icon3 { left: 45%; animation-duration: 10s; }
+#icon4 { left: 65%; animation-duration: 18s; }
+#icon5 { left: 85%; animation-duration: 14s; }
+
+/* Button */
+.btn-info {
+  background-color: #1abc9c;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  border-radius: 5px;
+  transition: transform 0.2s, background 0.3s;
+  color: #fff;
+  text-decoration: none;
+}
+
+.btn-info:hover {
+  transform: scale(1.1);
+  background-color: #16a085;
+}
 </style>
 </head>
 <body>
 
-<!-- Background circles -->
-<div class="background-circle" id="circle1"></div>
-<div class="background-circle" id="circle2"></div>
-<div class="background-circle" id="circle3"></div>
-
 <div class="main-message">
-    <h1>Coming Soon</h1>
-    <p>Our website is currently under development. Stay tuned for updates. In the meantime, feel free to reach out via email for inquiries or information.</p>
-    <a href="mailto:me@mathi4s.com" class="btn-contact">Contact Us</a>
+  <h1>Coming Soon</h1>
+  <p>Next update: Whenever I feel like it</p>
+  <a 
+    href="mailto:support@mathi4s.com" 
+    onclick="window.open('https://mail.google.com/mail/?view=cm&fs=1&to=support@mathi4s.com', '_blank'); return false;" 
+    class="btn btn-info"
+  >
+    Contact Me
+  </a>
 </div>
 
+<!-- Floating icons -->
+<div class="floating-icon" id="icon1">🎮</div>
+<div class="floating-icon" id="icon2">💪</div>
+<div class="floating-icon" id="icon3">🏎️</div>
+<div class="floating-icon" id="icon4">💻</div>
+
 <footer class="footer">
-    © 2025 Mathias | Powered by Monster and innovation
+  © 2025 Mathias | Powered by Monster and bad decisions
 </footer>
 
 </body>
