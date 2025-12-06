@@ -16,46 +16,134 @@
 
 body, html {
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
   color: #fff;
-  overflow: hidden;
+  overflow-x: hidden;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Light Mode */
+body.light-mode {
+  background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+  color: #2c3e50;
+}
+
+body.light-mode .container::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+body.light-mode .footer {
+  color: rgba(0, 0, 0, 0.5);
+  background: linear-gradient(to top, rgba(245, 247, 250, 0.95), transparent);
+}
+
+body.light-mode .support-toggle-btn {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.2);
+  color: rgba(0, 0, 0, 0.6);
+}
+
+body.light-mode .support-toggle-btn:hover {
+  background: rgba(0, 0, 0, 0.1);
+  border-color: rgba(0, 0, 0, 0.3);
+  color: rgba(0, 0, 0, 0.8);
+}
+
+body.light-mode .donation-content {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+body.light-mode .donation-title {
+  color: rgba(0, 0, 0, 0.8);
+}
+
+body.light-mode .donation-subtitle {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+body.light-mode .amount-input {
+  border-color: rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.8);
+  color: #2c3e50;
+}
+
+body.light-mode .amount-input:focus {
+  background: rgba(255, 255, 255, 1);
+}
+
+body.light-mode .amount-input::placeholder {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+body.light-mode .preset-btn {
+  background: rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 0, 0, 0.2);
+  color: rgba(0, 0, 0, 0.7);
+}
+
+body.light-mode .preset-btn:hover {
+  background: rgba(26, 188, 156, 0.2);
+  color: #2c3e50;
+}
+
+body.light-mode .copy-email {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+body.light-mode .copy-email:hover {
+  color: #1abc9c;
+}
+
+body.light-mode .skill-badge {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: #2c3e50;
+}
+
+body.light-mode .skill-badge:hover {
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(26, 188, 156, 0.5);
 }
 
 body {
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   position: relative;
+  padding: 2rem 0;
 }
 
 .container {
-  max-width: 600px;
+  max-width: 750px;
   width: 100%;
-  padding: 2rem 1rem;
+  padding: 0 1.5rem;
+  margin: 0 auto;
   text-align: center;
-  max-height: 100vh;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
 }
 
-.container::-webkit-scrollbar {
+/* Custom scrollbar for body */
+body::-webkit-scrollbar {
   width: 8px;
 }
 
-.container::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.1);
+body::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-.container::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.3);
+body::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
   border-radius: 10px;
+}
+
+body::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .main-message {
   z-index: 10;
-  animation: bounce 2s ease-in-out infinite;
 }
 
 .main-message h1 {
@@ -84,7 +172,12 @@ body {
   color: rgba(255, 255, 255, 0.5);
   background: linear-gradient(to top, rgba(15, 32, 39, 0.95), transparent);
   z-index: 100;
-  pointer-events: none;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.footer:hover {
+  color: rgba(255, 255, 255, 0.8);
 }
 
 /* ========== FLOATING ICONS ========== */
@@ -123,6 +216,505 @@ body {
 .btn-info:hover {
   transform: scale(1.1);
   background-color: #16a085;
+}
+
+/* Theme Toggle */
+.theme-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1.2rem;
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+body.light-mode .theme-toggle {
+  background: rgba(0, 0, 0, 0.1);
+  border-color: rgba(0, 0, 0, 0.2);
+}
+
+body.light-mode .theme-toggle:hover {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* Skills Section */
+.skills-section {
+  margin: 2rem 0 1.5rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.skills-section h3 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.skills-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  justify-content: center;
+}
+
+.skill-badge {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.3s ease;
+}
+
+.skill-badge:hover {
+  background: rgba(26, 188, 156, 0.2);
+  border-color: rgba(26, 188, 156, 0.5);
+  transform: translateY(-2px);
+}
+
+body.light-mode .skills-section {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+body.light-mode .skills-section h3 {
+  color: rgba(0, 0, 0, 0.8);
+}
+
+/* Newsletter Section */
+.newsletter-section {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.newsletter-section h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.newsletter-section p {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 1rem;
+}
+
+.newsletter-form {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.newsletter-input {
+  flex: 1;
+  padding: 0.7rem 1rem;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.newsletter-input:focus {
+  outline: none;
+  border-color: #1abc9c;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.newsletter-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.btn-subscribe {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  border: none;
+  padding: 0.7rem 1.5rem;
+  border-radius: 10px;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.btn-subscribe:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+}
+
+.btn-subscribe:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+body.light-mode .newsletter-section {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+body.light-mode .newsletter-section h3 {
+  color: rgba(0, 0, 0, 0.8);
+}
+
+body.light-mode .newsletter-section p {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+body.light-mode .newsletter-input {
+  border-color: rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.8);
+  color: #2c3e50;
+}
+
+body.light-mode .newsletter-input:focus {
+  background: rgba(255, 255, 255, 1);
+}
+
+body.light-mode .newsletter-input::placeholder {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+/* Status Section */
+.status-section {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.status-section h3 {
+  font-size: 1rem;
+  margin-bottom: 0.8rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.toggle-view-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  padding: 0.8rem 1.5rem;
+  border-radius: 10px;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.toggle-view-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.toggle-view-btn.active {
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  border-color: transparent;
+  box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+}
+
+.view-content {
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.status-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.8rem;
+}
+
+.status-item {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.8rem;
+  border-radius: 12px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.status-item:hover {
+  transform: translateY(-3px);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.status-emoji {
+  font-size: 1.8rem;
+  display: block;
+  margin-bottom: 0.3rem;
+}
+
+.status-label {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1abc9c;
+  margin-top: 0.2rem;
+}
+
+body.light-mode .status-section {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+body.light-mode .status-section h3 {
+  color: rgba(0, 0, 0, 0.8);
+}
+
+body.light-mode .status-item {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.2);
+}
+
+body.light-mode .status-item:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+body.light-mode .status-label {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+/* Easter Egg */
+.easter-egg {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  background: linear-gradient(135deg, #8e44ad, #3498db);
+  padding: 3rem;
+  border-radius: 30px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  text-align: center;
+  opacity: 0;
+  transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  max-width: 90%;
+  display: none;
+  pointer-events: none;
+}
+
+.easter-egg.show {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+  display: block;
+  pointer-events: auto;
+}
+
+.easter-egg h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.easter-egg p {
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+.easter-egg button {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  padding: 0.8rem 2rem;
+  border-radius: 50px;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.easter-egg button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+/* Admin Login Modal */
+.admin-login-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 10000;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.admin-login-modal.active {
+  display: flex;
+}
+
+.admin-login-form {
+  background: linear-gradient(135deg, #2c3e50, #34495e);
+  padding: 2.5rem;
+  border-radius: 20px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  animation: slideUp 0.3s ease;
+}
+
+.admin-login-form h2 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.8rem;
+  color: #fff;
+}
+
+.admin-login-form p {
+  margin: 0 0 1.5rem 0;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.admin-form-group {
+  margin-bottom: 1.2rem;
+}
+
+.admin-form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+}
+
+.admin-form-group input {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.admin-form-group input:focus {
+  outline: none;
+  border-color: #3498db;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.admin-form-group input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.admin-form-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.btn-admin-login {
+  flex: 1;
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  border: none;
+  padding: 0.8rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: 10px;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 10px rgba(52, 152, 219, 0.4);
+}
+
+.btn-admin-login:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(52, 152, 219, 0.6);
+}
+
+.btn-admin-login:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-admin-cancel {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.8rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  border-radius: 10px;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-admin-cancel:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+body.light-mode .admin-login-form {
+  background: linear-gradient(135deg, #ecf0f1, #bdc3c7);
+  color: #2c3e50;
+}
+
+body.light-mode .admin-login-form h2 {
+  color: #2c3e50;
+}
+
+body.light-mode .admin-login-form p {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+body.light-mode .admin-form-group label {
+  color: rgba(0, 0, 0, 0.8);
+}
+
+body.light-mode .admin-form-group input {
+  border-color: rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.8);
+  color: #2c3e50;
+}
+
+body.light-mode .admin-form-group input:focus {
+  background: rgba(255, 255, 255, 1);
+}
+
+body.light-mode .admin-form-group input::placeholder {
+  color: rgba(0, 0, 0, 0.4);
 }
 
 /* Copy email */
@@ -516,12 +1108,89 @@ body {
 </head>
 <body>
 
+<!-- Theme Toggle -->
+<div class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+  <span id="themeIcon">🌙</span>
+</div>
+
 <div class="container">
 <div class="main-message">
   <h1>Coming Soon</h1>
   <p>Next update: Whenever I feel like it</p>
   <a href="mailto:support@mathi4s.com" class="btn btn-info">📧 Email Me</a>
   <div class="copy-email" onclick="copyEmail()">support@mathi4s.com (click to copy)</div>
+  
+  <!-- Skills Section -->
+  <div class="skills-section">
+    <h3>💻 Tech Stack</h3>
+    <div class="skills-grid" id="skillsGrid">
+      <!-- Skills loaded from localStorage/admin panel -->
+    </div>
+  </div>
+  
+  <!-- About Section -->
+  <div class="status-section">
+    <div style="display: flex; justify-content: center; gap: 1rem; margin-bottom: 1.5rem;">
+      <button class="toggle-view-btn active" onclick="toggleView('about')" id="aboutBtn">
+        👤 About Me
+      </button>
+      <button class="toggle-view-btn" onclick="toggleView('doing')" id="doingBtn">
+        🚀 What I Do
+      </button>
+    </div>
+    
+    <div class="view-content" id="aboutView">
+      <div class="status-grid">
+        <div class="status-item">
+          <span class="status-emoji">🎮</span>
+          <div class="status-label">Competitive Gamer</div>
+        </div>
+        <div class="status-item">
+          <span class="status-emoji">👾</span>
+          <div class="status-label">Bug Slayer</div>
+        </div>
+        <div class="status-item">
+          <span class="status-emoji">⚡</span>
+          <div class="status-label">Monsters ∞</div>
+        </div>
+        <div class="status-item">
+          <span class="status-emoji">🕐</span>
+          <div class="status-label">My Time <span id="myTime" style="display: block; font-size: 1.1rem; margin-top: 0.3rem;">--:--</span></div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="view-content" id="doingView" style="display: none;">
+      <div class="status-grid">
+        <div class="status-item">
+          <span class="status-emoji">🐛</span>
+          <div class="status-label">Debugging at 3am</div>
+        </div>
+        <div class="status-item">
+          <span class="status-emoji">💥</span>
+          <div class="status-label">Learning by breaking</div>
+        </div>
+        <div class="status-item">
+          <span class="status-emoji">😴</span>
+          <div class="status-label">Sleep? Never heard of it</div>
+        </div>
+        <div class="status-item">
+          <span class="status-emoji">🔥</span>
+          <div class="status-label">Fueled by Monsters</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Newsletter Section -->
+  <div class="newsletter-section">
+    <h3>📬 Stay Updated</h3>
+    <p>Get notified when I launch something cool (or weird)</p>
+    <form class="newsletter-form" onsubmit="handleNewsletter(event)">
+      <input type="email" id="newsletterEmail" class="newsletter-input" placeholder="your@email.com" required>
+      <button type="submit" class="btn-subscribe" id="subscribeBtn">Subscribe</button>
+    </form>
+  </div>
   
   <div class="donation-section">
     <button class="support-toggle-btn" onclick="toggleDonation()">💚 Support Me</button>
@@ -580,11 +1249,415 @@ body {
 <div class="floating-icon" id="icon4">💻</div>
 <div class="floating-icon" id="icon5">🚀</div>
 
+<!-- Easter Egg -->
+<div class="easter-egg" id="easterEgg">
+  <h2>🎉 You Found It!</h2>
+  <p>Congrats! You discovered the secret.<br>Here's a fun fact: I coded this while drinking a Monster.</p>
+  <button onclick="closeEasterEgg()">Cool! 😎</button>
+</div>
+
+<!-- Secret Message Easter Egg -->
+<div class="easter-egg" id="secretMessage" style="background: linear-gradient(135deg, #11998e, #38ef7d);">
+  <h2>🕵️ Secret Unlocked!</h2>
+  <p>You found the hidden message!<br>"The cake is a lie, but the Monster is real."</p>
+  <button onclick="closeSecretMessage()">Nice! 🤫</button>
+</div>
+
+<!-- Admin Login Modal -->
+<div class="admin-login-modal" id="adminLoginModal" onclick="closeAdminLogin(event)">
+  <div class="admin-login-form" onclick="event.stopPropagation()">
+    <h2>🔐 Admin Access</h2>
+    <p>Enter your credentials</p>
+    <form onsubmit="handleAdminLogin(event)">
+      <div class="admin-form-group">
+        <label for="adminUsername">Username</label>
+        <input type="text" id="adminUsername" placeholder="Enter username" required autocomplete="username">
+      </div>
+      <div class="admin-form-group">
+        <label for="adminPassword">Password</label>
+        <input type="password" id="adminPassword" placeholder="Enter password" required autocomplete="current-password">
+      </div>
+      <div class="admin-form-actions">
+        <button type="button" class="btn-admin-cancel" onclick="closeAdminLogin()">Cancel</button>
+        <button type="submit" class="btn-admin-login" id="adminLoginBtn">🔓 Login</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <footer class="footer">
   © 2025 Mathias | Powered by Monster and bad decisions
 </footer>
 
 <script>
+// ========== THEME TOGGLE ==========
+function toggleTheme() {
+  const body = document.body;
+  const icon = document.getElementById('themeIcon');
+  
+  body.classList.toggle('light-mode');
+  
+  if (body.classList.contains('light-mode')) {
+    icon.textContent = '☀️';
+    localStorage.setItem('theme', 'light');
+  } else {
+    icon.textContent = '🌙';
+    localStorage.setItem('theme', 'dark');
+  }
+}
+
+// Load saved theme on page load
+window.addEventListener('DOMContentLoaded', () => {
+  const savedTheme = localStorage.getItem('theme');
+  const icon = document.getElementById('themeIcon');
+  
+  if (savedTheme === 'light') {
+    document.body.classList.add('light-mode');
+    icon.textContent = '☀️';
+  }
+  
+  // Load saved mood
+  const savedMood = localStorage.getItem('mood');
+  if (savedMood) {
+    setMood(savedMood);
+  }
+});
+
+// ========== MOOD SELECTOR ==========
+const moodThemes = {
+  happy: { bg: 'linear-gradient(135deg, #f093fb, #f5576c)', floatIcons: ['😄', '🎉', '🌟', '💖', '🎈'] },
+  chill: { bg: 'linear-gradient(135deg, #4facfe, #00f2fe)', floatIcons: ['😎', '🌊', '🏄', '🎵', '☕'] },
+  focused: { bg: 'linear-gradient(135deg, #43e97b, #38f9d7)', floatIcons: ['🎯', '💪', '⚡', '🔥', '🚀'] },
+  creative: { bg: 'linear-gradient(135deg, #fa709a, #fee140)', floatIcons: ['🎨', '✨', '🌈', '🦄', '💡'] },
+  sleepy: { bg: 'linear-gradient(135deg, #30cfd0, #330867)', floatIcons: ['😴', '🌙', '⭐', '💤', '🛌'] }
+};
+
+function setMood(mood) {
+  const theme = moodThemes[mood];
+  if (!theme) return;
+  
+  // Save mood
+  localStorage.setItem('mood', mood);
+  
+  // Update background
+  document.body.style.background = theme.bg;
+  
+  // Update floating icons
+  const icons = document.querySelectorAll('.floating-icon');
+  icons.forEach((icon, index) => {
+    icon.textContent = theme.floatIcons[index] || theme.floatIcons[0];
+  });
+  
+  // Update active mood button
+  document.querySelectorAll('.mood-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  document.querySelector(`[data-mood="${mood}"]`)?.classList.add('active');
+  
+  showToast(`Mood set to ${mood}! 🎭`);
+}
+
+// ========== NEWSLETTER ==========
+function handleNewsletter(event) {
+  event.preventDefault();
+  
+  const email = document.getElementById('newsletterEmail').value;
+  const btn = document.getElementById('subscribeBtn');
+  
+  btn.disabled = true;
+  btn.textContent = 'Subscribing...';
+  
+  // Simulate subscription (you can connect to Mailchimp, ConvertKit, etc.)
+  setTimeout(() => {
+    showToast('✅ Thanks for subscribing!', '#1abc9c');
+    document.getElementById('newsletterEmail').value = '';
+    btn.disabled = false;
+    btn.textContent = 'Subscribe';
+    
+    // Store in localStorage for now
+    const subscribers = JSON.parse(localStorage.getItem('subscribers') || '[]');
+    if (!subscribers.includes(email)) {
+      subscribers.push(email);
+      localStorage.setItem('subscribers', JSON.stringify(subscribers));
+    }
+  }, 1000);
+}
+
+// ========== EASTER EGG (Konami Code) ==========
+let konamiCode = [];
+const konamiSequence = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+
+document.addEventListener('keydown', (e) => {
+  konamiCode.push(e.key);
+  konamiCode = konamiCode.slice(-10);
+  
+  if (konamiCode.join(',') === konamiSequence.join(',')) {
+    openAdminLogin();
+    konamiCode = [];
+  }
+});
+
+// Alternative: Click the footer 7 times for Easter egg
+let footerClicks = 0;
+let footerClickTimer;
+document.querySelector('.footer').addEventListener('click', (e) => {
+  // Check if Ctrl key is held - do nothing, let regular clicks work
+  if (e.ctrlKey) {
+    return;
+  }
+  
+  footerClicks++;
+  clearTimeout(footerClickTimer);
+  
+  if (footerClicks >= 7) {
+    showEasterEgg();
+    footerClicks = 0;
+  }
+  
+  // Reset counter after 2 seconds
+  footerClickTimer = setTimeout(() => {
+    footerClicks = 0;
+  }, 2000);
+});
+
+function showEasterEgg() {
+  const egg = document.getElementById('easterEgg');
+  egg.classList.add('show');
+  
+  // Add confetti effect
+  for (let i = 0; i < 50; i++) {
+    createConfetti();
+  }
+}
+
+function closeEasterEgg() {
+  document.getElementById('easterEgg').classList.remove('show');
+}
+
+// ========== SECRET MESSAGE EASTER EGG ==========
+// Triple-click on the main heading
+let headingClicks = 0;
+let headingClickTimer;
+
+document.addEventListener('DOMContentLoaded', () => {
+  const heading = document.querySelector('.main-message h1');
+  
+  heading.addEventListener('click', () => {
+    headingClicks++;
+    clearTimeout(headingClickTimer);
+    
+    if (headingClicks >= 3) {
+      showSecretMessage();
+      headingClicks = 0;
+    }
+    
+    // Reset counter after 1 second
+    headingClickTimer = setTimeout(() => {
+      headingClicks = 0;
+    }, 1000);
+  });
+  
+  // Also add cursor pointer hint
+  heading.style.cursor = 'pointer';
+  heading.style.userSelect = 'none';
+  
+  // Load skills from localStorage
+  loadSkills();
+  
+  // Update time every second
+  setInterval(updateLocalTime, 1000);
+  updateLocalTime();
+});
+
+// ========== VIEW TOGGLE ==========
+function toggleView(view) {
+  const aboutView = document.getElementById('aboutView');
+  const doingView = document.getElementById('doingView');
+  const aboutBtn = document.getElementById('aboutBtn');
+  const doingBtn = document.getElementById('doingBtn');
+  
+  if (view === 'about') {
+    aboutView.style.display = 'block';
+    doingView.style.display = 'none';
+    aboutBtn.classList.add('active');
+    doingBtn.classList.remove('active');
+  } else {
+    aboutView.style.display = 'none';
+    doingView.style.display = 'block';
+    aboutBtn.classList.remove('active');
+    doingBtn.classList.add('active');
+  }
+}
+
+function updateMyTime() {
+  const now = new Date();
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const timeElement = document.getElementById('myTime');
+  if (timeElement) {
+    timeElement.textContent = `${hours}:${minutes}`;
+  }
+}
+
+// Update time every second
+setInterval(updateMyTime, 1000);
+updateMyTime();
+
+// ========== SKILLS MANAGEMENT ==========
+function loadSkills() {
+  const defaultSkills = [
+    { icon: '🔷', name: 'TypeScript' },
+    { icon: '⚛️', name: 'React' },
+    { icon: '🟢', name: 'Node.js' },
+    { icon: '🐍', name: 'Python' },
+    { icon: '🎨', name: 'CSS/SCSS' },
+    { icon: '🔥', name: 'Firebase' },
+    { icon: '🐳', name: 'Docker' },
+    { icon: '☁️', name: 'AWS' },
+    { icon: '📦', name: 'MongoDB' },
+    { icon: '⚡', name: 'Next.js' }
+  ];
+  
+  const skills = JSON.parse(localStorage.getItem('techStack') || JSON.stringify(defaultSkills));
+  const skillsGrid = document.getElementById('skillsGrid');
+  
+  skillsGrid.innerHTML = skills.map(skill => 
+    `<span class="skill-badge">${skill.icon} ${skill.name}</span>`
+  ).join('');
+}
+
+function showSecretMessage() {
+  const secret = document.getElementById('secretMessage');
+  secret.classList.add('show');
+  
+  // Add special effects
+  for (let i = 0; i < 30; i++) {
+    createSpecialConfetti();
+  }
+}
+
+function closeSecretMessage() {
+  document.getElementById('secretMessage').classList.remove('show');
+}
+
+function createSpecialConfetti() {
+  const confetti = document.createElement('div');
+  confetti.textContent = ['💚', '⚡', '🔥', '💎', '👑'][Math.floor(Math.random() * 5)];
+  confetti.style.cssText = `
+    position: fixed;
+    left: ${Math.random() * 100}%;
+    top: -50px;
+    font-size: ${Math.random() * 30 + 20}px;
+    z-index: 10000;
+    pointer-events: none;
+    animation: confettiFall ${Math.random() * 3 + 2}s linear forwards;
+  `;
+  document.body.appendChild(confetti);
+  
+  setTimeout(() => confetti.remove(), 5000);
+}
+
+// ========== ADMIN LOGIN ==========
+function openAdminLogin() {
+  document.getElementById('adminLoginModal').classList.add('active');
+  document.getElementById('adminUsername').focus();
+}
+
+function closeAdminLogin(event) {
+  if (!event || event.target.id === 'adminLoginModal') {
+    document.getElementById('adminLoginModal').classList.remove('active');
+  }
+}
+
+function handleAdminLogin(event) {
+  event.preventDefault();
+  
+  const username = document.getElementById('adminUsername').value;
+  const password = document.getElementById('adminPassword').value;
+  const btn = document.getElementById('adminLoginBtn');
+  
+  btn.disabled = true;
+  btn.textContent = '⏳ Verifying...';
+  
+  // Authenticate via serverless function
+  fetch('/.netlify/functions/admin-auth', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, password })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success && data.token) {
+      // Store auth token
+      localStorage.setItem('adminToken', data.token);
+      showToast('✅ Login successful! Redirecting...', '#1abc9c');
+      
+      // Redirect to admin panel
+      setTimeout(() => {
+        window.location.href = '/admin.html';
+      }, 1000);
+    } else {
+      throw new Error(data.error || 'Invalid credentials');
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    showToast('❌ Invalid username or password', '#e74c3c');
+    
+    // Shake animation
+    const form = document.querySelector('.admin-login-form');
+    form.style.animation = 'shake 0.5s';
+    setTimeout(() => {
+      form.style.animation = '';
+    }, 500);
+  })
+  .finally(() => {
+    btn.disabled = false;
+    btn.textContent = '🔓 Login';
+    document.getElementById('adminPassword').value = '';
+  });
+}
+
+// Add shake animation
+const shakeStyle = document.createElement('style');
+shakeStyle.textContent = `
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+    20%, 40%, 60%, 80% { transform: translateX(10px); }
+  }
+`;
+document.head.appendChild(shakeStyle);
+
+function createConfetti() {
+  const confetti = document.createElement('div');
+  confetti.textContent = ['🎉', '🎊', '⭐', '✨', '🌟'][Math.floor(Math.random() * 5)];
+  confetti.style.cssText = `
+    position: fixed;
+    left: ${Math.random() * 100}%;
+    top: -50px;
+    font-size: ${Math.random() * 30 + 20}px;
+    z-index: 10000;
+    pointer-events: none;
+    animation: confettiFall ${Math.random() * 3 + 2}s linear forwards;
+  `;
+  document.body.appendChild(confetti);
+  
+  setTimeout(() => confetti.remove(), 5000);
+}
+
+// Add confetti animation
+const confettiStyle = document.createElement('style');
+confettiStyle.textContent = `
+  @keyframes confettiFall {
+    to {
+      transform: translateY(100vh) rotate(${Math.random() * 360}deg);
+      opacity: 0;
+    }
+  }
+`;
+document.head.appendChild(confettiStyle);
+
 function openContactForm() {
   document.getElementById('contactModal').classList.add('active');
 }

@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel - Mathias</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #1e3c72, #2a5298);
+  color: #fff;
+  min-height: 100vh;
+}
+
+.admin-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 2rem;
+}
+
+.admin-header h1 {
+  font-size: 1.8rem;
+  margin: 0;
+}
+
+.btn-logout {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 10px;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-logout:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-5px);
+}
+
+.stat-card h3 {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 0.5rem;
+}
+
+.stat-card .stat-value {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #1abc9c;
+}
+
+.stat-card .stat-icon {
+  font-size: 2rem;
+  opacity: 0.3;
+  float: right;
+}
+
+.data-section {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.data-section h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.subscriber-list {
+  list-style: none;
+  padding: 0;
+}
+
+.subscriber-item {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 1rem;
+  border-radius: 10px;
+  margin-bottom: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.subscriber-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.btn-delete {
+  background: rgba(231, 76, 60, 0.2);
+  border: 1px solid rgba(231, 76, 60, 0.5);
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.btn-delete:hover {
+  background: rgba(231, 76, 60, 0.4);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-style: italic;
+}
+
+@media (max-width: 768px) {
+  .admin-header {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="admin-container">
+  <div class="admin-header">
+    <h1>🎮 Admin Dashboard</h1>
+    <button class="btn-logout" onclick="logout()">🚪 Logout</button>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <span class="stat-icon">📧</span>
+      <h3>Newsletter Subscribers</h3>
+      <div class="stat-value" id="subscriberCount">0</div>
+    </div>
+    
+    <div class="stat-card">
+      <span class="stat-icon">👀</span>
+      <h3>Page Views</h3>
+      <div class="stat-value">Coming Soon</div>
+    </div>
+    
+    <div class="stat-card">
+      <span class="stat-icon">💰</span>
+      <h3>Donations</h3>
+      <div class="stat-value">Coming Soon</div>
+    </div>
+  </div>
+
+  <div class="data-section">
+    <h2>📋 Newsletter Subscribers</h2>
+    <ul class="subscriber-list" id="subscriberList">
+      <li class="empty-state">No subscribers yet</li>
+    </ul>
+  </div>
+
+  <div class="data-section">
+    <h2>🚫 Unsubscribed Users</h2>
+    <ul class="subscriber-list" id="unsubscribedList">
+      <li class="empty-state">No unsubscribed users yet</li>
+    </ul>
+  </div>
+
+  <div class="data-section">
+    <h2>⚙️ Quick Actions</h2>
+    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+      <button class="btn btn-primary" onclick="openTechStackEditor()">💻 Edit Tech Stack</button>
+      <button class="btn btn-primary" onclick="openNewsletterComposer()">✉️ Send Newsletter</button>
+      <button class="btn btn-primary" onclick="exportSubscribers()">📥 Export Subscribers</button>
+      <button class="btn btn-secondary" onclick="clearAllData()">🗑️ Clear All Data</button>
+    </div>
+  </div>
+</div>
+
+<!-- Tech Stack Editor Modal -->
+<div id="techStackModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; align-items: center; justify-content: center;">
+  <div style="background: linear-gradient(135deg, #2c3e50, #34495e); padding: 2rem; border-radius: 20px; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto;">
+    <h2 style="margin: 0 0 1rem 0;">💻 Edit Tech Stack</h2>
+    
+    <div id="skillsList" style="margin-bottom: 1.5rem;"></div>
+    
+    <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 10px;">
+      <h3 style="font-size: 1rem; margin-bottom: 0.5rem;">Add New Skill</h3>
+      <div style="display: flex; gap: 0.5rem;">
+        <input type="text" id="newSkillIcon" placeholder="🔷" maxlength="2" style="width: 60px; padding: 0.6rem; border: 2px solid rgba(255,255,255,0.2); border-radius: 10px; background: rgba(255,255,255,0.1); color: #fff; font-size: 1.2rem; text-align: center;">
+        <input type="text" id="newSkillName" placeholder="Skill name" style="flex: 1; padding: 0.6rem; border: 2px solid rgba(255,255,255,0.2); border-radius: 10px; background: rgba(255,255,255,0.1); color: #fff; font-size: 0.95rem;">
+        <button onclick="addSkill()" style="padding: 0.6rem 1.2rem; border: none; border-radius: 10px; background: linear-gradient(135deg, #1abc9c, #16a085); color: #fff; cursor: pointer; font-weight: 600;">➕ Add</button>
+      </div>
+    </div>
+    
+    <div style="display: flex; gap: 0.5rem;">
+      <button onclick="closeTechStackEditor()" style="flex: 1; padding: 0.8rem; border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; background: rgba(255,255,255,0.1); color: #fff; cursor: pointer; font-weight: 600;">Cancel</button>
+      <button onclick="saveTechStack()" style="flex: 2; padding: 0.8rem; border: none; border-radius: 10px; background: linear-gradient(135deg, #3498db, #2980b9); color: #fff; cursor: pointer; font-weight: 600; box-shadow: 0 3px 10px rgba(52, 152, 219, 0.4);">💾 Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- Newsletter Composer Modal -->
+<div id="newsletterModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; align-items: center; justify-content: center;">
+  <div style="background: linear-gradient(135deg, #2c3e50, #34495e); padding: 2rem; border-radius: 20px; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto;">
+    <h2 style="margin: 0 0 1rem 0;">✉️ Send Newsletter</h2>
+    
+    <div style="margin-bottom: 1rem;">
+      <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Subject</label>
+      <input type="text" id="newsletterSubject" placeholder="Newsletter Subject" style="width: 100%; padding: 0.8rem; border: 2px solid rgba(255,255,255,0.2); border-radius: 10px; background: rgba(255,255,255,0.1); color: #fff; font-size: 0.95rem;">
+    </div>
+    
+    <div style="margin-bottom: 1rem;">
+      <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Message (HTML supported)</label>
+      <textarea id="newsletterMessage" placeholder="Write your newsletter message here..." style="width: 100%; padding: 0.8rem; border: 2px solid rgba(255,255,255,0.2); border-radius: 10px; background: rgba(255,255,255,0.1); color: #fff; font-size: 0.95rem; min-height: 200px; font-family: inherit; resize: vertical;"></textarea>
+    </div>
+    
+    <div style="margin-bottom: 1.5rem; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 10px;">
+      <strong>📧 Recipients: <span id="recipientCount">0</span></strong>
+    </div>
+    
+    <div style="display: flex; gap: 0.5rem;">
+      <button onclick="closeNewsletterComposer()" style="flex: 1; padding: 0.8rem; border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; background: rgba(255,255,255,0.1); color: #fff; cursor: pointer; font-weight: 600;">Cancel</button>
+      <button onclick="sendNewsletter()" id="sendNewsletterBtn" style="flex: 2; padding: 0.8rem; border: none; border-radius: 10px; background: linear-gradient(135deg, #1abc9c, #16a085); color: #fff; cursor: pointer; font-weight: 600; box-shadow: 0 3px 10px rgba(26, 188, 156, 0.4);">📨 Send to All</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Check authentication
+window.addEventListener('DOMContentLoaded', () => {
+  const token = localStorage.getItem('adminToken');
+  if (!token) {
+    window.location.href = '/';
+    return;
+  }
+  
+  loadDashboardData();
+});
+
+function loadDashboardData() {
+  // Load newsletter subscribers
+  const subscribers = JSON.parse(localStorage.getItem('subscribers') || '[]');
+  const unsubscribed = JSON.parse(localStorage.getItem('unsubscribed') || '[]');
+  
+  document.getElementById('subscriberCount').textContent = subscribers.length;
+  
+  const listElement = document.getElementById('subscriberList');
+  
+  if (subscribers.length === 0) {
+    listElement.innerHTML = '<li class="empty-state">No subscribers yet</li>';
+  } else {
+    listElement.innerHTML = subscribers.map((email, index) => `
+      <li class="subscriber-item">
+        <span>📧 ${email}</span>
+        <button class="btn-delete" onclick="deleteSubscriber(${index})">🗑️ Delete</button>
+      </li>
+    `).join('');
+  }
+  
+  // Load unsubscribed list
+  const unsubListElement = document.getElementById('unsubscribedList');
+  
+  if (unsubscribed.length === 0) {
+    unsubListElement.innerHTML = '<li class="empty-state">No unsubscribed users yet</li>';
+  } else {
+    unsubListElement.innerHTML = unsubscribed.map((item, index) => `
+      <li class="subscriber-item">
+        <span>🚫 ${item.email} <small style="opacity: 0.7;">(${new Date(item.date).toLocaleDateString()})</small></span>
+        <button class="btn-delete" onclick="deleteUnsubscribed(${index})">🗑️ Remove</button>
+      </li>
+    `).join('');
+  }
+}
+
+function deleteSubscriber(index) {
+  if (!confirm('Are you sure you want to delete this subscriber?')) return;
+  
+  const subscribers = JSON.parse(localStorage.getItem('subscribers') || '[]');
+  subscribers.splice(index, 1);
+  localStorage.setItem('subscribers', JSON.stringify(subscribers));
+  
+  loadDashboardData();
+  showToast('✅ Subscriber deleted');
+}
+
+function deleteUnsubscribed(index) {
+  if (!confirm('Remove this from unsubscribed list?')) return;
+  
+  const unsubscribed = JSON.parse(localStorage.getItem('unsubscribed') || '[]');
+  unsubscribed.splice(index, 1);
+  localStorage.setItem('unsubscribed', JSON.stringify(unsubscribed));
+  
+  loadDashboardData();
+  showToast('✅ Removed from list');
+}
+
+function exportSubscribers() {
+  const subscribers = JSON.parse(localStorage.getItem('subscribers') || '[]');
+  
+  if (subscribers.length === 0) {
+    showToast('⚠️ No subscribers to export', '#e74c3c');
+    return;
+  }
+  
+  const csvContent = 'Email\n' + subscribers.join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv' });
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `subscribers_${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+  
+  showToast('✅ Subscribers exported');
+}
+
+function clearAllData() {
+  if (!confirm('⚠️ This will delete ALL data including subscribers. Are you sure?')) return;
+  if (!confirm('Really sure? This cannot be undone!')) return;
+  
+  localStorage.removeItem('subscribers');
+  loadDashboardData();
+  showToast('✅ All data cleared');
+}
+
+// ========== TECH STACK EDITOR ==========
+let currentSkills = [];
+
+function openTechStackEditor() {
+  const defaultSkills = [
+    { icon: '🔷', name: 'TypeScript' },
+    { icon: '⚛️', name: 'React' },
+    { icon: '🟢', name: 'Node.js' },
+    { icon: '🐍', name: 'Python' },
+    { icon: '🎨', name: 'CSS/SCSS' },
+    { icon: '🔥', name: 'Firebase' },
+    { icon: '🐳', name: 'Docker' },
+    { icon: '☁️', name: 'AWS' },
+    { icon: '📦', name: 'MongoDB' },
+    { icon: '⚡', name: 'Next.js' }
+  ];
+  
+  currentSkills = JSON.parse(localStorage.getItem('techStack') || JSON.stringify(defaultSkills));
+  renderSkillsList();
+  document.getElementById('techStackModal').style.display = 'flex';
+}
+
+function closeTechStackEditor() {
+  document.getElementById('techStackModal').style.display = 'none';
+  document.getElementById('newSkillIcon').value = '';
+  document.getElementById('newSkillName').value = '';
+}
+
+function renderSkillsList() {
+  const listElement = document.getElementById('skillsList');
+  
+  if (currentSkills.length === 0) {
+    listElement.innerHTML = '<p style="text-align: center; opacity: 0.7;">No skills added yet</p>';
+  } else {
+    listElement.innerHTML = currentSkills.map((skill, index) => `
+      <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.8rem; background: rgba(255,255,255,0.05); border-radius: 10px; margin-bottom: 0.5rem;">
+        <span style="font-size: 1.5rem;">${skill.icon}</span>
+        <span style="flex: 1;">${skill.name}</span>
+        <button onclick="removeSkill(${index})" style="padding: 0.4rem 0.8rem; border: 1px solid rgba(231, 76, 60, 0.5); border-radius: 8px; background: rgba(231, 76, 60, 0.2); color: #fff; cursor: pointer; font-size: 0.9rem;">🗑️</button>
+      </div>
+    `).join('');
+  }
+}
+
+function addSkill() {
+  const icon = document.getElementById('newSkillIcon').value.trim();
+  const name = document.getElementById('newSkillName').value.trim();
+  
+  if (!icon || !name) {
+    showToast('⚠️ Please fill both icon and name', '#e74c3c');
+    return;
+  }
+  
+  currentSkills.push({ icon, name });
+  renderSkillsList();
+  
+  document.getElementById('newSkillIcon').value = '';
+  document.getElementById('newSkillName').value = '';
+  document.getElementById('newSkillName').focus();
+}
+
+function removeSkill(index) {
+  currentSkills.splice(index, 1);
+  renderSkillsList();
+}
+
+function saveTechStack() {
+  localStorage.setItem('techStack', JSON.stringify(currentSkills));
+  showToast('✅ Tech stack updated!', '#1abc9c');
+  closeTechStackEditor();
+}
+
+function openNewsletterComposer() {
+  const subscribers = JSON.parse(localStorage.getItem('subscribers') || '[]');
+  
+  if (subscribers.length === 0) {
+    showToast('⚠️ No subscribers to send to', '#e74c3c');
+    return;
+  }
+  
+  document.getElementById('recipientCount').textContent = subscribers.length;
+  document.getElementById('newsletterModal').style.display = 'flex';
+}
+
+function closeNewsletterComposer() {
+  document.getElementById('newsletterModal').style.display = 'none';
+  document.getElementById('newsletterSubject').value = '';
+  document.getElementById('newsletterMessage').value = '';
+}
+
+async function sendNewsletter() {
+  const subject = document.getElementById('newsletterSubject').value.trim();
+  const message = document.getElementById('newsletterMessage').value.trim();
+  const subscribers = JSON.parse(localStorage.getItem('subscribers') || '[]');
+  
+  if (!subject || !message) {
+    showToast('⚠️ Please fill in both subject and message', '#e74c3c');
+    return;
+  }
+  
+  if (subscribers.length === 0) {
+    showToast('⚠️ No subscribers to send to', '#e74c3c');
+    return;
+  }
+  
+  if (!confirm(`Send newsletter to ${subscribers.length} subscriber(s)?`)) {
+    return;
+  }
+  
+  const btn = document.getElementById('sendNewsletterBtn');
+  btn.disabled = true;
+  btn.textContent = '📤 Sending...';
+  
+  try {
+    const token = localStorage.getItem('adminToken');
+    const response = await fetch('/.netlify/functions/send-newsletter', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        subject: subject,
+        message: message,
+        subscribers: subscribers
+      })
+    });
+    
+    const data = await response.json();
+    
+    if (data.success) {
+      showToast(`✅ ${data.message}`, '#1abc9c');
+      closeNewsletterComposer();
+    } else {
+      throw new Error(data.error || 'Failed to send newsletter');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    showToast(`❌ ${error.message}`, '#e74c3c');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '📨 Send to All';
+  }
+}
+
+function logout() {
+  localStorage.removeItem('adminToken');
+  showToast('✅ Logged out successfully');
+  setTimeout(() => {
+    window.location.href = '/';
+  }, 1000);
+}
+
+function showToast(message, color = '#1abc9c') {
+  const toast = document.createElement('div');
+  toast.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: ${color};
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    z-index: 10000;
+    font-weight: 600;
+    animation: slideIn 0.3s ease-out;
+  `;
+  toast.textContent = message;
+  
+  document.body.appendChild(toast);
+  
+  setTimeout(() => {
+    toast.style.animation = 'slideOut 0.3s ease-out';
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
+
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes slideIn {
+    from { transform: translateX(400px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+  @keyframes slideOut {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(400px); opacity: 0; }
+  }
+`;
+document.head.appendChild(style);
+</script>
+
+</body>
+</html>

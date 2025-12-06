@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unsubscribe - Mathias</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.container {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  padding: 3rem;
+  border-radius: 20px;
+  max-width: 500px;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+p {
+  margin-bottom: 2rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.btn {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(231, 76, 60, 0.6);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.success {
+  color: #2ecc71;
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+
+.error {
+  color: #e74c3c;
+  font-weight: 600;
+}
+
+.back-link {
+  margin-top: 2rem;
+  display: inline-block;
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.back-link:hover {
+  color: #fff;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>😢 Unsubscribe</h1>
+  <p>Sorry to see you go! Click below to unsubscribe from the newsletter.</p>
+  
+  <div id="content">
+    <button class="btn" onclick="unsubscribe()" id="unsubBtn">Unsubscribe Me</button>
+  </div>
+  
+  <a href="/" class="back-link">← Back to Home</a>
+</div>
+
+<script>
+function getEmailFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('email');
+}
+
+async function unsubscribe() {
+  const email = getEmailFromUrl();
+  const btn = document.getElementById('unsubBtn');
+  const content = document.getElementById('content');
+  
+  if (!email) {
+    content.innerHTML = '<p class="error">Invalid unsubscribe link</p>';
+    return;
+  }
+  
+  btn.disabled = true;
+  btn.textContent = 'Unsubscribing...';
+  
+  try {
+    const response = await fetch('/.netlify/functions/unsubscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    
+    const data = await response.json();
+    
+    if (data.success) {
+      // Remove from subscribers list
+      const subscribers = JSON.parse(localStorage.getItem('subscribers') || '[]');
+      const updatedSubscribers = subscribers.filter(e => e !== email);
+      localStorage.setItem('subscribers', JSON.stringify(updatedSubscribers));
+      
+      // Add to unsubscribed list
+      const unsubscribed = JSON.parse(localStorage.getItem('unsubscribed') || '[]');
+      unsubscribed.push({
+        email: email,
+        date: new Date().toISOString()
+      });
+      localStorage.setItem('unsubscribed', JSON.stringify(unsubscribed));
+      
+      content.innerHTML = `
+        <p class="success">✅ You've been unsubscribed!</p>
+        <p>We won't send you any more emails.</p>
+      `;
+    } else {
+      throw new Error(data.error || 'Failed to unsubscribe');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    content.innerHTML = `<p class="error">❌ ${error.message}</p>`;
+    btn.disabled = false;
+    btn.textContent = 'Unsubscribe Me';
+  }
+}
+</script>
+
+</body>
+</html>
