@@ -5,8 +5,12 @@ exports.handler = async (event) => {
   }
 
   // Check if Stripe key is configured
-  if (!process.env.STRIPE_SECRET_KEY) {
-    console.error('STRIPE_SECRET_KEY is not configured');
+  console.log('STRIPE_SECRET_KEY exists:', !!process.env.STRIPE_SECRET_KEY);
+  console.log('STRIPE_SECRET_KEY length:', process.env.STRIPE_SECRET_KEY?.length);
+  console.log('STRIPE_SECRET_KEY starts with:', process.env.STRIPE_SECRET_KEY?.substring(0, 10));
+  
+  if (!process.env.STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY.trim() === '') {
+    console.error('STRIPE_SECRET_KEY is not configured properly');
     return {
       statusCode: 500,
       body: JSON.stringify({ error: 'Payment system not configured. Please contact support.' })
