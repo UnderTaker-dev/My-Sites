@@ -1,3 +1,5 @@
+const Airtable = require('airtable');
+
 exports.handler = async (event, context) => {
   // Only allow POST requests
   if (event.httpMethod !== 'POST') {
@@ -22,14 +24,33 @@ exports.handler = async (event, context) => {
       };
     }
 
-    // TODO: Store in database (for now, just return success)
-    // In the future, you can integrate with:
-    // - Airtable
-    // - Google Sheets
-    // - MongoDB
-    // - PostgreSQL via Supabase
+    const base = new Airtable({ apiKey: process.env.AIRTABLE_TOKEN }).base(process.env.AIRTABLE_BASE_ID);
     
-    console.log('New subscriber:', email);
+    // Check if already subscribed
+    const existing = await base('Subscribers').select({
+      filterByFormula: `{Email} = '${email}'`
+    }).firstPage();
+
+    if (existing.length > 0) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({
+          success: false,
+          error: 'Already subscribed'
+        })
+      };
+    }
+
+    // Add subscriber to Airtable
+    await base('Subscribers').create([
+      {
+        fields: {
+          Email: email
+        }
+      }
+    ]);
+    
+    console.log('New subscriber added to Airtable:', email);
 
     return {
       statusCode: 200,

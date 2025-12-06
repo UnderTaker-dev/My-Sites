@@ -1,26 +1,17 @@
 const Airtable = require('airtable');
 
 exports.handler = async (event, context) => {
-  // Only allow POST requests
   if (event.httpMethod !== 'POST') {
-    return {
-      statusCode: 405,
-      body: JSON.stringify({ error: 'Method not allowed' })
-    };
+    return { statusCode: 405, body: 'Method Not Allowed' };
   }
 
   try {
     const { email } = JSON.parse(event.body);
-
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!email || !emailRegex.test(email)) {
+    
+    if (!email || !email.includes('@')) {
       return {
         statusCode: 400,
-        body: JSON.stringify({
-          success: false,
-          error: 'Invalid email address'
-        })
+        body: JSON.stringify({ error: 'Invalid email' })
       };
     }
 
@@ -44,30 +35,16 @@ exports.handler = async (event, context) => {
         }
       }
     ]);
-    
-    console.log('Unsubscribe request:', {
-      email: email,
-      timestamp: new Date().toISOString(),
-      userAgent: event.headers['user-agent']
-    });
 
-    // Return success - client-side will handle localStorage removal
     return {
       statusCode: 200,
-      body: JSON.stringify({
-        success: true,
-        message: 'Successfully unsubscribed',
-        email: email
-      })
+      body: JSON.stringify({ message: 'Unsubscribed successfully' })
     };
   } catch (error) {
-    console.error('Unsubscribe error:', error);
+    console.error('Error unsubscribing:', error);
     return {
       statusCode: 500,
-      body: JSON.stringify({
-        success: false,
-        error: 'Unsubscribe failed'
-      })
+      body: JSON.stringify({ error: 'Failed to unsubscribe' })
     };
   }
 };
