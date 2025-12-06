@@ -1,0 +1,8 @@
+{
+  "name": "mathi4s-website",
+  "version": "1.0.0",
+  "description": "Mathias personal website with Stripe donations",
+  "dependencies": {
+    "stripe": "^14.0.0"
+  }
+}
