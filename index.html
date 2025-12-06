@@ -87,6 +87,19 @@ body, html {
   transform: scale(1.1);
   background-color: #16a085;
 }
+
+/* Copy email */
+.copy-email {
+  margin-top: 15px;
+  font-size: 0.95rem;
+  color: #ddd;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.copy-email:hover {
+  color: #1abc9c;
+}
 </style>
 </head>
 <body>
@@ -94,13 +107,8 @@ body, html {
 <div class="main-message">
   <h1>Coming Soon</h1>
   <p>Next update: Whenever I feel like it</p>
-  <a 
-    href="mailto:support@mathi4s.com" 
-    onclick="window.open('https://mail.google.com/mail/?view=cm&fs=1&to=support@mathi4s.com', '_blank'); return false;" 
-    class="btn btn-info"
-  >
-    Contact Me
-  </a>
+  <a href="mailto:support@mathi4s.com" class="btn btn-info">Contact Me</a>
+  <div class="copy-email" onclick="copyEmail()">Or copy my email: support@mathi4s.com</div>
 </div>
 
 <!-- Floating icons -->
@@ -112,6 +120,15 @@ body, html {
 <footer class="footer">
   © 2025 Mathias | Powered by Monster and bad decisions
 </footer>
+
+<script>
+function copyEmail() {
+  const email = "support@mathi4s.com";
+  navigator.clipboard.writeText(email).then(() => {
+    alert("Email copied to clipboard: " + email);
+  });
+}
+</script>
 
 </body>
 </html>
