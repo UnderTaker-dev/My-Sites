@@ -9,6 +9,18 @@ exports.handler = async (event, context) => {
     };
   }
 
+  // Check if Airtable credentials are configured
+  if (!process.env.AIRTABLE_TOKEN || !process.env.AIRTABLE_BASE_ID) {
+    console.error('Airtable credentials not configured. AIRTABLE_TOKEN:', !!process.env.AIRTABLE_TOKEN, 'AIRTABLE_BASE_ID:', !!process.env.AIRTABLE_BASE_ID);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        success: false,
+        error: 'Newsletter system not configured. Please contact support.'
+      })
+    };
+  }
+
   try {
     const { email } = JSON.parse(event.body);
 

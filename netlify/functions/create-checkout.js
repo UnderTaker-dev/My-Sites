@@ -1,10 +1,19 @@
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-
 exports.handler = async (event) => {
   // Only allow POST
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' };
   }
+
+  // Check if Stripe key is configured
+  if (!process.env.STRIPE_SECRET_KEY) {
+    console.error('STRIPE_SECRET_KEY is not configured');
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: 'Payment system not configured. Please contact support.' })
+    };
+  }
+
+  const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
   try {
     const { amount } = JSON.parse(event.body);
