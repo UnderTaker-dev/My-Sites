@@ -1041,40 +1041,62 @@ async function loadDashboardData() {
 
     // Load subscribers count
     console.log('📧 Fetching subscribers...');
-    const subscribersResponse = await fetch('/.netlify/functions/get-subscribers');
-    if (!subscribersResponse.ok) {
-      throw new Error(`Subscribers API returned ${subscribersResponse.status}`);
+    try {
+      const subscribersResponse = await fetch('/.netlify/functions/get-subscribers');
+      if (subscribersResponse.ok) {
+        const subscribersData = await subscribersResponse.json();
+        const subscriberCount = subscribersData.subscribers?.length || 0;
+        const subElement = document.getElementById('subscriberCount');
+        if (subElement) subElement.textContent = subscriberCount;
+        console.log(`✅ Subscribers: ${subscriberCount}`);
+      } else {
+        console.warn('⚠️ Subscribers API failed, showing 0');
+        document.getElementById('subscriberCount').textContent = '0';
+      }
+    } catch (e) {
+      console.warn('⚠️ Subscribers error:', e.message);
+      document.getElementById('subscriberCount').textContent = '0';
     }
-    const subscribersData = await subscribersResponse.json();
-    const subscriberCount = subscribersData.subscribers?.length || 0;
-    const subElement = document.getElementById('subscriberCount');
-    console.log('Subscriber element found:', subElement !== null);
-    if (subElement) subElement.textContent = subscriberCount;
-    console.log(`✅ Subscribers: ${subscriberCount}`);
 
     // Load page views count
     console.log('👁️ Fetching page views...');
-    const pageViewsResponse = await fetch('/.netlify/functions/get-page-views');
-    if (!pageViewsResponse.ok) {
-      throw new Error(`Page views API returned ${pageViewsResponse.status}`);
+    try {
+      const pageViewsResponse = await fetch('/.netlify/functions/get-page-views');
+      if (pageViewsResponse.ok) {
+        const pageViewsData = await pageViewsResponse.json();
+        const pageViewCount = pageViewsData.total || pageViewsData.count || 0;
+        document.getElementById('pageViewCount').textContent = pageViewCount;
+        console.log(`✅ Page views: ${pageViewCount}`);
+      } else {
+        console.warn('⚠️ Page views API failed, showing 0');
+        document.getElementById('pageViewCount').textContent = '0';
+      }
+    } catch (e) {
+      console.warn('⚠️ Page views error:', e.message);
+      document.getElementById('pageViewCount').textContent = '0';
     }
-    const pageViewsData = await pageViewsResponse.json();
-    const pageViewCount = pageViewsData.total || pageViewsData.count || 0;
-    document.getElementById('pageViewCount').textContent = pageViewCount;
-    console.log(`✅ Page views: ${pageViewCount}`);
 
     // Load donations data
     console.log('💰 Fetching donations...');
-    const donationsResponse = await fetch('/.netlify/functions/get-donations');
-    if (!donationsResponse.ok) {
-      throw new Error(`Donations API returned ${donationsResponse.status}`);
+    try {
+      const donationsResponse = await fetch('/.netlify/functions/get-donations');
+      if (donationsResponse.ok) {
+        const donationsData = await donationsResponse.json();
+        const donationAmount = donationsData.total || 0;
+        const donationCount = donationsData.count || 0;
+        document.getElementById('donationAmount').textContent = `$${donationAmount.toFixed(2)}`;
+        document.getElementById('donationCount').textContent = `${donationCount} donation${donationCount !== 1 ? 's' : ''}`;
+        console.log(`✅ Donations: $${donationAmount} (${donationCount})`);
+      } else {
+        console.warn('⚠️ Donations API failed, showing $0.00');
+        document.getElementById('donationAmount').textContent = '$0.00';
+        document.getElementById('donationCount').textContent = '0 donations';
+      }
+    } catch (e) {
+      console.warn('⚠️ Donations error:', e.message);
+      document.getElementById('donationAmount').textContent = '$0.00';
+      document.getElementById('donationCount').textContent = '0 donations';
     }
-    const donationsData = await donationsResponse.json();
-    const donationAmount = donationsData.total || 0;
-    const donationCount = donationsData.count || 0;
-    document.getElementById('donationAmount').textContent = `$${donationAmount.toFixed(2)}`;
-    document.getElementById('donationCount').textContent = `${donationCount} donation${donationCount !== 1 ? 's' : ''}`;
-    console.log(`✅ Donations: $${donationAmount} (${donationCount})`);
 
     console.log('✅ Dashboard data loaded successfully');
   } catch (error) {
