@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Panel - Mathias</title>
+<title>Admin Panel - Top Nav - Mathias</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -15,9 +15,9 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: #fff;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #f8fafc;
+  color: #1e293b;
   min-height: 100vh;
   position: relative;
 }
@@ -28,74 +28,104 @@ body::before {
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
-  background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/></svg>');
-  opacity: 0.3;
+  height: 40%;
+  background: linear-gradient(180deg, #3b82f6 0%, #60a5fa 100%);
   pointer-events: none;
+  z-index: 0;
 }
 
-.sidebar {
-  position: fixed;
-  left: 0;
+.top-nav {
+  position: sticky;
   top: 0;
-  width: 250px;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(10px);
-  padding: 2rem 0;
-  border-right: 1px solid rgba(255, 255, 255, 0.2);
   z-index: 100;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border-bottom: 2px solid #e2e8f0;
 }
 
-.sidebar-logo {
-  padding: 0 1.5rem;
-  margin-bottom: 2rem;
+.top-nav-container {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0.75rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
 }
 
-.sidebar-logo h2 {
-  font-size: 1.5rem;
-  font-weight: 700;
-}
-
-.sidebar-nav {
-  list-style: none;
-  padding: 0;
-}
-
-.sidebar-nav li {
-  margin: 0.5rem 0;
-}
-
-.sidebar-nav a {
+.nav-brand {
+  font-size: 1.75rem;
+  font-weight: 800;
+  white-space: nowrap;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 1rem 1.5rem;
-  color: rgba(255, 255, 255, 0.7);
+  gap: 0.5rem;
+}
+
+.nav-links {
+  display: flex;
+  gap: 0.25rem;
+  flex: 1;
+  justify-content: center;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.nav-links::-webkit-scrollbar {
+  display: none;
+}
+
+.nav-link {
+  padding: 0.75rem 1.5rem;
+  background: transparent;
+  border: none;
+  color: #64748b;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  white-space: nowrap;
   text-decoration: none;
-  transition: all 0.3s ease;
-  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
 }
 
-.sidebar-nav a:hover,
-.sidebar-nav a.active {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-  border-left: 3px solid #4facfe;
+.nav-link::before {
+  content: '';
+  position: absolute;
+  bottom: -0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+  border-radius: 2px;
+  transition: width 0.3s ease;
 }
 
-.sidebar-nav .icon {
-  font-size: 1.3rem;
-  width: 24px;
-  text-align: center;
+.nav-link:hover {
+  background: #f1f5f9;
+  color: #1e293b;
 }
 
-.main-content {
-  margin-left: 250px;
-  min-height: 100vh;
+.nav-link.active {
+  background: linear-gradient(135deg, #eff6ff, #f5f3ff);
+  color: #3b82f6;
+  box-shadow: inset 0 0 0 2px #3b82f6;
 }
 
-.admin-container {
+.nav-link.active::before {
+  width: 100%;
+}
+
+.page-container {
   max-width: 1400px;
   margin: 0 auto;
   padding: 2rem;
@@ -103,22 +133,30 @@ body::before {
   z-index: 1;
 }
 
-.admin-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.page-content {
+  animation: fadeInUp 0.6s ease-out;
+  background: #ffffff;
+  border-radius: 16px;
   padding: 2rem;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  margin-bottom: 2rem;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
 }
 
-.admin-header h1 {
-  font-size: 2rem;
-  margin: 0;
+.data-section {
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.data-section h2 {
+  color: #1e293b;
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
   font-weight: 700;
   background: linear-gradient(135deg, #fff 0%, #f0f0f0 100%);
   -webkit-background-clip: text;
@@ -426,31 +464,25 @@ tbody tr:hover {
 </head>
 <body>
 
-<button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
-
-<div class="sidebar" id="sidebar">
-  <div class="sidebar-logo">
-    <h2>🎮 Dashboard</h2>
-  </div>
-  <ul class="sidebar-nav">
-    <li><a href="#overview" class="active" onclick="event.preventDefault(); showSection('overview')"><span class="icon">📊</span> Overview</a></li>
-    <li><a href="#analytics" onclick="event.preventDefault(); showSection('analytics')"><span class="icon">📈</span> Analytics</a></li>
-    <li><a href="#subscribers" onclick="event.preventDefault(); showSection('subscribers')"><span class="icon">📧</span> Subscribers</a></li>
-    <li><a href="#pageviews" onclick="event.preventDefault(); showSection('pageviews')"><span class="icon">👀</span> Page Views</a></li>
-    <li><a href="#donations" onclick="event.preventDefault(); showSection('donations')"><span class="icon">💰</span> Donations</a></li>
-    <li><a href="#settings" onclick="event.preventDefault(); showSection('settings')"><span class="icon">⚙️</span> Settings</a></li>
-  </ul>
-</div>
-
-<div class="main-content">
-<div class="admin-container">
-  <div class="admin-header">
-    <h1>Admin Dashboard</h1>
+<nav class="top-nav">
+  <div class="top-nav-container">
+    <div class="nav-brand">🎮 Dashboard</div>
+    <div class="nav-links">
+      <a href="#overview" class="nav-link active" onclick="event.preventDefault(); showPage('overview')">📊 Overview</a>
+      <a href="#analytics" class="nav-link" onclick="event.preventDefault(); showPage('analytics')">📈 Analytics</a>
+      <a href="#subscribers" class="nav-link" onclick="event.preventDefault(); showPage('subscribers')">📧 Subscribers</a>
+      <a href="#pageviews" class="nav-link" onclick="event.preventDefault(); showPage('pageviews')">👀 Page Views</a>
+      <a href="#donations" class="nav-link" onclick="event.preventDefault(); showPage('donations')">💰 Donations</a>
+      <a href="#settings" class="nav-link" onclick="event.preventDefault(); showPage('settings')">⚙️ Settings</a>
+    </div>
     <button class="btn-logout" onclick="logout()">🚪 Logout</button>
   </div>
+</nav>
 
-  <!-- Overview Section -->
-  <div id="section-overview" class="content-section">
+<div class="page-container">
+  
+  <!-- Overview Page -->
+  <div id="page-overview" class="page-content">
     <div class="stats-grid">
     <div class="stat-card">
       <span class="stat-icon">📧</span>
@@ -473,8 +505,8 @@ tbody tr:hover {
   </div>
   </div>
 
-  <!-- Analytics Section -->
-  <div id="section-analytics" class="content-section" style="display:none;">
+  <!-- Analytics Page -->
+  <div id="page-analytics" class="page-content" style="display:none;">
     <div class="section-header">📈 Analytics</div>
     
   <div class="data-section">
@@ -505,8 +537,8 @@ tbody tr:hover {
   </div>
   </div>
 
-  <!-- Subscribers Section -->
-  <div id="section-subscribers" class="content-section" style="display:none;">
+  <!-- Subscribers Page -->
+  <div id="page-subscribers" class="page-content" style="display:none;">
     <div class="section-header">📧 Subscribers</div>
     
   <div class="data-section">
@@ -524,8 +556,8 @@ tbody tr:hover {
   </div>
   </div>
 
-  <!-- Page Views Section -->
-  <div id="section-pageviews" class="content-section" style="display:none;">
+  <!-- Page Views Page -->
+  <div id="page-pageviews" class="page-content" style="display:none;">
     <div class="section-header">👀 Page Views</div>
     
   <div class="data-section">
@@ -552,8 +584,8 @@ tbody tr:hover {
   </div>
   </div>
 
-  <!-- Donations Section -->
-  <div id="section-donations" class="content-section" style="display:none;">
+  <!-- Donations Page -->
+  <div id="page-donations" class="page-content" style="display:none;">
     <div class="section-header">💰 Donations</div>
     
   <div class="data-section">
@@ -579,8 +611,8 @@ tbody tr:hover {
   </div>
   </div>
 
-  <!-- Settings Section -->
-  <div id="section-settings" class="content-section" style="display:none;">
+  <!-- Settings Page -->
+  <div id="page-settings" class="page-content" style="display:none;">
     <div class="section-header">⚙️ Settings</div>
     
   <div class="data-section">
@@ -1363,32 +1395,19 @@ function logout() {
   }, 1000);
 }
 
-function toggleSidebar() {
-  const sidebar = document.getElementById('sidebar');
-  sidebar.classList.toggle('open');
-}
-
-function showSection(sectionName) {
-  // Hide all sections
-  const sections = document.querySelectorAll('.content-section');
-  sections.forEach(s => s.style.display = 'none');
+function showPage(pageName) {
+  // Hide all pages
+  const pages = document.querySelectorAll('.page-content');
+  pages.forEach(p => p.style.display = 'none');
   
-  // Show selected section
-  const section = document.getElementById(`section-${sectionName}`);
-  if (section) section.style.display = 'block';
+  // Show selected page
+  const page = document.getElementById(`page-${pageName}`);
+  if (page) page.style.display = 'block';
   
   // Update nav active state
-  const navLinks = document.querySelectorAll('.sidebar-nav a');
+  const navLinks = document.querySelectorAll('.nav-link');
   navLinks.forEach(link => link.classList.remove('active'));
-  
-  // Find and activate the clicked link
-  const activeLink = document.querySelector(`.sidebar-nav a[href="#${sectionName}"]`);
-  if (activeLink) activeLink.classList.add('active');
-  
-  // Close sidebar on mobile
-  if (window.innerWidth <= 1024) {
-    document.getElementById('sidebar').classList.remove('open');
-  }
+  event.target.classList.add('active');
 }
 
 function showToast(message, color = '#1abc9c') {

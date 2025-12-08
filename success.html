@@ -82,6 +82,82 @@ p {
   box-shadow: 0 6px 20px rgba(26, 188, 156, 0.6);
   color: #fff;
 }
+
+/* ========== THEME STYLES ========== */
+body.theme-christmas {
+  background: linear-gradient(135deg, #0a3d2e 0%, #1a5c3a 30%, #2d8c52 60%, #0a3d2e 100%) !important;
+}
+
+body.theme-christmas h1 {
+  background: linear-gradient(135deg, #ffcd00, #ffa500) !important;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+body.theme-christmas .btn-home {
+  background: linear-gradient(135deg, #dc143c, #ff1744) !important;
+  box-shadow: 0 4px 15px rgba(220, 20, 60, 0.5);
+}
+
+body.theme-halloween {
+  background: linear-gradient(135deg, #1a0a2e 0%, #240046 30%, #5a189a 60%, #1a0a2e 100%) !important;
+}
+
+body.theme-halloween h1 {
+  background: linear-gradient(135deg, #ff8c00, #ff6600) !important;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+body.theme-halloween .btn-home {
+  background: linear-gradient(135deg, #ff8c00, #ff6600) !important;
+  box-shadow: 0 4px 15px rgba(255, 140, 0, 0.5);
+}
+
+body.theme-valentine {
+  background: linear-gradient(135deg, #3d1f2e 0%, #5a2850 30%, #8b4a6c 60%, #3d1f2e 100%) !important;
+}
+
+body.theme-valentine h1 {
+  background: linear-gradient(135deg, #ff69b4, #ff1493) !important;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+body.theme-valentine .btn-home {
+  background: linear-gradient(135deg, #ff69b4, #ff1493) !important;
+  box-shadow: 0 4px 15px rgba(255, 105, 180, 0.5);
+}
+
+body.theme-newyear {
+  background: linear-gradient(135deg, #0a1f2e 0%, #1a3a52 30%, #2d5a7b 60%, #0a1f2e 100%) !important;
+}
+
+body.theme-newyear h1 {
+  background: linear-gradient(135deg, #00d4ff, #0099cc) !important;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+body.theme-newyear .btn-home {
+  background: linear-gradient(135deg, #00d4ff, #0099cc) !important;
+  box-shadow: 0 4px 15px rgba(0, 212, 255, 0.5);
+}
+
+body.theme-easter {
+  background: linear-gradient(135deg, #2e1a3e 0%, #4a2860 30%, #6b3d82 60%, #2e1a3e 100%) !important;
+}
+
+body.theme-easter h1 {
+  background: linear-gradient(135deg, #ffb6ff, #ff69b4) !important;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+body.theme-easter .btn-home {
+  background: linear-gradient(135deg, #ffb6ff, #ff69b4) !important;
+  box-shadow: 0 4px 15px rgba(255, 182, 255, 0.5);
+}
 </style>
 </head>
 <body>
@@ -92,6 +168,31 @@ p {
   <p>Your support means the world to me. You should receive a receipt from Stripe via email shortly.</p>
   <a href="/" class="btn-home">Back to Home</a>
 </div>
+
+<script>
+window.addEventListener('DOMContentLoaded', async () => {
+  try {
+    // Try Airtable first
+    const response = await fetch('/.netlify/functions/get-site-settings');
+    const data = await response.json();
+    const theme = data.theme || localStorage.getItem('siteTheme') || document.documentElement.getAttribute('data-theme') || 'default';
+    
+    // Save to localStorage
+    localStorage.setItem('siteTheme', theme);
+    
+    if (theme !== 'default') {
+      document.body.classList.add(`theme-${theme}`);
+    }
+  } catch (error) {
+    console.error('Error loading from Airtable, using localStorage/data-theme:', error);
+    // Fallback to localStorage or data-theme attribute
+    const theme = localStorage.getItem('siteTheme') || document.documentElement.getAttribute('data-theme') || 'default';
+    if (theme !== 'default') {
+      document.body.classList.add(`theme-${theme}`);
+    }
+  }
+});
+</script>
 
 </body>
 </html>

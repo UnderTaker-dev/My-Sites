@@ -17,23 +17,31 @@ exports.handler = async (event, context) => {
 
     const base = new Airtable({ apiKey: process.env.AIRTABLE_TOKEN }).base(process.env.AIRTABLE_BASE_ID);
     
-    // Delete all existing records
+    // Delete all existing records in batches of 10 (Airtable limit)
     const existingRecords = await base('TechStack').select().all();
     if (existingRecords.length > 0) {
-      await base('TechStack').destroy(existingRecords.map(r => r.id));
+      const batchSize = 10;
+      for (let i = 0; i < existingRecords.length; i += batchSize) {
+        const batch = existingRecords.slice(i, i + batchSize);
+        await base('TechStack').destroy(batch.map(r => r.id));
+      }
     }
 
-    // Add new records
+    // Add new records in batches of 10 (Airtable limit)
     if (skills.length > 0) {
-      await base('TechStack').create(
-        skills.map((skill, index) => ({
-          fields: {
-            Icon: skill.icon,
-            Name: skill.name,
-            Order: index
-          }
-        }))
-      );
+      const batchSize = 10;
+      for (let i = 0; i < skills.length; i += batchSize) {
+        const batch = skills.slice(i, i + batchSize);
+        await base('TechStack').create(
+          batch.map((skill, index) => ({
+            fields: {
+              Icon: skill.icon,
+              Name: skill.name,
+              Order: i + index
+            }
+          }))
+        );
+      }
     }
 
     return {

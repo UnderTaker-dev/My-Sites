@@ -17,7 +17,22 @@ exports.handler = async (event) => {
     };
   }
 
-  const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+  let stripe;
+  try {
+    const Stripe = require('stripe');
+    console.log('Stripe module loaded:', typeof Stripe);
+    stripe = Stripe(process.env.STRIPE_SECRET_KEY);
+    console.log('Stripe instance created:', typeof stripe);
+    console.log('Stripe.checkout:', typeof stripe?.checkout);
+    console.log('Stripe.checkout.Session:', typeof stripe?.checkout?.Session);
+    console.log('Stripe.checkout.Session.create:', typeof stripe?.checkout?.Session?.create);
+  } catch (err) {
+    console.error('Error loading Stripe:', err);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: 'Failed to initialize payment system: ' + err.message })
+    };
+  }
 
   try {
     const { amount } = JSON.parse(event.body);
@@ -31,7 +46,7 @@ exports.handler = async (event) => {
     }
 
     // Create Checkout Session
-    const session = await stripe.checkout.Session.create({
+    const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       mode: 'payment',
       line_items: [{
@@ -45,7 +60,7 @@ exports.handler = async (event) => {
         },
         quantity: 1,
       }],
-      success_url: `${event.headers.origin || 'https://mathi4s.com'}/success.html?amount=${amount}`,
+      success_url: `${event.headers.origin || 'https://mathi4s.com'}/thank-you.html`,
       cancel_url: `${event.headers.origin || 'https://mathi4s.com'}`,
     });
 

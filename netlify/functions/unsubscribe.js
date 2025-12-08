@@ -10,7 +10,7 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    const { email } = JSON.parse(event.body);
+    const { email, reason } = JSON.parse(event.body);
 
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -35,12 +35,21 @@ exports.handler = async (event, context) => {
       await base('Subscribers').destroy(subscriberRecords.map(r => r.id));
     }
 
+    // Get subscription date before removing
+    let subscribedDate = null;
+    if (subscriberRecords.length > 0) {
+      subscribedDate = subscriberRecords[0].get('Subscribed Date');
+    }
+    
     // Add to Unsubscribed
     await base('Unsubscribed').create([
       {
         fields: {
           Email: email,
-          Date: new Date().toISOString().split('T')[0]
+          'Unsubscribed Date': new Date().toISOString().split('T')[0],
+          'Previously Subscribed Date': subscribedDate,
+          Reason: reason || 'Not specified',
+          'IP Address': event.headers['x-forwarded-for'] || event.headers['client-ip'] || 'Unknown'
         }
       }
     ]);
@@ -51,7 +60,7 @@ exports.handler = async (event, context) => {
       userAgent: event.headers['user-agent']
     });
 
-    // Return success - client-side will handle localStorage removal
+    // Return success
     return {
       statusCode: 200,
       body: JSON.stringify({

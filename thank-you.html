@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thank You - Mathias</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    
+    .container {
+      max-width: 600px;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 3rem;
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+    
+    .icon {
+      font-size: 5rem;
+      margin-bottom: 1rem;
+      animation: bounce 2s infinite;
+    }
+    
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+    
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    p {
+      font-size: 1.2rem;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+      opacity: 0.9;
+    }
+    
+    .btn {
+      display: inline-block;
+      padding: 1rem 2rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    }
+    
+    .message {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 1.5rem;
+      border-radius: 15px;
+      margin: 2rem 0;
+      border-left: 4px solid #667eea;
+    }
+    
+    .message p {
+      margin-bottom: 0;
+      font-size: 1rem;
+    }
+    
+    /* ========== THEME STYLES ========== */
+    body.theme-christmas {
+      background: linear-gradient(135deg, #0a3d2e 0%, #1a5c3a 30%, #2d8c52 60%, #0a3d2e 100%) !important;
+    }
+    
+    body.theme-christmas h1 {
+      background: linear-gradient(135deg, #ffcd00, #ffa500) !important;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 30px rgba(220, 20, 60, 0.5);
+    }
+    
+    body.theme-christmas .btn {
+      background: linear-gradient(135deg, #dc143c, #ff1744) !important;
+      box-shadow: 0 4px 15px rgba(220, 20, 60, 0.5);
+    }
+    
+    body.theme-halloween {
+      background: linear-gradient(135deg, #1a0a2e 0%, #240046 30%, #5a189a 60%, #1a0a2e 100%) !important;
+    }
+    
+    body.theme-halloween h1 {
+      background: linear-gradient(135deg, #ff8c00, #ff6600) !important;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 30px rgba(255, 140, 0, 0.5);
+    }
+    
+    body.theme-halloween .btn {
+      background: linear-gradient(135deg, #ff8c00, #ff6600) !important;
+      box-shadow: 0 4px 15px rgba(255, 140, 0, 0.5);
+    }
+    
+    body.theme-valentine {
+      background: linear-gradient(135deg, #3d1f2e 0%, #5a2850 30%, #8b4a6c 60%, #3d1f2e 100%) !important;
+    }
+    
+    body.theme-valentine h1 {
+      background: linear-gradient(135deg, #ff69b4, #ff1493) !important;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 30px rgba(255, 105, 180, 0.5);
+    }
+    
+    body.theme-valentine .btn {
+      background: linear-gradient(135deg, #ff69b4, #ff1493) !important;
+      box-shadow: 0 4px 15px rgba(255, 105, 180, 0.5);
+    }
+    
+    body.theme-newyear {
+      background: linear-gradient(135deg, #0a1f2e 0%, #1a3a52 30%, #2d5a7b 60%, #0a1f2e 100%) !important;
+    }
+    
+    body.theme-newyear h1 {
+      background: linear-gradient(135deg, #00d4ff, #0099cc) !important;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+    }
+    
+    body.theme-newyear .btn {
+      background: linear-gradient(135deg, #00d4ff, #0099cc) !important;
+      box-shadow: 0 4px 15px rgba(0, 212, 255, 0.5);
+    }
+    
+    body.theme-easter {
+      background: linear-gradient(135deg, #2e1a3e 0%, #4a2860 30%, #6b3d82 60%, #2e1a3e 100%) !important;
+    }
+    
+    body.theme-easter h1 {
+      background: linear-gradient(135deg, #ffb6ff, #ff69b4) !important;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 30px rgba(255, 182, 255, 0.5);
+    }
+    
+    body.theme-easter .btn {
+      background: linear-gradient(135deg, #ffb6ff, #ff69b4) !important;
+      box-shadow: 0 4px 15px rgba(255, 182, 255, 0.5);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon">🎉</div>
+    <h1>Thank You!</h1>
+    <p>Your generous donation has been received successfully. Your support means the world to me!</p>
+    
+    <div class="message">
+      <p>💙 Your contribution helps me continue creating and sharing valuable content. A receipt has been sent to your email address.</p>
+    </div>
+    
+    <a href="/" class="btn">← Back to Home</a>
+  </div>
+
+  <script>
+    // Track this page view too
+    (async function() {
+      try {
+        const userAgent = navigator.userAgent;
+        const device = /mobile/i.test(userAgent) ? 'Mobile' : /tablet|ipad/i.test(userAgent) ? 'Tablet' : 'Desktop';
+        
+        let browser = 'Unknown';
+        if (/edg/i.test(userAgent)) browser = 'Edge';
+        else if (/chrome/i.test(userAgent) && !/edg/i.test(userAgent)) browser = 'Chrome';
+        else if (/safari/i.test(userAgent) && !/chrome/i.test(userAgent)) browser = 'Safari';
+        else if (/firefox/i.test(userAgent)) browser = 'Firefox';
+        else if (/msie|trident/i.test(userAgent)) browser = 'Internet Explorer';
+        
+        let os = 'Unknown';
+        if (/windows/i.test(userAgent)) os = 'Windows';
+        else if (/mac/i.test(userAgent)) os = 'macOS';
+        else if (/linux/i.test(userAgent)) os = 'Linux';
+        else if (/android/i.test(userAgent)) os = 'Android';
+        else if (/ios|iphone|ipad/i.test(userAgent)) os = 'iOS';
+        
+        const referrer = document.referrer || 'Direct';
+        
+        await fetch('/.netlify/functions/track-page-view', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            page: window.location.pathname,
+            device: device,
+            browser: browser,
+            os: os,
+            referrer: referrer
+          })
+        });
+      } catch (error) {
+        console.error('Failed to track page view:', error);
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+Icon,Name,Order,Category,Proficiency,Years Experience
+🔷,TypeScript,0,Language,Expert,3
+⚛️,React,1,Framework,Expert,4
+🟢,Node.js,2,Runtime,Advanced,4
+🐍,Python,3,Language,Advanced,2
+🎨,CSS/SCSS,4,Styling,Expert,5
+🔥,Firebase,5,Backend,Intermediate,2
+🐳,Docker,6,DevOps,Intermediate,2
+☁️,AWS,7,Cloud,Intermediate,1
+📦,MongoDB,8,Database,Advanced,3
+⚡,Next.js,9,Framework,Advanced,2

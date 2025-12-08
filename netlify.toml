@@ -3,3 +3,9 @@
 
 [build.environment]
   NODE_VERSION = "18"
+
+# Short, friendly confirmation link
+[[redirects]]
+  from = "/confirm/:token"
+  to = "/.netlify/functions/confirm-subscription?token=:token"
+  status = 200

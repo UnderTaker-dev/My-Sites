@@ -22,6 +22,12 @@ body, html {
   color: #fff;
   overflow-x: hidden;
   transition: background 0.3s ease, color 0.3s ease;
+  opacity: 0;
+  animation: fadeIn 0.3s ease-in forwards;
+}
+
+@keyframes fadeIn {
+  to { opacity: 1; }
 }
 
 /* Light Mode */
@@ -1104,6 +1110,447 @@ body.light-mode .admin-form-group input::placeholder {
     padding: 0.6rem;
   }
 }
+
+/* ========== THEME STYLES ========== */
+/* Christmas Theme */
+body[data-theme="christmas"],
+body.theme-christmas {
+  background: linear-gradient(180deg, #1a2a4e 0%, #2d4a7c 30%, #3d5a9c 50%, #2d4a7c 70%, #1a2a4e 100%) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+body.theme-christmas::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(circle at 15% 20%, rgba(100, 150, 255, 0.3), transparent 50%),
+    radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.4), transparent 50%),
+    radial-gradient(circle at 50% 10%, rgba(200, 220, 255, 0.2), transparent 40%);
+  opacity: 0.8;
+  pointer-events: none;
+  z-index: 1;
+  animation: winterGlow 6s ease-in-out infinite;
+}
+
+@keyframes winterGlow {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 0.9; }
+}
+
+body.theme-christmas::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(2px 2px at 10% 40%, rgba(255,255,255,0.9), rgba(0,0,0,0)),
+    radial-gradient(1.5px 1.5px at 20% 60%, rgba(255,255,255,0.7), rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 30% 80%, rgba(255,255,255,0.8), rgba(0,0,0,0)),
+    radial-gradient(2px 2px at 60% 30%, rgba(255,255,255,0.85), rgba(0,0,0,0)),
+    radial-gradient(1.5px 1.5px at 80% 70%, rgba(255,255,255,0.75), rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 90% 40%, rgba(255,255,255,0.8), rgba(0,0,0,0));
+  background-repeat: repeat;
+  background-size: 300px 300px;
+  animation: snowfall 25s linear infinite;
+  opacity: 0.6;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes snowfall {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+body.theme-christmas .container {
+  position: relative;
+  z-index: 10;
+}
+
+body.theme-christmas .main-message h1 {
+  color: #e3f2fd;
+  text-shadow: 
+    0 0 10px rgba(227, 242, 253, 0.8),
+    0 0 20px rgba(144, 202, 249, 1),
+    0 0 30px rgba(100, 181, 246, 0.9),
+    0 0 40px rgba(66, 165, 245, 0.8),
+    2px 2px 0 rgba(0, 0, 0, 0.9);
+  font-weight: 900;
+  letter-spacing: 3px;
+}
+
+body.theme-christmas .newsletter-form {
+  background: rgba(33, 150, 243, 0.15) !important;
+  border: 3px solid #90caf9 !important;
+  box-shadow: 0 0 40px rgba(144, 202, 249, 0.5), inset 0 0 25px rgba(100, 181, 246, 0.1);
+}
+
+body.theme-christmas .support-toggle-btn {
+  background: linear-gradient(135deg, rgba(100, 181, 246, 0.4), rgba(144, 202, 249, 0.3));
+  border: 3px solid #90caf9;
+  color: #e3f2fd;
+  font-weight: bold;
+  box-shadow: 0 0 20px rgba(144, 202, 249, 0.5);
+}
+
+body.theme-christmas .support-toggle-btn:hover {
+  background: linear-gradient(135deg, rgba(100, 181, 246, 0.6), rgba(144, 202, 249, 0.5));
+  box-shadow: 0 0 40px rgba(144, 202, 249, 1);
+  transform: scale(1.08);
+}
+
+body.theme-christmas .btn-subscribe {
+  background: linear-gradient(135deg, #42a5f5, #64b5f6) !important;
+  box-shadow: 0 0 25px rgba(100, 181, 246, 0.8);
+  border: 2px solid #90caf9;
+  font-weight: bold;
+  color: #fff;
+}
+
+body.theme-christmas .skill-badge {
+  background: linear-gradient(135deg, rgba(144, 202, 249, 0.25), rgba(100, 181, 246, 0.15)) !important;
+  border: 2px solid #90caf9 !important;
+  color: #e3f2fd;
+}
+
+body.theme-christmas .floating-icon {
+  filter: drop-shadow(0 0 12px rgba(255, 237, 78, 0.8)) !important;
+}
+
+/* Halloween Theme */
+body.theme-halloween {
+  background: linear-gradient(135deg, #1a0a2e 0%, #240046 25%, #5a189a 50%, #240046 75%, #1a0a2e 100%) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+body.theme-halloween::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(circle at 20% 30%, rgba(255, 140, 0, 0.3), transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(138, 43, 226, 0.2), transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(255, 69, 0, 0.15), transparent 50%);
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 1;
+  animation: spookyPulse 4s ease-in-out infinite;
+}
+
+@keyframes spookyPulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.7; }
+}
+
+body.theme-halloween .container {
+  position: relative;
+  z-index: 10;
+}
+
+body.theme-halloween .main-message h1 {
+  color: #ff8c00;
+  text-shadow: 
+    0 0 10px rgba(255, 140, 0, 0.6),
+    0 0 20px rgba(255, 69, 0, 1),
+    0 0 30px rgba(138, 43, 226, 0.8),
+    0 0 40px rgba(0, 0, 0, 0.9),
+    2px 2px 0 rgba(0, 0, 0, 0.9);
+  font-weight: 900;
+  letter-spacing: 3px;
+}
+
+body.theme-halloween .newsletter-form {
+  background: rgba(255, 140, 0, 0.12) !important;
+  border: 3px solid #ff8c00 !important;
+  box-shadow: 0 0 30px rgba(255, 140, 0, 0.4), inset 0 0 20px rgba(138, 43, 226, 0.1);
+}
+
+body.theme-halloween .support-toggle-btn {
+  background: linear-gradient(135deg, rgba(255, 140, 0, 0.3), rgba(138, 43, 226, 0.3));
+  border: 2px solid #ff8c00;
+  color: #ff8c00;
+  font-weight: bold;
+  box-shadow: 0 0 15px rgba(255, 140, 0, 0.4);
+}
+
+body.theme-halloween .support-toggle-btn:hover {
+  background: linear-gradient(135deg, rgba(255, 140, 0, 0.5), rgba(138, 43, 226, 0.5));
+  box-shadow: 0 0 30px rgba(255, 140, 0, 0.8);
+  transform: scale(1.05);
+}
+
+body.theme-halloween .btn-subscribe {
+  background: linear-gradient(135deg, #ff8c00, #ff6600) !important;
+  box-shadow: 0 0 20px rgba(255, 140, 0, 0.7);
+  border: 2px solid #ff9900;
+  font-weight: bold;
+}
+
+body.theme-halloween .skill-badge {
+  background: linear-gradient(135deg, rgba(138, 43, 226, 0.2), rgba(255, 140, 0, 0.1)) !important;
+  border: 2px solid #ff8c00 !important;
+  color: #ffb347;
+}
+
+body.theme-halloween .floating-icon {
+  filter: drop-shadow(0 0 10px rgba(255, 140, 0, 0.6)) !important;
+}
+
+/* Valentine's Theme */
+body.theme-valentine {
+  background: linear-gradient(135deg, #3d1f2e 0%, #5a2850 25%, #8b4a6c 50%, #5a2850 75%, #3d1f2e 100%) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+body.theme-valentine::before {
+  content: '💖';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  font-size: 3rem;
+  opacity: 0.08;
+  pointer-events: none;
+  z-index: 1;
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 35px,
+    rgba(255, 105, 180, 0.03) 35px,
+    rgba(255, 105, 180, 0.03) 70px
+  );
+}
+
+body.theme-valentine .container {
+  position: relative;
+  z-index: 10;
+}
+
+body.theme-valentine .main-message h1 {
+  color: #ff69b4;
+  text-shadow: 
+    0 0 10px rgba(255, 105, 180, 0.6),
+    0 0 20px rgba(255, 20, 147, 1),
+    0 0 30px rgba(255, 192, 203, 0.8),
+    0 0 40px rgba(0, 0, 0, 0.8),
+    2px 2px 0 rgba(0, 0, 0, 0.8);
+  font-weight: 900;
+  letter-spacing: 3px;
+}
+
+body.theme-valentine .newsletter-form {
+  background: rgba(255, 105, 180, 0.12) !important;
+  border: 3px solid #ff69b4 !important;
+  box-shadow: 0 0 30px rgba(255, 105, 180, 0.4), inset 0 0 20px rgba(255, 192, 203, 0.1);
+}
+
+body.theme-valentine .support-toggle-btn {
+  background: linear-gradient(135deg, rgba(255, 105, 180, 0.3), rgba(255, 20, 147, 0.3));
+  border: 2px solid #ff69b4;
+  color: #ff69b4;
+  font-weight: bold;
+  box-shadow: 0 0 15px rgba(255, 105, 180, 0.4);
+}
+
+body.theme-valentine .support-toggle-btn:hover {
+  background: linear-gradient(135deg, rgba(255, 105, 180, 0.5), rgba(255, 20, 147, 0.5));
+  box-shadow: 0 0 30px rgba(255, 105, 180, 0.8);
+  transform: scale(1.05);
+}
+
+body.theme-valentine .btn-subscribe {
+  background: linear-gradient(135deg, #ff69b4, #ff1493) !important;
+  box-shadow: 0 0 20px rgba(255, 105, 180, 0.7);
+  border: 2px solid #ff85c1;
+  font-weight: bold;
+}
+
+body.theme-valentine .skill-badge {
+  background: linear-gradient(135deg, rgba(255, 192, 203, 0.2), rgba(255, 105, 180, 0.1)) !important;
+  border: 2px solid #ff69b4 !important;
+  color: #ffb6d9;
+}
+
+body.theme-valentine .floating-icon {
+  filter: drop-shadow(0 0 10px rgba(255, 105, 180, 0.6)) !important;
+}
+
+/* New Year Theme */
+body.theme-newyear {
+  background: linear-gradient(135deg, #0a1f2e 0%, #1a3a52 25%, #2d5a7b 50%, #1a3a52 75%, #0a1f2e 100%) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+body.theme-newyear::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 20% 20%, rgba(0, 212, 255, 0.2), transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(0, 150, 200, 0.2), transparent 50%);
+  animation: celebrationGlow 3s ease-in-out infinite;
+  opacity: 0.6;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes celebrationGlow {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+body.theme-newyear .container {
+  position: relative;
+  z-index: 10;
+}
+
+body.theme-newyear .main-message h1 {
+  color: #00d4ff;
+  text-shadow: 
+    0 0 10px rgba(0, 212, 255, 0.6),
+    0 0 20px rgba(0, 150, 200, 1),
+    0 0 30px rgba(0, 255, 255, 0.8),
+    0 0 40px rgba(173, 216, 230, 0.6),
+    2px 2px 0 rgba(0, 0, 0, 0.8);
+  font-weight: 900;
+  letter-spacing: 3px;
+}
+
+body.theme-newyear .newsletter-form {
+  background: rgba(0, 212, 255, 0.12) !important;
+  border: 3px solid #00d4ff !important;
+  box-shadow: 0 0 30px rgba(0, 212, 255, 0.4), inset 0 0 20px rgba(0, 150, 200, 0.1);
+}
+
+body.theme-newyear .support-toggle-btn {
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(0, 150, 200, 0.3));
+  border: 2px solid #00d4ff;
+  color: #00d4ff;
+  font-weight: bold;
+  box-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
+}
+
+body.theme-newyear .support-toggle-btn:hover {
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.5), rgba(0, 150, 200, 0.5));
+  box-shadow: 0 0 30px rgba(0, 212, 255, 0.8);
+  transform: scale(1.05);
+}
+
+body.theme-newyear .btn-subscribe {
+  background: linear-gradient(135deg, #00d4ff, #0099cc) !important;
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.7);
+  border: 2px solid #00e6ff;
+  font-weight: bold;
+}
+
+body.theme-newyear .skill-badge {
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 150, 200, 0.1)) !important;
+  border: 2px solid #00d4ff !important;
+  color: #80e5ff;
+}
+
+body.theme-newyear .floating-icon {
+  filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.6)) !important;
+}
+
+/* Easter Theme */
+body.theme-easter {
+  background: linear-gradient(135deg, #2e1a3e 0%, #4a2860 25%, #6b3d82 50%, #4a2860 75%, #2e1a3e 100%) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+body.theme-easter::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 30% 40%, rgba(255, 182, 255, 0.15), transparent 50%),
+    radial-gradient(circle at 70% 60%, rgba(144, 238, 144, 0.15), transparent 50%);
+  animation: springBlossom 4s ease-in-out infinite;
+  opacity: 0.6;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes springBlossom {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+body.theme-easter .container {
+  position: relative;
+  z-index: 10;
+}
+
+body.theme-easter .main-message h1 {
+  color: #ffb6ff;
+  text-shadow: 
+    0 0 10px rgba(255, 182, 255, 0.6),
+    0 0 20px rgba(255, 105, 180, 1),
+    0 0 30px rgba(144, 238, 144, 0.8),
+    0 0 40px rgba(0, 0, 0, 0.8),
+    2px 2px 0 rgba(0, 0, 0, 0.8);
+  font-weight: 900;
+  letter-spacing: 3px;
+}
+
+body.theme-easter .newsletter-form {
+  background: rgba(255, 182, 255, 0.12) !important;
+  border: 3px solid #ffb6ff !important;
+  box-shadow: 0 0 30px rgba(255, 182, 255, 0.4), inset 0 0 20px rgba(144, 238, 144, 0.1);
+}
+
+body.theme-easter .support-toggle-btn {
+  background: linear-gradient(135deg, rgba(255, 182, 255, 0.3), rgba(144, 238, 144, 0.3));
+  border: 2px solid #ffb6ff;
+  color: #ffb6ff;
+  font-weight: bold;
+  box-shadow: 0 0 15px rgba(255, 182, 255, 0.4);
+}
+
+body.theme-easter .support-toggle-btn:hover {
+  background: linear-gradient(135deg, rgba(255, 182, 255, 0.5), rgba(144, 238, 144, 0.5));
+  box-shadow: 0 0 30px rgba(255, 182, 255, 0.8);
+  transform: scale(1.05);
+}
+
+body.theme-easter .btn-subscribe {
+  background: linear-gradient(135deg, #ffb6ff, #ff69b4) !important;
+  box-shadow: 0 0 20px rgba(255, 182, 255, 0.7);
+  border: 2px solid #ffc0ff;
+  font-weight: bold;
+}
+
+body.theme-easter .skill-badge {
+  background: linear-gradient(135deg, rgba(255, 182, 255, 0.2), rgba(144, 238, 144, 0.1)) !important;
+  border: 2px solid #ffb6ff !important;
+  color: #ffd9ff;
+}
+
+body.theme-easter .floating-icon {
+  filter: drop-shadow(0 0 10px rgba(255, 182, 255, 0.6)) !important;
+}
 </style>
 </head>
 <body>
@@ -1115,106 +1562,138 @@ body.light-mode .admin-form-group input::placeholder {
 
 <div class="container">
 <div class="main-message">
-  <h1>Coming Soon</h1>
-  <p>Next update: Whenever I feel like it</p>
-  <a href="mailto:support@mathi4s.com" class="btn btn-info">📧 Email Me</a>
-  <div class="copy-email" onclick="copyEmail()">support@mathi4s.com (click to copy)</div>
+  <h1 style="background: linear-gradient(135deg, #3498db, #9b59b6, #e74c3c); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-size: 4rem; font-weight: 900; margin-bottom: 0.5rem;">UnderTaker</h1>
+  <p style="font-size: 1.15rem; margin: 1rem 0 1rem 0; opacity: 0.85; font-weight: 600;">Developer 💻 | Gamer 🎮 | F1 🏎️ | Music 🎵 | Fitness 💪 | Servers 🖥️</p>
+  <p style="opacity: 0.7; margin-bottom: 2.5rem; font-size: 1rem; line-height: 1.6;">Building things. Breaking things. Learning everything.</p>
   
-  <!-- Skills Section -->
-  <div class="skills-section">
-    <h3>💻 Tech Stack</h3>
-    <div class="skills-grid" id="skillsGrid">
-      <!-- Skills loaded from localStorage/admin panel -->
-    </div>
-  </div>
-  
-  <!-- About Section -->
+  <!-- About Me / What I Do Section -->
   <div class="status-section">
-    <div style="display: flex; justify-content: center; gap: 1rem; margin-bottom: 1.5rem;">
-      <button class="toggle-view-btn active" onclick="toggleView('about')" id="aboutBtn">
+    <div style="display: flex; justify-content: center; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+      <button class="toggle-view-btn active" onclick="toggleView('about')" id="aboutBtn" style="transition: all 0.3s ease; background: linear-gradient(135deg, rgba(52, 152, 219, 0.2), rgba(52, 152, 219, 0.05)); border: 2px solid rgba(52, 152, 219, 0.3); padding: 0.7rem 1.5rem; border-radius: 8px; cursor: pointer; font-weight: 600;">
         👤 About Me
       </button>
-      <button class="toggle-view-btn" onclick="toggleView('doing')" id="doingBtn">
+      <button class="toggle-view-btn" onclick="toggleView('doing')" id="doingBtn" style="transition: all 0.3s ease; background: transparent; border: 2px solid rgba(100, 100, 100, 0.2); padding: 0.7rem 1.5rem; border-radius: 8px; cursor: pointer; font-weight: 600;">
         🚀 What I Do
       </button>
     </div>
     
     <div class="view-content" id="aboutView">
-      <div class="status-grid">
-        <div class="status-item">
-          <span class="status-emoji">🎮</span>
-          <div class="status-label">Competitive Gamer</div>
+      <div class="status-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem;">
+        <div class="status-item" style="background: linear-gradient(135deg, rgba(52, 152, 219, 0.15), rgba(52, 152, 219, 0.05)); border: 2px solid rgba(52, 152, 219, 0.3); border-radius: 12px; padding: 1.2rem; text-align: center; transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 10px 20px rgba(52, 152, 219, 0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+          <span class="status-emoji" style="font-size: 2.2rem; display: block; margin-bottom: 0.5rem;">🎮</span>
+          <div class="status-label" style="font-weight: 600; font-size: 0.95rem;">Competitive Gamer</div>
         </div>
-        <div class="status-item">
-          <span class="status-emoji">👾</span>
-          <div class="status-label">Bug Slayer</div>
+        <div class="status-item" style="background: linear-gradient(135deg, rgba(231, 76, 60, 0.15), rgba(231, 76, 60, 0.05)); border: 2px solid rgba(231, 76, 60, 0.3); border-radius: 12px; padding: 1.2rem; text-align: center; transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 10px 20px rgba(231, 76, 60, 0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+          <span class="status-emoji" style="font-size: 2.2rem; display: block; margin-bottom: 0.5rem;">👾</span>
+          <div class="status-label" style="font-weight: 600; font-size: 0.95rem;">Bug Slayer</div>
         </div>
-        <div class="status-item">
-          <span class="status-emoji">⚡</span>
-          <div class="status-label">Monsters ∞</div>
+        <div class="status-item" style="background: linear-gradient(135deg, rgba(230, 126, 34, 0.15), rgba(230, 126, 34, 0.05)); border: 2px solid rgba(230, 126, 34, 0.3); border-radius: 12px; padding: 1.2rem; text-align: center; transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 10px 20px rgba(230, 126, 34, 0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+          <span class="status-emoji" style="font-size: 2.2rem; display: block; margin-bottom: 0.5rem;">⚡</span>
+          <div class="status-label" style="font-weight: 600; font-size: 0.95rem;">Monsters ∞</div>
         </div>
-        <div class="status-item">
-          <span class="status-emoji">🕐</span>
-          <div class="status-label">My Time <span id="myTime" style="display: block; font-size: 1.1rem; margin-top: 0.3rem;">--:--</span></div>
+        <div class="status-item" style="background: linear-gradient(135deg, rgba(155, 89, 182, 0.15), rgba(155, 89, 182, 0.05)); border: 2px solid rgba(155, 89, 182, 0.3); border-radius: 12px; padding: 1.2rem; text-align: center; transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 10px 20px rgba(155, 89, 182, 0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+          <span class="status-emoji" style="font-size: 2.2rem; display: block; margin-bottom: 0.5rem;">🕐</span>
+          <div class="status-label" style="font-weight: 600; font-size: 0.95rem;">My Time <span id="myTime" style="display: block; font-size: 1.1rem; margin-top: 0.3rem; font-weight: 700;">--:--</span></div>
         </div>
       </div>
     </div>
     
     <div class="view-content" id="doingView" style="display: none;">
-      <div class="status-grid">
-        <div class="status-item">
-          <span class="status-emoji">🐛</span>
-          <div class="status-label">Debugging at 3am</div>
+      <div class="status-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem;">
+        <div class="status-item" style="background: linear-gradient(135deg, rgba(231, 76, 60, 0.15), rgba(231, 76, 60, 0.05)); border: 2px solid rgba(231, 76, 60, 0.3); border-radius: 12px; padding: 1.2rem; text-align: center; transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 10px 20px rgba(231, 76, 60, 0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+          <span class="status-emoji" style="font-size: 2.2rem; display: block; margin-bottom: 0.5rem;">🐛</span>
+          <div class="status-label" style="font-weight: 600; font-size: 0.95rem;">Debugging at 3am</div>
         </div>
-        <div class="status-item">
-          <span class="status-emoji">💥</span>
-          <div class="status-label">Learning by breaking</div>
+        <div class="status-item" style="background: linear-gradient(135deg, rgba(230, 126, 34, 0.15), rgba(230, 126, 34, 0.05)); border: 2px solid rgba(230, 126, 34, 0.3); border-radius: 12px; padding: 1.2rem; text-align: center; transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 10px 20px rgba(230, 126, 34, 0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+          <span class="status-emoji" style="font-size: 2.2rem; display: block; margin-bottom: 0.5rem;">💥</span>
+          <div class="status-label" style="font-weight: 600; font-size: 0.95rem;">Learning by breaking</div>
         </div>
-        <div class="status-item">
-          <span class="status-emoji">😴</span>
-          <div class="status-label">Sleep? Never heard of it</div>
+        <div class="status-item" style="background: linear-gradient(135deg, rgba(52, 152, 219, 0.15), rgba(52, 152, 219, 0.05)); border: 2px solid rgba(52, 152, 219, 0.3); border-radius: 12px; padding: 1.2rem; text-align: center; transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 10px 20px rgba(52, 152, 219, 0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+          <span class="status-emoji" style="font-size: 2.2rem; display: block; margin-bottom: 0.5rem;">😴</span>
+          <div class="status-label" style="font-weight: 600; font-size: 0.95rem;">Sleep? Never heard of it</div>
         </div>
-        <div class="status-item">
-          <span class="status-emoji">🔥</span>
-          <div class="status-label">Fueled by Monsters</div>
+        <div class="status-item" style="background: linear-gradient(135deg, rgba(230, 126, 34, 0.15), rgba(230, 126, 34, 0.05)); border: 2px solid rgba(230, 126, 34, 0.3); border-radius: 12px; padding: 1.2rem; text-align: center; transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 10px 20px rgba(230, 126, 34, 0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+          <span class="status-emoji" style="font-size: 2.2rem; display: block; margin-bottom: 0.5rem;">🔥</span>
+          <div class="status-label" style="font-weight: 600; font-size: 0.95rem;">Fueled by Monsters</div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- What I'm Into Section -->
+  <div class="skills-section" style="margin-top: 3rem;">
+    <h3 style="margin-bottom: 2rem; font-size: 1.4rem; text-align: center;">🎯 What I'm Into</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1.2rem; padding: 0;">
+      <div style="background: linear-gradient(135deg, rgba(230, 126, 34, 0.15), rgba(230, 126, 34, 0.05)); border: 2px solid rgba(230, 126, 34, 0.3); border-left: 4px solid #e67e22; padding: 1.2rem; border-radius: 12px; text-align: center; transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 12px 24px rgba(230, 126, 34, 0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🎮</div>
+        <div style="font-weight: 700; margin: 0.5rem 0; font-size: 1rem;">Gaming</div>
+        <div style="font-size: 0.8rem; opacity: 0.6; font-weight: 500;">Competitive</div>
+      </div>
+      <div style="background: linear-gradient(135deg, rgba(231, 76, 60, 0.15), rgba(231, 76, 60, 0.05)); border: 2px solid rgba(231, 76, 60, 0.3); border-left: 4px solid #e74c3c; padding: 1.2rem; border-radius: 12px; text-align: center; transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 12px 24px rgba(231, 76, 60, 0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🏎️</div>
+        <div style="font-weight: 700; margin: 0.5rem 0; font-size: 1rem;">F1 Racing</div>
+        <div style="font-size: 0.8rem; opacity: 0.6; font-weight: 500;">Speed</div>
+      </div>
+      <div style="background: linear-gradient(135deg, rgba(52, 152, 219, 0.15), rgba(52, 152, 219, 0.05)); border: 2px solid rgba(52, 152, 219, 0.3); border-left: 4px solid #3498db; padding: 1.2rem; border-radius: 12px; text-align: center; transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 12px 24px rgba(52, 152, 219, 0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🎵</div>
+        <div style="font-weight: 700; margin: 0.5rem 0; font-size: 1rem;">Music</div>
+        <div style="font-size: 0.8rem; opacity: 0.6; font-weight: 500;">All genres</div>
+      </div>
+      <div style="background: linear-gradient(135deg, rgba(46, 204, 113, 0.15), rgba(46, 204, 113, 0.05)); border: 2px solid rgba(46, 204, 113, 0.3); border-left: 4px solid #2ecc71; padding: 1.2rem; border-radius: 12px; text-align: center; transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 12px 24px rgba(46, 204, 113, 0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">💪</div>
+        <div style="font-weight: 700; margin: 0.5rem 0; font-size: 1rem;">Gym</div>
+        <div style="font-size: 0.8rem; opacity: 0.6; font-weight: 500;">Gains</div>
+      </div>
+      <div style="background: linear-gradient(135deg, rgba(155, 89, 182, 0.15), rgba(155, 89, 182, 0.05)); border: 2px solid rgba(155, 89, 182, 0.3); border-left: 4px solid #9b59b6; padding: 1.2rem; border-radius: 12px; text-align: center; transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 12px 24px rgba(155, 89, 182, 0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">💻</div>
+        <div style="font-weight: 700; margin: 0.5rem 0; font-size: 1rem;">Coding</div>
+        <div style="font-size: 0.8rem; opacity: 0.6; font-weight: 500;">Building</div>
+      </div>
+      <div style="background: linear-gradient(135deg, rgba(26, 188, 156, 0.15), rgba(26, 188, 156, 0.05)); border: 2px solid rgba(26, 188, 156, 0.3); border-left: 4px solid #1abc9c; padding: 1.2rem; border-radius: 12px; text-align: center; transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 12px 24px rgba(26, 188, 156, 0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🖥️</div>
+        <div style="font-weight: 700; margin: 0.5rem 0; font-size: 1rem;">Servers</div>
+        <div style="font-size: 0.8rem; opacity: 0.6; font-weight: 500;">Infrastructure</div>
       </div>
     </div>
   </div>
   
   <!-- Newsletter Section -->
-  <div class="newsletter-section">
-    <h3>📬 Stay Updated</h3>
-    <p>Get notified when I launch something cool (or weird)</p>
-    <form class="newsletter-form" onsubmit="handleNewsletter(event)">
-      <input type="email" id="newsletterEmail" class="newsletter-input" placeholder="your@email.com" required>
-      <button type="submit" class="btn-subscribe" id="subscribeBtn">Subscribe</button>
+  <div class="newsletter-section" style="margin-top: 3rem; background: linear-gradient(135deg, rgba(155, 89, 182, 0.1), rgba(52, 152, 219, 0.1)); border-radius: 16px; padding: 2rem; border: 2px solid rgba(155, 89, 182, 0.2);">
+    <h3 style="margin-bottom: 0.5rem; text-align: center;">📬 Stay Updated</h3>
+    <p style="text-align: center; margin-bottom: 1.5rem; opacity: 0.8;">Get notified when I launch something cool (or weird)</p>
+    <form class="newsletter-form" onsubmit="handleNewsletter(event)" style="display: flex; gap: 0.8rem; flex-wrap: wrap; justify-content: center;">
+      <input type="email" id="newsletterEmail" class="newsletter-input" placeholder="your@email.com" required style="flex: 1; min-width: 200px; padding: 0.8rem 1rem; border: 2px solid rgba(155, 89, 182, 0.3); border-radius: 8px; background: transparent; color: inherit; transition: all 0.3s ease;" onmouseover="this.style.borderColor='rgba(155, 89, 182, 0.6)'" onmouseout="this.style.borderColor='rgba(155, 89, 182, 0.3)'">
+      <button type="submit" class="btn-subscribe" id="subscribeBtn" style="padding: 0.8rem 2rem; background: linear-gradient(135deg, #9b59b6, #8e44ad); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 8px 16px rgba(155, 89, 182, 0.3)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'">Subscribe</button>
     </form>
   </div>
   
-  <div class="donation-section">
-    <button class="support-toggle-btn" onclick="toggleDonation()">💚 Support Me</button>
+  <div class="donation-section" id="donationSection" style="margin-top: 3rem;">
+    <button class="support-toggle-btn" id="supportMeBtn" onclick="toggleDonation()" style="width: 100%; padding: 1rem 2rem; background: linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(52, 152, 219, 0.2)); border: 2px solid rgba(46, 204, 113, 0.4); border-radius: 12px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 8px 20px rgba(46, 204, 113, 0.2)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'">💚 Support Me</button>
     
-    <div class="donation-content" id="donationContent">
-      <div class="donation-title">⚡ Buy Me a Monster</div>
-      <div class="donation-subtitle">Fuel my coding and bad decisions</div>
+    <div class="donation-content" id="donationContent" style="margin-top: 1.5rem; background: linear-gradient(135deg, rgba(46, 204, 113, 0.1), rgba(52, 152, 219, 0.1)); border-radius: 12px; padding: 2rem; border: 2px solid rgba(46, 204, 113, 0.2);">
+      <div class="donation-title" style="font-size: 1.3rem; font-weight: 700; text-align: center; margin-bottom: 0.3rem;">⚡ Buy Me a Monster</div>
+      <div class="donation-subtitle" style="text-align: center; opacity: 0.8; margin-bottom: 1.5rem;">Fuel my coding and bad decisions</div>
     
-    <div class="preset-amounts">
-      <button class="preset-btn" onclick="setAmount(3)">$3</button>
-      <button class="preset-btn" onclick="setAmount(5)">$5</button>
-      <button class="preset-btn" onclick="setAmount(10)">$10</button>
-      <button class="preset-btn" onclick="setAmount(25)">$25</button>
+    <div class="preset-amounts" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.8rem; margin-bottom: 1.5rem;">
+      <button class="preset-btn" onclick="setAmount(3)" style="padding: 0.8rem; background: linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(46, 204, 113, 0.1)); border: 2px solid rgba(46, 204, 113, 0.3); border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(46, 204, 113, 0.3)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(46, 204, 113, 0.1))'; this.style.transform='translateY(0)'">$3</button>
+      <button class="preset-btn" onclick="setAmount(5)" style="padding: 0.8rem; background: linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(46, 204, 113, 0.1)); border: 2px solid rgba(46, 204, 113, 0.3); border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(46, 204, 113, 0.3)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(46, 204, 113, 0.1))'; this.style.transform='translateY(0)'">$5</button>
+      <button class="preset-btn" onclick="setAmount(10)" style="padding: 0.8rem; background: linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(46, 204, 113, 0.1)); border: 2px solid rgba(46, 204, 113, 0.3); border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(46, 204, 113, 0.3)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(46, 204, 113, 0.1))'; this.style.transform='translateY(0)'">$10</button>
+      <button class="preset-btn" onclick="setAmount(25)" style="padding: 0.8rem; background: linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(46, 204, 113, 0.1)); border: 2px solid rgba(46, 204, 113, 0.3); border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(46, 204, 113, 0.3)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(46, 204, 113, 0.1))'; this.style.transform='translateY(0)'">$25</button>
     </div>
     
-    <div class="amount-input-group">
-      <input type="number" id="donationAmount" class="amount-input" placeholder="$ Custom" min="1" max="10000" step="1">
+    <div class="amount-input-group" style="margin-bottom: 1.5rem;">
+      <input type="number" id="donationAmount" class="amount-input" placeholder="$ Custom" min="1" max="10000" step="1" style="width: 100%; padding: 0.8rem 1rem; border: 2px solid rgba(46, 204, 113, 0.3); border-radius: 8px; background: transparent; color: inherit; transition: all 0.3s ease;" onmouseover="this.style.borderColor='rgba(46, 204, 113, 0.6)'" onmouseout="this.style.borderColor='rgba(46, 204, 113, 0.3)'">
     </div>
     
-    <button class="btn-donate" id="donateBtn" onclick="handleDonation()">⚡ Send Monster</button>
+    <button class="btn-donate" id="donateBtn" onclick="handleDonation()" style="width: 100%; padding: 0.9rem; background: linear-gradient(135deg, #2ecc71, #27ae60); color: white; border: none; border-radius: 8px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 8px 20px rgba(46, 204, 113, 0.3)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'">⚡ Send Monster</button>
     </div>
   </div>
+
 </div>
 </div>
+
+    </div>
+  </div>
 
 <!-- Contact Form Modal -->
 <div class="contact-modal" id="contactModal" onclick="closeContactForm(event)">
@@ -1357,6 +1836,41 @@ function setMood(mood) {
   showToast(`Mood set to ${mood}! 🎭`);
 }
 
+// ========== RANDOM FACTS ==========
+const randomFacts = [
+  "I code while listening to lo-fi beats",
+  "My favorite energy drink is Monster",
+  "I've debugged code at 3am more times than I'd like to admit",
+  "I can build a full-stack app in a weekend",
+  "I'm a competitive gamer at heart",
+  "Coffee or Monster? Monster, always Monster",
+  "I started coding at age 12",
+  "I love breaking things to understand how they work",
+  "I've participated in multiple hackathons",
+  "I believe in learning by doing, not just watching",
+  "My code has been used by thousands of people",
+  "I'm self-taught in most of what I know",
+  "I prefer dark mode for everything",
+  "I can type faster than I can think",
+  "I've deployed apps to production while on vacation",
+  "Git commit messages are a form of poetry for me",
+  "I refactor code for fun on weekends",
+  "I have a GitHub contribution streak going",
+  "I love open-source projects",
+  "I believe in clean, readable code",
+  "I can solve problems with JavaScript, Python, and more",
+  "I'm always learning new technologies",
+  "I've built things that surprised even me",
+  "Caffeine is my favorite language feature",
+  "I debug with console.log() like a professional"
+];
+
+function showRandomFact() {
+  const randomFact = randomFacts[Math.floor(Math.random() * randomFacts.length)];
+  document.getElementById('factDisplay').textContent = randomFact;
+  showToast('✨ New fact revealed!', '#1abc9c');
+}
+
 // ========== NEWSLETTER ==========
 function handleNewsletter(event) {
   event.preventDefault();
@@ -1367,20 +1881,29 @@ function handleNewsletter(event) {
   btn.disabled = true;
   btn.textContent = 'Subscribing...';
   
-  // Simulate subscription (you can connect to Mailchimp, ConvertKit, etc.)
-  setTimeout(() => {
-    showToast('✅ Thanks for subscribing!', '#1abc9c');
-    document.getElementById('newsletterEmail').value = '';
+  // Call the newsletter-subscribe function
+  fetch('/.netlify/functions/newsletter-subscribe', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      showToast('📧 Check your email to confirm subscription!', '#1abc9c');
+      document.getElementById('newsletterEmail').value = '';
+    } else {
+      showToast('❌ ' + (data.error || 'Subscription failed'), '#e74c3c');
+    }
+  })
+  .catch(error => {
+    console.error('Newsletter error:', error);
+    showToast('❌ Something went wrong. Please try again.', '#e74c3c');
+  })
+  .finally(() => {
     btn.disabled = false;
     btn.textContent = 'Subscribe';
-    
-    // Store in localStorage for now
-    const subscribers = JSON.parse(localStorage.getItem('subscribers') || '[]');
-    if (!subscribers.includes(email)) {
-      subscribers.push(email);
-      localStorage.setItem('subscribers', JSON.stringify(subscribers));
-    }
-  }, 1000);
+  });
 }
 
 // ========== EASTER EGG (Konami Code) ==========
@@ -1504,7 +2027,7 @@ setInterval(updateMyTime, 1000);
 updateMyTime();
 
 // ========== SKILLS MANAGEMENT ==========
-function loadSkills() {
+async function loadSkills() {
   const defaultSkills = [
     { icon: '🔷', name: 'TypeScript' },
     { icon: '⚛️', name: 'React' },
@@ -1518,10 +2041,26 @@ function loadSkills() {
     { icon: '⚡', name: 'Next.js' }
   ];
   
-  const skills = JSON.parse(localStorage.getItem('techStack') || JSON.stringify(defaultSkills));
-  const skillsGrid = document.getElementById('skillsGrid');
+  try {
+    // Try to fetch tech stack from Airtable
+    const response = await fetch('/.netlify/functions/db-get-tech-stack');
+    if (response.ok) {
+      const techStack = await response.json();
+      if (techStack && techStack.length > 0) {
+        const skillsGrid = document.getElementById('skillsGrid');
+        skillsGrid.innerHTML = techStack.map(skill => 
+          `<span class="skill-badge">${skill.icon} ${skill.name}</span>`
+        ).join('');
+        return;
+      }
+    }
+  } catch (error) {
+    console.error('Error loading tech stack from Airtable:', error);
+  }
   
-  skillsGrid.innerHTML = skills.map(skill => 
+  // Fallback to default skills if Airtable fails
+  const skillsGrid = document.getElementById('skillsGrid');
+  skillsGrid.innerHTML = defaultSkills.map(skill => 
     `<span class="skill-badge">${skill.icon} ${skill.name}</span>`
   ).join('');
 }
@@ -1594,7 +2133,7 @@ function handleAdminLogin(event) {
       
       // Redirect to admin panel
       setTimeout(() => {
-        window.location.href = '/admin.html';
+        window.location.href = '/admin-tabs.html';
       }, 1000);
     } else {
       throw new Error(data.error || 'Invalid credentials');
@@ -1707,7 +2246,15 @@ function handleContactSubmit(event) {
 
 function toggleDonation() {
   const content = document.getElementById('donationContent');
+  const btn = document.getElementById('supportMeBtn');
+  
   content.classList.toggle('active');
+  
+  if (content.classList.contains('active')) {
+    btn.style.background = 'linear-gradient(135deg, rgba(46, 204, 113, 0.4), rgba(52, 152, 219, 0.4))';
+  } else {
+    btn.style.background = 'linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(52, 152, 219, 0.2))';
+  }
 }
 
 function setAmount(amount) {
@@ -1828,6 +2375,57 @@ style.textContent = `
   }
 `;
 document.head.appendChild(style);
+
+// Track page view with device info
+(async function() {
+  try {
+    const userAgent = navigator.userAgent;
+    
+    // Detect device type
+    const device = /mobile/i.test(userAgent) ? 'Mobile' : 
+                   /tablet|ipad/i.test(userAgent) ? 'Tablet' : 'Desktop';
+    
+    // Detect browser
+    let browser = 'Unknown';
+    if (/edg/i.test(userAgent)) browser = 'Edge';
+    else if (/chrome/i.test(userAgent) && !/edg/i.test(userAgent)) browser = 'Chrome';
+    else if (/safari/i.test(userAgent) && !/chrome/i.test(userAgent)) browser = 'Safari';
+    else if (/firefox/i.test(userAgent)) browser = 'Firefox';
+    else if (/msie|trident/i.test(userAgent)) browser = 'Internet Explorer';
+    
+    // Detect OS
+    let os = 'Unknown';
+    if (/windows/i.test(userAgent)) os = 'Windows';
+    else if (/mac/i.test(userAgent)) os = 'macOS';
+    else if (/linux/i.test(userAgent)) os = 'Linux';
+    else if (/android/i.test(userAgent)) os = 'Android';
+    else if (/ios|iphone|ipad/i.test(userAgent)) os = 'iOS';
+    
+    // Get referrer
+    const referrer = document.referrer || 'Direct';
+    
+    const response = await fetch('/.netlify/functions/track-page-view', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        page: window.location.pathname,
+        device: device,
+        browser: browser,
+        os: os,
+        referrer: referrer
+      })
+    });
+    
+    if (!response.ok) {
+      const error = await response.text();
+      console.error('Page view tracking failed:', response.status, error);
+    } else {
+      console.log('Page view tracked successfully');
+    }
+  } catch (error) {
+    console.error('Failed to track page view:', error);
+  }
+})();
 </script>
 
 </body>

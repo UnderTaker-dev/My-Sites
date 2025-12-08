@@ -60,8 +60,11 @@ exports.handler = async (event, context) => {
 
     // Send email to each subscriber
     const results = [];
+    console.log(`Attempting to send newsletter to ${subscribers.length} subscriber(s)`);
+    
     for (const email of subscribers) {
       try {
+        console.log(`Sending to: ${email}`);
         // Add unsubscribe link to message
         const unsubscribeLink = `https://mathi4s.com/unsubscribe.html?email=${encodeURIComponent(email)}`;
         const fullMessage = `
@@ -102,18 +105,23 @@ exports.handler = async (event, context) => {
         );
 
         if (emailResponse.ok) {
+          console.log(`✅ Successfully sent to: ${email}`);
           results.push({ email, success: true });
         } else {
           const error = await emailResponse.text();
+          console.error(`❌ Failed to send to ${email}:`, error);
           results.push({ email, success: false, error });
         }
       } catch (err) {
+        console.error(`❌ Error sending to ${email}:`, err.message);
         results.push({ email, success: false, error: err.message });
       }
     }
 
     const successCount = results.filter(r => r.success).length;
     const failedCount = results.length - successCount;
+    
+    console.log(`Newsletter results: ${successCount} sent, ${failedCount} failed`);
 
     return {
       statusCode: 200,

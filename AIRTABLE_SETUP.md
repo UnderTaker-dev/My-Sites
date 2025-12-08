@@ -14,6 +14,7 @@ AIRTABLE_BASE_ID=your_airtable_base_id_here
 ```
 ADMIN_USERNAME=your_admin_username
 ADMIN_PASSWORD=your_admin_password
+ADMIN_EMAIL=your_email@domain.com (where notification emails are sent)
 MICROSOFT_CLIENT_ID=your_microsoft_client_id
 MICROSOFT_CLIENT_SECRET=your_microsoft_client_secret
 MICROSOFT_TENANT_ID=your_microsoft_tenant_id
@@ -47,6 +48,15 @@ STRIPE_SECRET_KEY=your_stripe_secret_key
 
 ## Airtable Tables:
 
-✅ **Subscribers**: Email
+✅ **Subscribers**: Email, Subscribed Date, Source, IP Address, Status, Notes, Verification Token, Confirmed Date
 ✅ **Unsubscribed**: Email, Date  
 ✅ **TechStack**: Icon, Name, Order
+
+### Important: New Fields Required
+
+Please add these fields to your Airtable **Subscribers** table:
+- **Verification Token** (Single line text) - For email confirmation
+- **Confirmed Date** (Date) - When user confirmed subscription
+- **Status** (Single select: "Active", "Pending") - Subscription status
+
+Without these fields, double opt-in won't work properly!

@@ -1,0 +1,2574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel - Tabbed - Mathias</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: #0f172a;
+  color: #fff;
+  min-height: 100vh;
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3), transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(74, 86, 226, 0.3), transparent 50%);
+  pointer-events: none;
+}
+
+.tabs-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1rem;
+  position: relative;
+  z-index: 1;
+}
+
+.tab-nav {
+  display: flex;
+  gap: 0;
+  margin-bottom: 2rem;
+  background: #1e293b;
+  padding: 0;
+  border-radius: 12px;
+  overflow-x: auto;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  border: 1px solid #334155;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.tab-nav h2 {
+  margin: 0;
+  padding: 1rem 1.5rem;
+  font-size: 1.3rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  border-right: 1px solid #334155;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.tab-btn {
+  padding: 1rem 1.5rem;
+  background: transparent;
+  border: none;
+  border-right: 1px solid #334155;
+  color: #94a3b8;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+}
+
+.tab-btn:last-of-type {
+  border-right: none;
+}
+
+.tab-btn::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.tab-btn:hover {
+  background: #334155;
+  color: #fff;
+}
+
+.tab-btn.active {
+  background: #1e293b;
+  color: #60a5fa;
+}
+
+.tab-btn.active::after {
+  transform: scaleX(1);
+}
+
+.btn-logout {
+  margin-left: auto;
+  border-left: 1px solid #334155 !important;
+  border-right: none !important;
+}
+
+.tab-content {
+  animation: fadeInUp 0.6s ease-out;
+  padding: 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  margin-bottom: 2rem;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.admin-header h1 {
+  font-size: 2rem;
+  margin: 0;
+  font-weight: 700;
+  background: linear-gradient(135deg, #fff 0%, #f0f0f0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.btn-logout {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 12px;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
+}
+
+.btn-logout:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(245, 87, 108, 0.5);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.stat-card {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 2rem;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.stat-card:hover::before {
+  opacity: 1;
+}
+
+.stat-card:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+}
+
+.stat-card h3 {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+.stat-card .stat-value {
+  font-size: 2.8rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0.5rem 0;
+}
+
+.stat-card .stat-icon {
+  font-size: 2.5rem;
+  opacity: 0.2;
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+}
+
+.data-section {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.data-section h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.section-group {
+  margin-bottom: 3rem;
+}
+
+.section-header {
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 1.5rem;
+  padding-left: 0.5rem;
+  border-left: 4px solid #4facfe;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.content-section {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.content-section:not(:first-child) {
+  margin-top: 0;
+}
+
+@media (max-width: 1024px) {
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+  
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .main-content {
+    margin-left: 0;
+  }
+  
+  .mobile-menu-btn {
+    display: block !important;
+  }
+}
+
+.mobile-menu-btn {
+  display: none;
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 101;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  padding: 0.75rem;
+  border-radius: 10px;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+}
+
+.subscriber-list {
+  list-style: none;
+  padding: 0;
+}
+
+.subscriber-item {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 1.2rem;
+  border-radius: 12px;
+  margin-bottom: 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.subscriber-item:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateX(5px);
+}
+
+.btn-delete {
+  background: rgba(231, 76, 60, 0.3);
+  border: 1px solid rgba(231, 76, 60, 0.6);
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.btn-delete:hover {
+  background: rgba(231, 76, 60, 0.6);
+  transform: scale(1.05);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-style: italic;
+  font-size: 1.1rem;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+thead tr {
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+th {
+  padding: 1rem !important;
+  text-align: left;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+td {
+  padding: 1rem !important;
+}
+
+tbody tr {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  transition: background 0.3s ease;
+}
+
+tbody tr:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+.export-btn {
+  padding: 0.6rem 1.2rem !important;
+  border: none !important;
+  border-radius: 10px !important;
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%) !important;
+  color: #fff !important;
+  cursor: pointer !important;
+  font-weight: 600 !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3) !important;
+}
+
+.export-btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(79, 172, 254, 0.5) !important;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.stat-card, .data-section {
+  animation: fadeInUp 0.6s ease-out backwards;
+}
+
+.stat-card:nth-child(1) { animation-delay: 0.1s; }
+.stat-card:nth-child(2) { animation-delay: 0.2s; }
+.stat-card:nth-child(3) { animation-delay: 0.3s; }
+
+@media (max-width: 768px) {
+  .admin-header {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .admin-header h1 {
+    font-size: 1.5rem;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="tabs-container">
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="showTab('dashboard')">🎮 Dashboard</button>
+    <button class="tab-btn" onclick="showTab('analytics')">📈 Analytics</button>
+    <button class="tab-btn" onclick="showTab('subscribers')">📧 Subscribers</button>
+    <button class="tab-btn" onclick="showTab('pageviews')">👀 Page Views</button>
+    <button class="tab-btn" onclick="showTab('donations')">💰 Donations</button>
+    <button class="tab-btn" onclick="showTab('activity')">📋 Activity Log</button>
+    <button class="tab-btn" onclick="showTab('techstack')">🛠️ Skills & Tools</button>
+    <button class="tab-btn" onclick="showTab('settings')">⚙️ Settings</button>
+    <button class="btn-logout" onclick="logout()">🚪 Logout</button>
+  </div>
+
+  <!-- Dashboard Tab - Key metrics with navigation buttons -->
+  <div id="tab-dashboard" class="tab-content">
+    <div class="stats-grid">
+    <div class="stat-card">
+      <span class="stat-icon">📧</span>
+      <h3>Newsletter Subscribers</h3>
+      <div class="stat-value" id="subscriberCount">0</div>
+    </div>
+    
+    <div class="stat-card">
+      <span class="stat-icon">👀</span>
+      <h3>Page Views</h3>
+      <div class="stat-value" id="pageViewCount">Loading...</div>
+    </div>
+    
+    <div class="stat-card">
+      <span class="stat-icon">💰</span>
+      <h3>Donations</h3>
+      <div class="stat-value" id="donationAmount">Loading...</div>
+      <div style="font-size: 0.9rem; opacity: 0.8; margin-top: 0.5rem;" id="donationCount"></div>
+    </div>
+  </div>
+
+  <!-- Quick Access Cards -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
+    <div class="data-section" style="cursor: pointer; transition: all 0.3s;" onclick="showTab('analytics')" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+      <div style="text-align: center; padding: 1rem;">
+        <div style="font-size: 3rem; margin-bottom: 0.5rem;">📊</div>
+        <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem;">Analytics</h3>
+        <p style="opacity: 0.7; font-size: 0.9rem;">View charts and trends</p>
+      </div>
+    </div>
+
+    <div class="data-section" style="cursor: pointer; transition: all 0.3s;" onclick="showTab('subscribers')" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+      <div style="text-align: center; padding: 1rem;">
+        <div style="font-size: 3rem; margin-bottom: 0.5rem;">📧</div>
+        <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem;">Subscribers</h3>
+        <p style="opacity: 0.7; font-size: 0.9rem;">Manage email list</p>
+      </div>
+    </div>
+
+    <div class="data-section" style="cursor: pointer; transition: all 0.3s;" onclick="showTab('pageviews')" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+      <div style="text-align: center; padding: 1rem;">
+        <div style="font-size: 3rem; margin-bottom: 0.5rem;">👀</div>
+        <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem;">Page Views</h3>
+        <p style="opacity: 0.7; font-size: 0.9rem;">See visitor activity</p>
+      </div>
+    </div>
+
+    <div class="data-section" style="cursor: pointer; transition: all 0.3s;" onclick="showTab('donations')" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+      <div style="text-align: center; padding: 1rem;">
+        <div style="font-size: 3rem; margin-bottom: 0.5rem;">💰</div>
+        <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem;">Donations</h3>
+        <p style="opacity: 0.7; font-size: 0.9rem;">View contributions</p>
+      </div>
+    </div>
+
+    <div class="data-section" style="cursor: pointer; transition: all 0.3s;" onclick="showTab('techstack')" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+      <div style="text-align: center; padding: 1rem;">
+        <div style="font-size: 3rem; margin-bottom: 0.5rem;">🛠️</div>
+        <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem;">Skills & Tools</h3>
+        <p style="opacity: 0.7; font-size: 0.9rem;">Manage technologies</p>
+      </div>
+    </div>
+
+    <div class="data-section" style="cursor: pointer; transition: all 0.3s;" onclick="showTab('settings')" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+      <div style="text-align: center; padding: 1rem;">
+        <div style="font-size: 3rem; margin-bottom: 0.5rem;">⚙️</div>
+        <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem;">Settings</h3>
+        <p style="opacity: 0.7; font-size: 0.9rem;">Configure admin panel</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Quick Actions -->
+  <div style="position: fixed; bottom: 2rem; right: 2rem; display: flex; flex-direction: column; gap: 0.75rem; z-index: 100;">
+    <button onclick="openQuickAddSubscriber()" style="width: 60px; height: 60px; border-radius: 50%; border: none; background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4); transition: all 0.3s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'" title="Add Subscriber">➕</button>
+    <button onclick="openNewsletterComposer()" style="width: 60px; height: 60px; border-radius: 50%; border: none; background: linear-gradient(135deg, #1abc9c, #16a085); color: #fff; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 15px rgba(26, 188, 156, 0.4); transition: all 0.3s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'" title="Send Newsletter">✉️</button>
+  </div>
+  </div>
+
+  <!-- Analytics Tab (just charts) -->
+  <div id="tab-analytics" class="tab-content" style="display:none;">
+    <div class="section-header">📈 Analytics</div>
+    
+  <div class="data-section">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <h2 style="margin: 0;">Analytics Overview</h2>
+      <div style="display: flex; align-items: center; gap: 0.5rem;">
+        <span id="analyticsRefreshTime" style="font-size: 0.85rem; opacity: 0.6;"></span>
+        <button onclick="refreshAnalytics(this)" style="padding: 0.5rem 1rem; border: none; border-radius: 8px; background: rgba(255,255,255,0.1); color: #fff; cursor: pointer; font-size: 0.85rem;">🔄 Refresh</button>
+      </div>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;">
+      
+      <div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 15px;">
+        <h3 style="font-size: 1.1rem; margin-bottom: 1rem;">Device Distribution</h3>
+        <canvas id="deviceChart"></canvas>
+      </div>
+      
+      <div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 15px;">
+        <h3 style="font-size: 1.1rem; margin-bottom: 1rem;">Browser Usage</h3>
+        <canvas id="browserChart"></canvas>
+      </div>
+      
+      <div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 15px;">
+        <h3 style="font-size: 1.1rem; margin-bottom: 1rem;">Top Pages</h3>
+        <canvas id="pagesChart"></canvas>
+      </div>
+      
+      <div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 15px;">
+        <h3 style="font-size: 1.1rem; margin-bottom: 1rem;">Top Referrers</h3>
+        <canvas id="referrersChart"></canvas>
+      </div>
+      
+      <div style="background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 15px;">
+        <h3 style="font-size: 1.1rem; margin-bottom: 1rem;">Top Countries</h3>
+        <canvas id="countriesChart"></canvas>
+      </div>
+      
+    </div>
+  </div>
+  </div>
+
+  <!-- Subscribers Tab -->
+  <div id="tab-subscribers" class="tab-content" style="display:none;">
+    <div class="section-header">📧 Subscribers</div>
+    
+  <div class="data-section">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <h2 style="margin: 0;">Newsletter Subscribers</h2>
+      <div style="display: flex; gap: 0.5rem;">
+        <button class="btn btn-primary" onclick="openNewsletterComposer()">✉️ Send Newsletter</button>
+        <button class="btn btn-primary" onclick="exportSubscribers()">📥 Export</button>
+      </div>
+    </div>
+    <div style="display:flex; gap:0.5rem; flex-wrap: wrap; margin-bottom:0.75rem; align-items:center;">
+      <input id="subscriberSearch" type="text" placeholder="Search email" oninput="renderSubscribersWithFilters()" style="flex:1; min-width:200px; padding:0.6rem; border-radius:8px; border:1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color:#fff;">
+      <select id="subscriberStatusFilter" onchange="renderSubscribersWithFilters()" style="padding:0.6rem; border-radius:8px; border:1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color:#fff;">
+        <option value="all">All statuses</option>
+        <option value="Active">Active</option>
+        <option value="Pending">Pending</option>
+      </select>
+      <input id="subscriberDomainFilter" type="text" placeholder="Filter by domain (e.g. gmail.com)" oninput="renderSubscribersWithFilters()" style="flex:1; min-width:200px; padding:0.6rem; border-radius:8px; border:1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color:#fff;">
+      <button class="btn btn-secondary" onclick="clearSubscriberFilters()">Reset</button>
+    </div>
+    <div style="margin-bottom:0.5rem; display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center;">
+      <div id="bulkActionsBar" style="display:none; gap:0.4rem; flex-wrap:wrap;">
+        <span style="opacity:0.8;">Bulk actions:</span>
+        <button class="btn btn-primary" onclick="bulkUpdateStatus('Active')">✅ Force Confirm</button>
+        <button class="btn btn-secondary" onclick="bulkUpdateStatus('Pending')">⏳ Mark Pending</button>
+        <button class="btn btn-secondary" onclick="bulkResendConfirmations()">📬 Resend Confirmations</button>
+        <button class="btn-delete" onclick="bulkDeleteSubscribers()">🗑️ Delete</button>
+      </div>
+    </div>
+    <ul class="subscriber-list" id="subscriberList">
+      <li class="empty-state">No subscribers yet</li>
+    </ul>
+  </div>
+
+  <div class="data-section">
+    <h2>Unsubscribed Users</h2>
+    <ul class="subscriber-list" id="unsubscribedList">
+      <li class="empty-state">No unsubscribed users yet</li>
+    </ul>
+  </div>
+  </div>
+
+  <!-- Page Views Tab -->
+  <div id="tab-pageviews" class="tab-content" style="display:none;">
+    <div class="section-header">👀 Page Views</div>
+    
+  <div class="data-section">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <h2 style="margin: 0;">Recent Page Views</h2>
+      <button onclick="exportPageViews()" class="export-btn">📥 Export CSV</button>
+    </div>
+    <div style="overflow-x: auto;">
+      <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+          <tr style="background: rgba(255,255,255,0.05); text-align: left;">
+            <th style="padding: 0.8rem; border-bottom: 2px solid rgba(255,255,255,0.1);">Page</th>
+            <th style="padding: 0.8rem; border-bottom: 2px solid rgba(255,255,255,0.1);">Timestamp</th>
+            <th style="padding: 0.8rem; border-bottom: 2px solid rgba(255,255,255,0.1);">Location</th>
+            <th style="padding: 0.8rem; border-bottom: 2px solid rgba(255,255,255,0.1);">Device Info</th>
+            <th style="padding: 0.8rem; border-bottom: 2px solid rgba(255,255,255,0.1);">Referrer</th>
+          </tr>
+        </thead>
+        <tbody id="pageViewsTable">
+          <tr><td colspan="5" style="padding: 1rem; text-align: center; opacity: 0.7;">Loading...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  </div>
+
+  <!-- Donations Tab -->
+  <div id="tab-donations" class="tab-content" style="display:none;">
+    <div class="section-header">💰 Donations</div>
+    
+  <div class="data-section">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <h2 style="margin: 0;">Donation History</h2>
+      <button onclick="exportDonations()" class="export-btn">📥 Export CSV</button>
+    </div>
+    <div style="overflow-x: auto;">
+      <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+          <tr style="background: rgba(255,255,255,0.05); text-align: left;">
+            <th style="padding: 0.8rem; border-bottom: 2px solid rgba(255,255,255,0.1);">Amount</th>
+            <th style="padding: 0.8rem; border-bottom: 2px solid rgba(255,255,255,0.1);">Email</th>
+            <th style="padding: 0.8rem; border-bottom: 2px solid rgba(255,255,255,0.1);">Timestamp</th>
+            <th style="padding: 0.8rem; border-bottom: 2px solid rgba(255,255,255,0.1);">Status</th>
+          </tr>
+        </thead>
+        <tbody id="donationsTable">
+          <tr><td colspan="4" style="padding: 1rem; text-align: center; opacity: 0.7;">Loading...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  </div>
+
+  <!-- Skills & Tools Tab -->
+  <div id="tab-techstack" class="tab-content" style="display:none;">
+    <div class="section-header">🛠️ Skills & Tools</div>
+    
+    <div class="data-section">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <div>
+          <h2 style="margin: 0;">Technology Stack</h2>
+          <span id="techStackRefreshTime" style="font-size: 0.85rem; opacity: 0.6; display: block; margin-top: 0.3rem;"></span>
+        </div>
+        <button class="btn btn-primary" onclick="openTechStackEditor()">✏️ Edit Stack</button>
+      </div>
+      <div id="techStackDisplay" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1rem; margin-top: 1.5rem;">
+        <p style="opacity: 0.7;">Loading tech stack...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Activity Log Tab -->
+  <div id="tab-activity" class="tab-content" style="display:none;">
+    <div class="section-header">📋 Activity Log</div>
+    
+  <div class="data-section">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <h2 style="margin: 0;">Admin Actions & Events</h2>
+      <span id="activityRefreshTime" style="font-size: 0.85rem; opacity: 0.6;"></span>
+    </div>
+    <div style="max-height: 600px; overflow-y: auto; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px;">
+      <div id="activityLogList" style="padding: 1rem;">
+        <p style="opacity: 0.7; text-align: center;">Loading activity log...</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="data-section">
+    <h2>Failed Emails (Retry Queue)</h2>
+    <div style="max-height: 400px; overflow-y: auto; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px;">
+      <table style="width: 100%; border-collapse: collapse;">
+        <thead style="position: sticky; top: 0; background: rgba(0,0,0,0.2);">
+          <tr>
+            <th style="padding: 0.8rem; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1);">Email</th>
+            <th style="padding: 0.8rem; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1);">Error</th>
+            <th style="padding: 0.8rem; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1);">Retries</th>
+            <th style="padding: 0.8rem; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1);">Action</th>
+          </tr>
+        </thead>
+        <tbody id="retryQueueTable">
+          <tr><td colspan="4" style="padding: 1rem; text-align: center; opacity: 0.7;">No failed emails</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="data-section">
+    <h2>Unsubscribe Reasons</h2>
+    <div id="unsubscribeStatsDisplay" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+      <p style="opacity: 0.7;">Loading stats...</p>
+    </div>
+  </div>
+  </div>
+
+  <!-- Settings Tab -->
+  <div id="tab-settings" class="tab-content" style="display:none;">
+    <div class="section-header">⚙️ Settings</div>
+    
+  <div class="data-section">
+    <h2>Email Deliverability</h2>
+    <p style="opacity: 0.7; font-size: 0.9rem; margin-bottom: 1rem;">⚠️ For best inbox placement, ensure your domain is properly configured:</p>
+    <div style="display: flex; flex-direction: column; gap: 0.75rem; background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 10px; margin-bottom: 1rem;">
+      <div style="display: flex; align-items: center; gap: 0.5rem;">
+        <span>📝 SPF Record:</span> <code style="background: rgba(0,0,0,0.3); padding: 0.3rem 0.6rem; border-radius: 4px; font-size: 0.85rem;">v=spf1 include:outlook.com ~all</code>
+      </div>
+      <div style="display: flex; align-items: center; gap: 0.5rem;">
+        <span>🔑 DKIM:</span> <code style="background: rgba(0,0,0,0.3); padding: 0.3rem 0.6rem; border-radius: 4px; font-size: 0.85rem;">default._domainkey (from Microsoft)</code>
+      </div>
+      <div style="display: flex; align-items: center; gap: 0.5rem;">
+        <span>🛡️ DMARC:</span> <code style="background: rgba(0,0,0,0.3); padding: 0.3rem 0.6rem; border-radius: 4px; font-size: 0.85rem;">v=DMARC1; p=quarantine; rua=mailto:admin@mathi4s.com</code>
+      </div>
+      <p style="font-size: 0.85rem; opacity: 0.6; margin: 0.5rem 0 0 0;">⚡ Add these TXT records to your domain's DNS for best deliverability.</p>
+    </div>
+    <div style="background: rgba(220, 180, 30, 0.1); border-left: 3px solid #f39c12; padding: 1rem; border-radius: 5px; margin-bottom: 1rem;">
+      <strong>⏱️ Email Warmup Tips:</strong>
+      <ul style="margin: 0.5rem 0 0 0; padding-left: 1.5rem; font-size: 0.9rem;">
+        <li>Start with small send volumes (10–50 emails/day)</li>
+        <li>Gradually increase over 1–2 weeks</li>
+        <li>Monitor bounce/complaint rates</li>
+        <li>Avoid sudden spikes to prevent spam folder</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="data-section">
+    <h2>Notifications</h2>
+    <p style="opacity: 0.7; font-size: 0.9rem; margin-bottom: 1rem;">
+      💡 Email notifications are automatically sent to <strong>ADMIN_EMAIL</strong> when Microsoft Graph is configured. 
+      These settings are saved locally for future UI enhancements.
+    </p>
+    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+      <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+        <input type="checkbox" id="notifyNewSubscriber" style="width: 18px; height: 18px;" checked>
+        <span>Email me when someone subscribes</span>
+      </label>
+      <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+        <input type="checkbox" id="notifyNewDonation" style="width: 18px; height: 18px;" checked>
+        <span>Email me when someone donates</span>
+      </label>
+      <button onclick="saveNotificationSettings()" style="padding: 0.6rem 1.2rem; border: none; border-radius: 8px; background: linear-gradient(135deg, #3498db, #2980b9); color: #fff; cursor: pointer; font-weight: 600; width: fit-content; margin-top: 0.5rem;">💾 Save Preferences</button>
+    </div>
+  </div>
+
+  <div class="data-section">
+    <h2>API Configuration</h2>
+    <p style="opacity: 0.7; font-size: 0.9rem; margin-bottom: 1rem;">Manage your Airtable and Microsoft Graph API keys</p>
+    <button onclick="alert('API key management coming soon!')" style="padding: 0.6rem 1.2rem; border: none; border-radius: 8px; background: rgba(255,255,255,0.1); color: #fff; cursor: pointer; font-weight: 600;">🔑 Manage API Keys</button>
+  </div>
+
+  <div class="data-section">
+    <h2 style="display: flex; align-items: center; gap: 0.8rem;"><span style="font-size: 1.5rem;">📦</span> Backup & Restore</h2>
+    <p style="opacity: 0.7; font-size: 0.9rem; margin-bottom: 1.5rem;">Keep your data safe with automatic backups</p>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+      <button onclick="backupAllData()" style="padding: 1rem; border: 2px solid rgba(26, 188, 156, 0.3); border-radius: 12px; background: linear-gradient(135deg, rgba(26, 188, 156, 0.1), rgba(26, 188, 156, 0.05)); color: #fff; cursor: pointer; font-weight: 600; transition: all 0.3s ease;" onmouseover="this.style.background='linear-gradient(135deg, rgba(26, 188, 156, 0.2), rgba(26, 188, 156, 0.1))'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='linear-gradient(135deg, rgba(26, 188, 156, 0.1), rgba(26, 188, 156, 0.05))'; this.style.transform='translateY(0)'">📦 Backup All Data</button>
+      <button onclick="alert('Restore functionality coming soon!')" style="padding: 1rem; border: 2px solid rgba(100,100,100, 0.3); border-radius: 12px; background: rgba(255,255,255,0.05); color: #fff; cursor: pointer; font-weight: 600; transition: all 0.3s ease; opacity: 0.6;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='0.6'">📥 Restore from Backup</button>
+    </div>
+  </div>
+
+  <div class="data-section">
+    <h2 style="display: flex; align-items: center; gap: 0.8rem;"><span style="font-size: 1.5rem;">🗑️</span> Data Management</h2>
+    <p style="opacity: 0.7; font-size: 0.9rem; margin-bottom: 1.5rem;"><span style="color: #e74c3c;">⚠️ Warning:</span> This action cannot be undone</p>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+      <button class="btn btn-secondary" onclick="clearAllData()" style="padding: 1rem; border: 2px solid rgba(231, 76, 60, 0.3); border-radius: 12px; background: linear-gradient(135deg, rgba(231, 76, 60, 0.1), rgba(231, 76, 60, 0.05)); color: #fff; cursor: pointer; font-weight: 600; transition: all 0.3s ease;" onmouseover="this.style.background='linear-gradient(135deg, rgba(231, 76, 60, 0.2), rgba(231, 76, 60, 0.1))'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='linear-gradient(135deg, rgba(231, 76, 60, 0.1), rgba(231, 76, 60, 0.05))'; this.style.transform='translateY(0)'">🗑️ Clear All Data</button>
+    </div>
+  </div>
+
+  <div class="data-section">
+    <h2>🔐 Access Control</h2>
+    <p style="opacity: 0.7; font-size: 0.9rem; margin-bottom: 1rem;">Manage admin users and their roles</p>
+    
+    <div style="margin-bottom: 1rem;">
+      <h3 style="font-size: 0.95rem; margin-bottom: 0.75rem;">Add New Admin</h3>
+      <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+        <input id="adminEmail" type="email" placeholder="admin@example.com" style="flex: 1; min-width: 200px; padding: 0.6rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: #fff;">
+        <input id="adminName" type="text" placeholder="Name" style="flex: 1; min-width: 150px; padding: 0.6rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: #fff;">
+        <select id="adminRole" style="padding: 0.6rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: #fff;">
+          <option value="Owner">Owner</option>
+          <option value="Editor">Editor</option>
+          <option value="Viewer">Viewer</option>
+        </select>
+        <button onclick="addAdminUser()" class="btn btn-primary">➕ Add Admin</button>
+      </div>
+    </div>
+    
+    <h3 style="font-size: 0.95rem; margin-bottom: 0.75rem;">Current Admins</h3>
+    <div style="overflow-x: auto;">
+      <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+        <thead>
+          <tr style="background: rgba(255,255,255,0.05); text-align: left;">
+            <th style="padding: 0.8rem; border-bottom: 2px solid rgba(255,255,255,0.1);">Name</th>
+            <th style="padding: 0.8rem; border-bottom: 2px solid rgba(255,255,255,0.1);">Email</th>
+            <th style="padding: 0.8rem; border-bottom: 2px solid rgba(255,255,255,0.1);">Role</th>
+            <th style="padding: 0.8rem; border-bottom: 2px solid rgba(255,255,255,0.1);">Status</th>
+            <th style="padding: 0.8rem; border-bottom: 2px solid rgba(255,255,255,0.1);">Last Access</th>
+            <th style="padding: 0.8rem; border-bottom: 2px solid rgba(255,255,255,0.1);">Action</th>
+          </tr>
+        </thead>
+        <tbody id="adminUsersList">
+          <tr><td colspan="6" style="padding: 1rem; text-align: center; opacity: 0.7;">Loading admins...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  </div>
+
+</div>
+</div>
+
+<!-- Edit Admin Role Modal -->
+<div id="editRoleModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; align-items: center; justify-content: center;">
+  <div style="background: linear-gradient(135deg, #2c3e50, #34495e); padding: 2.5rem; border-radius: 20px; max-width: 500px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.5); position: relative; z-index: 10001;">
+    <h2 style="margin: 0 0 0.5rem 0; display: flex; align-items: center; gap: 0.8rem;">👥 Edit Admin Role</h2>
+    <p id="editRoleAdminName" style="margin: 0 0 1.5rem 0; opacity: 0.7; font-size: 0.95rem;"></p>
+    
+    <div style="margin-bottom: 2rem;">
+      <label style="display: block; margin-bottom: 0.8rem; font-weight: 600; font-size: 0.95rem;">Select New Role:</label>
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.8rem;">
+        <button onclick="selectNewRole('Owner')" data-role="Owner" style="padding: 1rem; border: 2px solid rgba(52, 152, 219, 0.3); border-radius: 12px; background: rgba(52, 152, 219, 0.05); color: #fff; cursor: pointer; font-weight: 600; transition: all 0.3s ease; position: relative; z-index: 10002;" onmouseover="this.style.background='rgba(52, 152, 219, 0.15)'; this.style.borderColor='rgba(52, 152, 219, 0.6)'" onmouseout="this.style.background='rgba(52, 152, 219, 0.05)'; this.style.borderColor='rgba(52, 152, 219, 0.3)'">
+          👑 Owner
+        </button>
+        <button onclick="selectNewRole('Editor')" data-role="Editor" style="padding: 1rem; border: 2px solid rgba(155, 89, 182, 0.3); border-radius: 12px; background: rgba(155, 89, 182, 0.05); color: #fff; cursor: pointer; font-weight: 600; transition: all 0.3s ease; position: relative; z-index: 10002;" onmouseover="this.style.background='rgba(155, 89, 182, 0.15)'; this.style.borderColor='rgba(155, 89, 182, 0.6)'" onmouseout="this.style.background='rgba(155, 89, 182, 0.05)'; this.style.borderColor='rgba(155, 89, 182, 0.3)'">
+          ✏️ Editor
+        </button>
+        <button onclick="selectNewRole('Viewer')" data-role="Viewer" style="padding: 1rem; border: 2px solid rgba(46, 204, 113, 0.3); border-radius: 12px; background: rgba(46, 204, 113, 0.05); color: #fff; cursor: pointer; font-weight: 600; transition: all 0.3s ease; position: relative; z-index: 10002;" onmouseover="this.style.background='rgba(46, 204, 113, 0.15)'; this.style.borderColor='rgba(46, 204, 113, 0.6)'" onmouseout="this.style.background='rgba(46, 204, 113, 0.05)'; this.style.borderColor='rgba(46, 204, 113, 0.3)'">
+          👁️ Viewer
+        </button>
+      </div>
+    </div>
+    
+    <div style="display: flex; gap: 0.8rem;">
+      <button onclick="closeEditRoleModal()" style="flex: 1; padding: 0.8rem; border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; background: rgba(255,255,255,0.1); color: #fff; cursor: pointer; font-weight: 600; transition: all 0.3s ease; position: relative; z-index: 10002;" onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">Cancel</button>
+      <button onclick="confirmEditRole()" style="flex: 2; padding: 0.8rem; border: none; border-radius: 10px; background: linear-gradient(135deg, #3498db, #2980b9); color: #fff; cursor: pointer; font-weight: 600; box-shadow: 0 3px 10px rgba(52, 152, 219, 0.4); transition: all 0.3s ease; position: relative; z-index: 10002;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(52, 152, 219, 0.6)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 3px 10px rgba(52, 152, 219, 0.4)'">✅ Confirm Change</button>
+    </div>
+  </div>
+</div>
+
+<!-- Tech Stack Editor Modal -->
+<div id="techStackModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; align-items: center; justify-content: center;">
+  <div style="background: linear-gradient(135deg, #2c3e50, #34495e); padding: 2rem; border-radius: 20px; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto;">
+    <h2 style="margin: 0 0 1rem 0;">🛠️ Edit Skills & Tools</h2>
+    
+    <div id="skillsList" style="margin-bottom: 1.5rem;"></div>
+    
+    <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 10px;">
+      <h3 style="font-size: 1rem; margin-bottom: 0.5rem;">Add New Skill</h3>
+      <p style="font-size: 0.85rem; opacity: 0.7; margin-bottom: 0.8rem;">💡 Press Win + . (period) to open emoji picker</p>
+      <div style="display: flex; gap: 0.5rem;">
+        <input type="text" id="newSkillIcon" placeholder="🔷" maxlength="2" style="width: 60px; padding: 0.6rem; border: 2px solid rgba(255,255,255,0.2); border-radius: 10px; background: rgba(255,255,255,0.1); color: #fff; font-size: 1.2rem; text-align: center;">
+        <input type="text" id="newSkillName" placeholder="Skill name" style="flex: 1; padding: 0.6rem; border: 2px solid rgba(255,255,255,0.2); border-radius: 10px; background: rgba(255,255,255,0.1); color: #fff; font-size: 0.95rem;">
+        <button onclick="addSkill()" style="padding: 0.6rem 1.2rem; border: none; border-radius: 10px; background: linear-gradient(135deg, #1abc9c, #16a085); color: #fff; cursor: pointer; font-weight: 600;">➕ Add</button>
+      </div>
+    </div>
+    
+    <div style="display: flex; gap: 0.5rem;">
+      <button onclick="closeTechStackEditor()" style="flex: 1; padding: 0.8rem; border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; background: rgba(255,255,255,0.1); color: #fff; cursor: pointer; font-weight: 600;">Cancel</button>
+      <button onclick="saveTechStack()" style="flex: 2; padding: 0.8rem; border: none; border-radius: 10px; background: linear-gradient(135deg, #3498db, #2980b9); color: #fff; cursor: pointer; font-weight: 600; box-shadow: 0 3px 10px rgba(52, 152, 219, 0.4);">💾 Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- Newsletter Composer Modal -->
+<div id="newsletterModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; align-items: center; justify-content: center;">
+  <div style="background: linear-gradient(135deg, #2c3e50, #34495e); padding: 2rem; border-radius: 20px; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto;">
+    <h2 style="margin: 0 0 1rem 0;">✉️ Send Newsletter</h2>
+    
+    <div style="margin-bottom: 1rem;">
+      <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Subject</label>
+      <input type="text" id="newsletterSubject" placeholder="Newsletter Subject" style="width: 100%; padding: 0.8rem; border: 2px solid rgba(255,255,255,0.2); border-radius: 10px; background: rgba(255,255,255,0.1); color: #fff; font-size: 0.95rem;">
+    </div>
+    
+    <div style="margin-bottom: 1rem;">
+      <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Message (HTML supported)</label>
+      <textarea id="newsletterMessage" placeholder="Write your newsletter message here..." style="width: 100%; padding: 0.8rem; border: 2px solid rgba(255,255,255,0.2); border-radius: 10px; background: rgba(255,255,255,0.1); color: #fff; font-size: 0.95rem; min-height: 200px; font-family: inherit; resize: vertical;"></textarea>
+    </div>
+    
+    <div style="margin-bottom: 1.5rem; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 10px;">
+      <strong>📧 Recipients: <span id="recipientCount">0</span></strong>
+    </div>
+    
+    <div style="display: flex; gap: 0.5rem;">
+      <button onclick="closeNewsletterComposer()" style="flex: 1; padding: 0.8rem; border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; background: rgba(255,255,255,0.1); color: #fff; cursor: pointer; font-weight: 600;">Cancel</button>
+      <button onclick="sendNewsletter()" id="sendNewsletterBtn" style="flex: 2; padding: 0.8rem; border: none; border-radius: 10px; background: linear-gradient(135deg, #1abc9c, #16a085); color: #fff; cursor: pointer; font-weight: 600; box-shadow: 0 3px 10px rgba(26, 188, 156, 0.4);">📨 Send to All</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Check authentication
+window.addEventListener('DOMContentLoaded', () => {
+  console.log('Admin dashboard loading...');
+  const token = localStorage.getItem('adminToken');
+  console.log('Token check:', token ? 'Found' : 'Missing');
+  
+  if (!token) {
+    console.log('No token, redirecting to home');
+    window.location.href = '/';
+    return;
+  }
+  
+  console.log('Loading dashboard data...');
+  loadDashboardData().catch(err => {
+    console.error('Dashboard load error:', err);
+  });
+
+  // Preload tab data for instant switching
+  initAllTabsData();
+});
+
+async function initAllTabsData() {
+  try {
+    await Promise.all([
+      loadSubscribersTab().catch(e => console.error('Prefetch subscribers failed', e)),
+      loadPageViewsTable().catch(e => console.error('Prefetch pageviews failed', e)),
+      loadDonationsTable().catch(e => console.error('Prefetch donations failed', e)),
+      (async () => {
+        try {
+          await loadActivityLog();
+          await loadRetryQueue();
+          await loadUnsubscribeStats();
+        } catch (e) {
+          console.error('Prefetch activity bundle failed', e);
+        }
+      })(),
+      loadTechStack().catch(e => console.error('Prefetch techstack failed', e)),
+      loadAdminUsers().catch(e => console.error('Prefetch admins failed', e))
+    ]);
+    console.log('✅ Prefetch of all tabs complete');
+  } catch (e) {
+    console.error('Prefetch error', e);
+  }
+}
+
+async function loadSubscribersTab() {
+  console.log('📧 Loading subscribers tab...');
+  try {
+    const response = await fetch('/.netlify/functions/get-subscribers');
+    const data = await response.json();
+    
+    // Store subscribers globally
+    window.__subscribers = data.subscribers || [];
+    window.__unsubscribed = data.unsubscribed || [];
+    
+    // Render subscribers list
+    renderSubscribersWithFilters();
+    
+    // Render unsubscribed list
+    const unsubList = document.getElementById('unsubscribedList');
+    if (unsubList) {
+      if (window.__unsubscribed.length === 0) {
+        unsubList.innerHTML = '<li class="empty-state">No unsubscribed users yet</li>';
+      } else {
+        unsubList.innerHTML = window.__unsubscribed.map(item => `
+          <li class="subscriber-item">
+            📧 ${item.email} <span style="opacity:0.6; font-size:0.9em;">(${item.date})</span>
+            <button class="btn-delete" style="margin-left: 1rem;" onclick="deleteUnsubscribed('${item.id}', '${item.email}')">🗑️ Delete</button>
+          </li>
+        `).join('');
+      }
+    }
+    
+    console.log('✅ Subscribers loaded:', window.__subscribers.length);
+  } catch (error) {
+    console.error('Error loading subscribers:', error);
+    const listElement = document.getElementById('subscriberList');
+    if (listElement) {
+      listElement.innerHTML = '<li class="empty-state" style="color: #e74c3c;">Error loading subscribers</li>';
+    }
+  }
+}
+
+
+async function loadDashboardData() {
+  try {
+    console.log('🔄 Loading dashboard data...');
+    
+    // Set loading state
+    document.getElementById('subscriberCount').textContent = '...';
+    document.getElementById('pageViewCount').textContent = '...';
+    document.getElementById('donationAmount').textContent = '...';
+    document.getElementById('donationCount').textContent = '...';
+
+    // Load subscribers count
+    console.log('📧 Fetching subscribers...');
+    const subscribersResponse = await fetch('/.netlify/functions/get-subscribers');
+    if (!subscribersResponse.ok) {
+      throw new Error(`Subscribers API returned ${subscribersResponse.status}`);
+    }
+    const subscribersData = await subscribersResponse.json();
+    const subscriberCount = subscribersData.subscribers?.length || 0;
+    const subElement = document.getElementById('subscriberCount');
+    console.log('Subscriber element found:', subElement !== null);
+    if (subElement) subElement.textContent = subscriberCount;
+    console.log(`✅ Subscribers: ${subscriberCount}`);
+
+    // Load page views count
+    console.log('👁️ Fetching page views...');
+    const pageViewsResponse = await fetch('/.netlify/functions/get-page-views');
+    if (!pageViewsResponse.ok) {
+      throw new Error(`Page views API returned ${pageViewsResponse.status}`);
+    }
+    const pageViewsData = await pageViewsResponse.json();
+    const pageViewCount = pageViewsData.total || pageViewsData.count || 0;
+    document.getElementById('pageViewCount').textContent = pageViewCount;
+    console.log(`✅ Page views: ${pageViewCount}`);
+
+    // Load donations data
+    console.log('💰 Fetching donations...');
+    const donationsResponse = await fetch('/.netlify/functions/get-donations');
+    if (!donationsResponse.ok) {
+      throw new Error(`Donations API returned ${donationsResponse.status}`);
+    }
+    const donationsData = await donationsResponse.json();
+    const donationAmount = donationsData.total || 0;
+    const donationCount = donationsData.count || 0;
+    document.getElementById('donationAmount').textContent = `$${donationAmount.toFixed(2)}`;
+    document.getElementById('donationCount').textContent = `${donationCount} donation${donationCount !== 1 ? 's' : ''}`;
+    console.log(`✅ Donations: $${donationAmount} (${donationCount})`);
+
+    console.log('✅ Dashboard data loaded successfully');
+  } catch (error) {
+    console.error('❌ Error loading dashboard data:', error);
+    showToast('⚠️ Error loading dashboard data: ' + error.message, '#e74c3c');
+    
+    // Set error state
+    document.getElementById('subscriberCount').textContent = '❌';
+    document.getElementById('pageViewCount').textContent = '❌';
+    document.getElementById('donationAmount').textContent = '❌';
+    document.getElementById('donationCount').textContent = '❌';
+  }
+}
+
+async function loadPageViewsTable() {
+  console.log('📄 Loading page views table...');
+  try {
+    const response = await fetch('/.netlify/functions/get-page-views-details');
+    const data = await response.json();
+    
+    const friendlyPage = (page) => {
+      const path = page || '/';
+      const map = {
+        '/': 'Home',
+        '/thank-you.html': 'Thank You',
+        '/admin-tabs.html': 'Admin Dashboard',
+        '/admin.html': 'Admin Dashboard',
+      };
+      return map[path] ? `${map[path]} (${path})` : path;
+    };
+    
+    const now = new Date().toLocaleTimeString();
+    updateAllRefreshTimestamps(now);
+    
+    const table = document.getElementById('pageViewsTable');
+    if (data.views && data.views.length > 0) {
+      table.innerHTML = data.views.map(view => `
+        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+          <td style="padding: 0.8rem;">${friendlyPage(view.page)}</td>
+          <td style="padding: 0.8rem; font-size: 0.9em;">${new Date(view.timestamp).toLocaleString()}</td>
+          <td style="padding: 0.8rem;">
+            <div style="font-size: 0.9em;">
+              <div>🌍 ${view.city}, ${view.country}</div>
+              <div style="opacity: 0.6; font-size: 0.85em;">${view.ip}</div>
+            </div>
+          </td>
+          <td style="padding: 0.8rem;">
+            <div style="font-size: 0.9em;">
+              <div>${view.device || 'Unknown'}</div>
+              <div style="opacity: 0.7; font-size: 0.85em;">${view.browser || 'Unknown'} • ${view.os || 'Unknown'}</div>
+            </div>
+          </td>
+          <td style="padding: 0.8rem; font-size: 0.85em; opacity: 0.8; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${view.referrer}">${view.referrer}</td>
+        </tr>
+      `).join('');
+    } else {
+      table.innerHTML = '<tr><td colspan="5" style="padding: 1rem; text-align: center; opacity: 0.7;">No page views yet</td></tr>';
+    }
+    console.log('✅ Page views table rendered:', data.views ? data.views.length : 0);
+  } catch (error) {
+    console.error('Error loading page views table:', error);
+    document.getElementById('pageViewsTable').innerHTML = 
+      '<tr><td colspan="5" style="padding: 1rem; text-align: center; color: #e74c3c;">Error loading data</td></tr>';
+  }
+}
+
+async function loadDonationsTable() {
+  console.log('💳 Loading donations table...');
+  try {
+    const response = await fetch('/.netlify/functions/get-donations-details');
+    const data = await response.json();
+    
+    const now = new Date().toLocaleTimeString();
+    updateAllRefreshTimestamps(now);
+    
+    const table = document.getElementById('donationsTable');
+    if (data.donations && data.donations.length > 0) {
+      table.innerHTML = data.donations.map(donation => `
+        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+          <td style="padding: 0.8rem; font-weight: 600;">$${donation.amount.toFixed(2)}</td>
+          <td style="padding: 0.8rem;">${donation.email || 'Anonymous'}</td>
+          <td style="padding: 0.8rem;">${new Date(donation.timestamp).toLocaleString()}</td>
+          <td style="padding: 0.8rem;">
+            <span style="padding: 0.25rem 0.5rem; background: ${donation.status === 'completed' ? '#27ae60' : '#95a5a6'}; border-radius: 4px; font-size: 0.85em;">
+              ${donation.status}
+            </span>
+          </td>
+        </tr>
+      `).join('');
+    } else {
+      table.innerHTML = '<tr><td colspan="4" style="padding: 1rem; text-align: center; opacity: 0.7;">No donations yet</td></tr>';
+    }
+    console.log('✅ Donations table rendered:', data.donations ? data.donations.length : 0);
+  } catch (error) {
+    console.error('Error loading donations table:', error);
+    document.getElementById('donationsTable').innerHTML = 
+      '<tr><td colspan="4" style="padding: 1rem; text-align: center; color: #e74c3c;">Error loading data</td></tr>';
+  }
+}
+
+// Analytics Charts
+let deviceChart, browserChart, pagesChart, countriesChart, referrersChart;
+
+function updateAllRefreshTimestamps(nowText) {
+  const ids = [
+    'analyticsRefreshTime',
+    'pageViewsRefreshTime',
+    'donationsRefreshTime',
+    'techStackRefreshTime'
+  ];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = `Last updated: ${nowText}`;
+  });
+}
+
+async function loadAnalyticsCharts() {
+  try {
+    const response = await fetch('/.netlify/functions/get-page-views-details');
+    const data = await response.json();
+    
+    const now = new Date().toLocaleTimeString();
+    updateAllRefreshTimestamps(now);
+    
+    if (!data.views || data.views.length === 0) return;
+    
+    const views = data.views;
+    
+    // Device Distribution
+    const deviceCounts = {};
+    views.forEach(v => {
+      deviceCounts[v.device] = (deviceCounts[v.device] || 0) + 1;
+    });
+    
+    if (deviceChart) deviceChart.destroy();
+    deviceChart = new Chart(document.getElementById('deviceChart'), {
+      type: 'doughnut',
+      data: {
+        labels: Object.keys(deviceCounts),
+        datasets: [{
+          data: Object.values(deviceCounts),
+          backgroundColor: ['#3498db', '#e74c3c', '#f39c12', '#9b59b6'],
+          borderWidth: 2,
+          borderColor: '#1e3c72'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: { labels: { color: '#fff' } }
+        }
+      }
+    });
+    
+    // Browser Usage
+    const browserCounts = {};
+    views.forEach(v => {
+      browserCounts[v.browser] = (browserCounts[v.browser] || 0) + 1;
+    });
+    
+    if (browserChart) browserChart.destroy();
+    browserChart = new Chart(document.getElementById('browserChart'), {
+      type: 'pie',
+      data: {
+        labels: Object.keys(browserCounts),
+        datasets: [{
+          data: Object.values(browserCounts),
+          backgroundColor: ['#1abc9c', '#3498db', '#e67e22', '#e74c3c', '#9b59b6'],
+          borderWidth: 2,
+          borderColor: '#1e3c72'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: { labels: { color: '#fff' } }
+        }
+      }
+    });
+    
+    // Top Pages
+    const pageCounts = {};
+    views.forEach(v => {
+      const page = v.page || '/';
+      pageCounts[page] = (pageCounts[page] || 0) + 1;
+    });
+    const topPages = Object.entries(pageCounts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5);
+    
+    if (pagesChart) pagesChart.destroy();
+    pagesChart = new Chart(document.getElementById('pagesChart'), {
+      type: 'bar',
+      data: {
+        labels: topPages.map(p => p[0]),
+        datasets: [{
+          label: 'Views',
+          data: topPages.map(p => p[1]),
+          backgroundColor: '#3498db',
+          borderColor: '#2980b9',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        scales: {
+          y: { 
+            beginAtZero: true,
+            ticks: { color: '#fff' },
+            grid: { color: 'rgba(255,255,255,0.1)' }
+          },
+          x: { 
+            ticks: { color: '#fff' },
+            grid: { color: 'rgba(255,255,255,0.1)' }
+          }
+        },
+        plugins: {
+          legend: { labels: { color: '#fff' } }
+        }
+      }
+    });
+    
+    // Top Countries
+    const countryCounts = {};
+    views.forEach(v => {
+      if (v.country && v.country !== 'Unknown') {
+        countryCounts[v.country] = (countryCounts[v.country] || 0) + 1;
+      }
+    });
+    const topCountries = Object.entries(countryCounts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5);
+    
+    if (countriesChart) countriesChart.destroy();
+    countriesChart = new Chart(document.getElementById('countriesChart'), {
+      type: 'bar',
+      data: {
+        labels: topCountries.map(c => c[0]),
+        datasets: [{
+          label: 'Visitors',
+          data: topCountries.map(c => c[1]),
+          backgroundColor: '#1abc9c',
+          borderColor: '#16a085',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        indexAxis: 'y',
+        scales: {
+          x: { 
+            beginAtZero: true,
+            ticks: { color: '#fff' },
+            grid: { color: 'rgba(255,255,255,0.1)' }
+          },
+          y: { 
+            ticks: { color: '#fff' },
+            grid: { color: 'rgba(255,255,255,0.1)' }
+          }
+        },
+        plugins: {
+          legend: { labels: { color: '#fff' } }
+        }
+      }
+    });
+    
+    // Top Referrers
+    const referrerCounts = {};
+    views.forEach(v => {
+      const referrer = v.referrer || 'Direct';
+      referrerCounts[referrer] = (referrerCounts[referrer] || 0) + 1;
+    });
+    const topReferrers = Object.entries(referrerCounts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5);
+    
+    if (referrersChart) referrersChart.destroy();
+    referrersChart = new Chart(document.getElementById('referrersChart'), {
+      type: 'bar',
+      data: {
+        labels: topReferrers.map(r => r[0]),
+        datasets: [{
+          label: 'Traffic',
+          data: topReferrers.map(r => r[1]),
+          backgroundColor: '#f39c12',
+          borderColor: '#e67e22',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        scales: {
+          y: { 
+            beginAtZero: true,
+            ticks: { color: '#fff' },
+            grid: { color: 'rgba(255,255,255,0.1)' }
+          },
+          x: { 
+            ticks: { color: '#fff' },
+            grid: { color: 'rgba(255,255,255,0.1)' }
+          }
+        },
+        plugins: {
+          legend: { labels: { color: '#fff' } }
+        }
+      }
+    });
+    
+  } catch (error) {
+    console.error('Error loading analytics charts:', error);
+  }
+}
+
+// Export to CSV functions
+async function exportPageViews() {
+  try {
+    const response = await fetch('/.netlify/functions/get-page-views-details');
+    const data = await response.json();
+    
+    if (!data.views || data.views.length === 0) {
+      showToast('⚠️ No page views to export', '#e74c3c');
+      return;
+    }
+    
+    const csv = 'Page,Timestamp,IP Address,City,Country,Device,Browser,OS,Referrer\n' +
+      data.views.map(v => 
+        `"${v.page || '/'}", "${new Date(v.timestamp).toLocaleString()}","${v.ip}","${v.city}","${v.country}","${v.device}","${v.browser}","${v.os}","${v.referrer}"`
+      ).join('\n');
+    
+    downloadCSV(csv, `page-views-${new Date().toISOString().split('T')[0]}.csv`);
+    showToast('✅ Page views exported');
+  } catch (error) {
+    console.error('Export error:', error);
+    showToast('❌ Failed to export page views', '#e74c3c');
+  }
+}
+
+async function exportDonations() {
+  try {
+    const response = await fetch('/.netlify/functions/get-donations-details');
+    const data = await response.json();
+    
+    if (!data.donations || data.donations.length === 0) {
+      showToast('⚠️ No donations to export', '#e74c3c');
+      return;
+    }
+    
+    const csv = 'Amount,Email,Timestamp,Status\n' +
+      data.donations.map(d => 
+        `"$${d.amount.toFixed(2)}","${d.email || 'Anonymous'}","${new Date(d.timestamp).toLocaleString()}","${d.status}"`
+      ).join('\n');
+    
+    downloadCSV(csv, `donations-${new Date().toISOString().split('T')[0]}.csv`);
+    showToast('✅ Donations exported');
+  } catch (error) {
+    console.error('Export error:', error);
+    showToast('❌ Failed to export donations', '#e74c3c');
+  }
+}
+
+function downloadCSV(csv, filename) {
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  window.URL.revokeObjectURL(url);
+}
+
+async function deleteSubscriber(recordId, email) {
+  if (!confirm(`Are you sure you want to delete ${email}?`)) return;
+  
+  try {
+    const response = await fetch('/.netlify/functions/delete-subscriber', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        recordId: recordId,
+        tableName: 'Subscribers'
+      })
+    });
+    
+    const data = await response.json();
+    
+    if (data.success) {
+      showToast('✅ Subscriber deleted');
+      loadDashboardData();
+    } else {
+      throw new Error(data.error);
+    }
+  } catch (error) {
+    console.error('Delete error:', error);
+    showToast('❌ Failed to delete subscriber', '#e74c3c');
+  }
+}
+
+async function updateSubscriberStatus(recordId, email, status) {
+  const actionText = status === 'Active' ? 'force confirm' : 'mark as pending';
+  if (!confirm(`Are you sure you want to ${actionText} ${email}?`)) return;
+
+  try {
+    const response = await fetch('/.netlify/functions/update-subscriber', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: recordId, status })
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      showToast(`✅ ${email} updated to ${status}`);
+      loadDashboardData();
+    } else {
+      throw new Error(data.error || 'Update failed');
+    }
+  } catch (error) {
+    console.error('Update error:', error);
+    showToast('❌ Failed to update subscriber', '#e74c3c');
+  }
+}
+
+async function deleteUnsubscribed(recordId, email) {
+  if (!confirm(`Remove ${email} from unsubscribed list?`)) return;
+  
+  try {
+    const response = await fetch('/.netlify/functions/delete-subscriber', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        recordId: recordId,
+        tableName: 'Unsubscribed'
+      })
+    });
+    
+    const data = await response.json();
+    
+    if (data.success) {
+      showToast('✅ Removed from list');
+      loadDashboardData();
+    } else {
+      throw new Error(data.error);
+    }
+  } catch (error) {
+    console.error('Delete error:', error);
+    showToast('❌ Failed to remove from list', '#e74c3c');
+  }
+}
+
+function getFilteredSubscribers() {
+  const list = window.__subscribers || [];
+  const term = (document.getElementById('subscriberSearch')?.value || '').toLowerCase();
+  const statusFilter = document.getElementById('subscriberStatusFilter')?.value || 'all';
+  const domainFilter = (document.getElementById('subscriberDomainFilter')?.value || '').toLowerCase();
+
+  return list.filter(s => {
+    const matchesTerm = !term || (s.email && s.email.toLowerCase().includes(term));
+    const matchesStatus = statusFilter === 'all' || (s.status || 'Active') === statusFilter;
+    const matchesDomain = !domainFilter || (s.email && s.email.toLowerCase().endsWith(domainFilter));
+    return matchesTerm && matchesStatus && matchesDomain;
+  });
+}
+
+function renderSubscribersWithFilters() {
+  const listElement = document.getElementById('subscriberList');
+  const subscribers = getFilteredSubscribers();
+
+  if (!listElement) return;
+  if (subscribers.length === 0) {
+    listElement.innerHTML = '<li class="empty-state">No subscribers yet</li>';
+    document.getElementById('bulkActionsBar').style.display = 'none';
+    return;
+  }
+
+  listElement.innerHTML = subscribers.map((item) => {
+    const status = item.status || 'Active';
+    const statusBadge = status === 'Active' 
+      ? '<span style="background: #1abc9c; color: white; padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600; margin-left: 0.5rem;">✓ Active</span>'
+      : '<span style="background: #f39c12; color: white; padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600; margin-left: 0.5rem;">⏳ Pending</span>';
+    const opacity = status === 'Pending' ? 'opacity: 0.6;' : '';
+    const actionButtons = status === 'Active'
+      ? `<button class="btn-secondary" onclick="updateSubscriberStatus('${item.id}', '${item.email}', 'Pending')">⏳ Mark Pending</button>`
+      : `<button class="btn-secondary" onclick="updateSubscriberStatus('${item.id}', '${item.email}', 'Active')">✅ Force Confirm</button>`;
+    
+    const lastResent = item['Last Resent'] ? new Date(item['Last Resent']).toLocaleString() : 'Never';
+    
+    return `
+      <li class="subscriber-item" style="${opacity}; display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; justify-content: space-between;">
+        <div style="flex: 1; min-width: 200px;">
+          <label style="display:flex; align-items:center; gap:0.5rem;">
+            <input type="checkbox" class="subscriber-select" value="${item.id}" onchange="toggleBulkBar()">
+            <span style="cursor: pointer; color: #4a56e2; text-decoration: underline;" onclick="openSubscriberTimeline('${item.email}')">📧 ${item.email}</span>${statusBadge}
+          </label>
+          <div style="font-size: 0.8rem; opacity: 0.6; margin-left: 1.5rem;">Last resent: ${lastResent}</div>
+        </div>
+        <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+          <button class="btn-secondary" onclick="resendConfirmation('${item.id}', '${item.email}')">📬 Resend</button>
+          ${actionButtons}
+          <button class="btn-delete" onclick="deleteSubscriber('${item.id}', '${item.email}')">🗑️ Delete</button>
+        </div>
+      </li>
+    `;
+  }).join('');
+}
+
+function toggleBulkBar() {
+  const anyChecked = Array.from(document.querySelectorAll('.subscriber-select')).some(cb => cb.checked);
+  document.getElementById('bulkActionsBar').style.display = anyChecked ? 'flex' : 'none';
+}
+
+function clearSubscriberFilters() {
+  const search = document.getElementById('subscriberSearch');
+  const status = document.getElementById('subscriberStatusFilter');
+  const domain = document.getElementById('subscriberDomainFilter');
+  if (search) search.value = '';
+  if (status) status.value = 'all';
+  if (domain) domain.value = '';
+  renderSubscribersWithFilters();
+}
+
+function getSelectedSubscriberIds() {
+  return Array.from(document.querySelectorAll('.subscriber-select'))
+    .filter(cb => cb.checked)
+    .map(cb => cb.value);
+}
+
+async function bulkUpdateStatus(status) {
+  const ids = getSelectedSubscriberIds();
+  if (ids.length === 0) return;
+  if (!confirm(`Update ${ids.length} subscriber(s) to ${status}?`)) return;
+  for (const id of ids) {
+    await updateSubscriberStatus(id, '(bulk)', status);
+  }
+  renderSubscribersWithFilters();
+  toggleBulkBar();
+}
+
+async function bulkDeleteSubscribers() {
+  const ids = getSelectedSubscriberIds();
+  if (ids.length === 0) return;
+  if (!confirm(`Delete ${ids.length} subscriber(s)?`)) return;
+  for (const id of ids) {
+    await deleteSubscriber(id, '(bulk)');
+  }
+  renderSubscribersWithFilters();
+  toggleBulkBar();
+}
+
+async function resendConfirmation(id, email) {
+  try {
+    const res = await fetch('/.netlify/functions/resend-confirmation', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, email })
+    });
+    
+    const data = await res.json();
+    
+    if (res.status === 429) {
+      showToast(`⏳ Wait ${data.minutesRemaining} more minute(s) before resending`, '#f39c12');
+      return;
+    }
+    
+    if (!res.ok) {
+      throw new Error(data.error || 'Resend failed');
+    }
+    showToast('✅ Confirmation resent');
+    loadDashboardData();
+  } catch (err) {
+    console.error('Resend error:', err);
+    showToast(`❌ ${err.message || 'Failed to resend'}`, '#e74c3c');
+  }
+}
+
+async function bulkResendConfirmations() {
+  const ids = getSelectedSubscriberIds();
+  if (ids.length === 0) return;
+  if (!confirm(`Resend confirmation to ${ids.length} subscriber(s)?`)) return;
+  for (const id of ids) {
+    const sub = (window.__subscribers || []).find(s => s.id === id);
+    if (sub) await resendConfirmation(id, sub.email);
+  }
+  toggleBulkBar();
+}
+
+async function exportSubscribers() {
+  try {
+    const response = await fetch('/.netlify/functions/get-subscribers');
+    const data = await response.json();
+    const subscribers = data.subscribers || [];
+    
+    if (subscribers.length === 0) {
+      showToast('⚠️ No subscribers to export', '#e74c3c');
+      return;
+    }
+    
+    const csvContent = 'Email,Date\n' + subscribers.map(s => `${s.email},${s.date || 'N/A'}`).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `subscribers_${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    
+    showToast('✅ Subscribers exported');
+  } catch (error) {
+    console.error('Export error:', error);
+    showToast('❌ Failed to export subscribers', '#e74c3c');
+  }
+}
+
+function clearAllData() {
+  showToast('⚠️ Clear all data must be done in Airtable', '#e74c3c');
+}
+
+async function loadActivityLog() {
+  console.log('📜 Loading activity log...');
+  try {
+    const response = await fetch('/.netlify/functions/get-activity-log');
+    const data = await response.json();
+    
+    const now = new Date().toLocaleTimeString();
+    updateAllRefreshTimestamps(now);
+    
+    const list = document.getElementById('activityLogList');
+    if (!list) return;
+    
+    const items = data.items || [];
+    if (items.length === 0) {
+      list.innerHTML = '<p style="opacity: 0.7; text-align: center;">No activities yet</p>';
+      return;
+    }
+    
+    list.innerHTML = items.map(item => `
+      <div style="padding: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: start;">
+        <div style="flex: 1;">
+          <div style="font-weight: 600; margin-bottom: 0.3rem;">📝 ${item.type}</div>
+          <div style="font-size: 0.85rem; opacity: 0.7;">Email: ${item.email || 'N/A'}</div>
+          ${item.adminName ? `<div style="font-size: 0.85rem; opacity: 0.7;">👤 Admin: ${item.adminName} (${item.adminEmail})</div>` : ''}
+          ${item.adminIp ? `<div style="font-size: 0.85rem; opacity: 0.7;">🌐 IP: ${item.adminIp}</div>` : ''}
+          ${item.note ? `<div style="font-size: 0.85rem; opacity: 0.7;">Note: ${item.note}</div>` : ''}
+          <div style="font-size: 0.75rem; opacity: 0.5; margin-top: 0.3rem;">${new Date(item.timestamp).toLocaleString()}</div>
+        </div>
+      </div>
+    `).join('');
+    console.log('✅ Activity log rendered:', items.length);
+  } catch (error) {
+    console.error('Error loading activity log:', error);
+  }
+}
+
+async function loadRetryQueue() {
+  console.log('📮 Loading retry queue...');
+  try {
+    const response = await fetch('/.netlify/functions/get-retry-queue');
+    const data = await response.json();
+    
+    const table = document.getElementById('retryQueueTable');
+    if (!table) return;
+    
+    const queue = data.queue || [];
+    if (queue.length === 0) {
+      table.innerHTML = '<tr><td colspan="4" style="padding: 1rem; text-align: center; opacity: 0.7;">No failed emails</td></tr>';
+      return;
+    }
+    
+    table.innerHTML = queue.map(item => `
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <td style="padding: 0.8rem; font-size: 0.9em;">${item.email}</td>
+        <td style="padding: 0.8rem; font-size: 0.85em; opacity: 0.8; max-width: 300px; overflow: hidden; text-overflow: ellipsis;">${(item.error || 'Unknown error').slice(0, 100)}</td>
+        <td style="padding: 0.8rem; text-align: center;">${item.retries || 0}</td>
+        <td style="padding: 0.8rem; text-align: center;">
+          <button class="btn-secondary" onclick="retryFailedEmail('${item.id}')">🔄 Retry</button>
+        </td>
+      </tr>
+    `).join('');
+    console.log('✅ Retry queue rendered:', queue.length);
+  } catch (error) {
+    console.error('Error loading retry queue:', error);
+  }
+}
+
+async function loadUnsubscribeStats() {
+  console.log('📉 Loading unsubscribe stats...');
+  try {
+    const response = await fetch('/.netlify/functions/get-unsubscribe-stats');
+    const data = await response.json();
+    
+    const display = document.getElementById('unsubscribeStatsDisplay');
+    if (!display) return;
+    
+    const stats = data.stats || [];
+    const total = data.total || 0;
+    
+    if (total === 0) {
+      display.innerHTML = '<p style="opacity: 0.7;">No unsubscribes yet</p>';
+      return;
+    }
+    
+    display.innerHTML = stats.map(stat => `
+      <div style="background: rgba(255,255,255,0.08); padding: 1rem; border-radius: 10px; border-left: 3px solid #f39c12;">
+        <div style="font-weight: 600; margin-bottom: 0.3rem;">${stat.reason}</div>
+        <div style="font-size: 1.5rem; font-weight: bold; color: #f39c12;">${stat.count}</div>
+        <div style="font-size: 0.85rem; opacity: 0.7;">${((stat.count / total) * 100).toFixed(1)}% of ${total} total</div>
+      </div>
+    `).join('');
+    console.log('✅ Unsubscribe stats rendered:', stats.length);
+  } catch (error) {
+    console.error('Error loading unsubscribe stats:', error);
+  }
+}
+
+async function retryFailedEmail(queueId) {
+  if (!confirm('Retry this email?')) return;
+  try {
+    const res = await fetch('/.netlify/functions/retry-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: queueId })
+    });
+    if (res.ok) {
+      showToast('✅ Email queued for retry');
+      loadRetryQueue();
+    } else {
+      showToast('❌ Failed to retry', '#e74c3c');
+    }
+  } catch (err) {
+    console.error('Retry error:', err);
+    showToast('❌ Retry failed', '#e74c3c');
+  }
+}
+
+// ========== TECH STACK ==========
+async function loadTechStack() {
+  console.log('🛠️ Loading tech stack...');
+  const defaultSkills = [
+    { icon: '🔷', name: 'TypeScript', version: 'v5.3', updated: '2024-01' },
+    { icon: '⚛️', name: 'React', version: 'v18.2', updated: '2024-03' },
+    { icon: '🟢', name: 'Node.js', version: 'v20.0', updated: '2024-04' },
+    { icon: '🐍', name: 'Python', version: 'v3.12', updated: '2024-02' },
+    { icon: '🎨', name: 'CSS/SCSS', version: 'v3', updated: '2024-01' },
+    { icon: '🔥', name: 'Firebase', version: 'v10', updated: '2024-05' },
+    { icon: '🐳', name: 'Docker', version: 'v24', updated: '2024-03' },
+    { icon: '☁️', name: 'AWS', version: 'Latest', updated: '2024-05' },
+    { icon: '📦', name: 'MongoDB', version: 'v7', updated: '2024-04' },
+    { icon: '⚡', name: 'Next.js', version: 'v14', updated: '2024-05' }
+  ];
+  
+  try {
+    const response = await fetch('/.netlify/functions/db-get-tech-stack');
+    let techStack = defaultSkills;
+    if (response.ok) {
+      const data = await response.json();
+      if (data && data.length > 0) {
+        techStack = data;
+      }
+    }
+    
+    const now = new Date().toLocaleTimeString();
+    updateAllRefreshTimestamps(now);
+    
+    const display = document.getElementById('techStackDisplay');
+    display.innerHTML = techStack.map(skill => `
+      <div style="background: rgba(255,255,255,0.08); padding: 1.2rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">${skill.icon}</div>
+        <div style="font-weight: 600; font-size: 1.1rem;">${skill.name}</div>
+        ${skill.version ? `<div style="font-size: 0.85rem; opacity: 0.7; margin-top: 0.3rem;">${skill.version}</div>` : ''}
+        ${skill.updated ? `<div style="font-size: 0.75rem; opacity: 0.5; margin-top: 0.2rem;">Updated: ${skill.updated}</div>` : ''}
+      </div>
+    `).join('');
+    console.log('✅ Tech stack rendered:', techStack.length);
+  } catch (error) {
+    console.error('Error loading tech stack:', error);
+  }
+}
+
+async function refreshAnalytics(btn) {
+  try {
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = '⏳ Refreshing...';
+    }
+
+    await loadAnalyticsCharts();
+
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = '🔄 Refresh';
+    }
+
+    showToast('✅ Analytics refreshed');
+  } catch (err) {
+    console.error('Error refreshing analytics:', err);
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = '🔄 Refresh';
+    }
+    showToast('❌ Failed to refresh analytics', '#e74c3c');
+  }
+}
+
+function openQuickAddSubscriber() {
+  const email = prompt('Enter subscriber email:');
+  if (!email || !email.includes('@')) {
+    if (email !== null) showToast('⚠️ Invalid email address', '#e74c3c');
+    return;
+  }
+  
+  // Use existing newsletter subscription function
+  fetch('/.netlify/functions/newsletter-subscribe', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      showToast('✅ Subscriber added!', '#1abc9c');
+      loadDashboardData();
+    } else {
+      showToast('❌ ' + (data.error || 'Failed to add subscriber'), '#e74c3c');
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    showToast('❌ Failed to add subscriber', '#e74c3c');
+  });
+}
+
+function loadNotificationSettings() {
+  const notifySubscriber = localStorage.getItem('notifyNewSubscriber') === 'true';
+  const notifyDonation = localStorage.getItem('notifyNewDonation') === 'true';
+  
+  const subscriberCheckbox = document.getElementById('notifyNewSubscriber');
+  const donationCheckbox = document.getElementById('notifyNewDonation');
+  
+  if (subscriberCheckbox) subscriberCheckbox.checked = notifySubscriber;
+  if (donationCheckbox) donationCheckbox.checked = notifyDonation;
+}
+
+function saveNotificationSettings() {
+  const notifySubscriber = document.getElementById('notifyNewSubscriber').checked;
+  const notifyDonation = document.getElementById('notifyNewDonation').checked;
+  
+  localStorage.setItem('notifyNewSubscriber', notifySubscriber);
+  localStorage.setItem('notifyNewDonation', notifyDonation);
+  
+  showToast('✅ Notification preferences saved', '#1abc9c');
+}
+
+async function backupAllData() {
+  try {
+    showToast('📦 Creating backup...', '#3498db');
+    
+    // Fetch all data
+    const [subsRes, viewsRes, donationsRes] = await Promise.all([
+      fetch('/.netlify/functions/get-subscribers'),
+      fetch('/.netlify/functions/get-page-views-details'),
+      fetch('/.netlify/functions/get-donations-details')
+    ]);
+    
+    const subscribers = await subsRes.json();
+    const views = await viewsRes.json();
+    const donations = await donationsRes.json();
+    
+    const backup = {
+      timestamp: new Date().toISOString(),
+      subscribers: subscribers.subscribers || [],
+      unsubscribed: subscribers.unsubscribed || [],
+      pageViews: views.views || [],
+      donations: donations.donations || []
+    };
+    
+    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `backup-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+    
+    showToast('✅ Backup created successfully!', '#1abc9c');
+  } catch (error) {
+    console.error('Backup error:', error);
+    showToast('❌ Failed to create backup', '#e74c3c');
+  }
+}
+
+function clearAllData() {
+  showToast('⚠️ Clear all data must be done in Airtable', '#e74c3c');
+}
+
+// ========== TECH STACK EDITOR ==========
+let currentSkills = [];
+
+async function openTechStackEditor() {
+  const defaultSkills = [
+    { icon: '🔷', name: 'TypeScript' },
+    { icon: '⚛️', name: 'React' },
+    { icon: '🟢', name: 'Node.js' },
+    { icon: '🐍', name: 'Python' },
+    { icon: '🎨', name: 'CSS/SCSS' },
+    { icon: '🔥', name: 'Firebase' },
+    { icon: '🐳', name: 'Docker' },
+    { icon: '☁️', name: 'AWS' },
+    { icon: '📦', name: 'MongoDB' },
+    { icon: '⚡', name: 'Next.js' }
+  ];
+  
+  try {
+    const response = await fetch('/.netlify/functions/db-get-tech-stack');
+    if (response.ok) {
+      const techStack = await response.json();
+      currentSkills = techStack.length > 0 ? techStack : defaultSkills;
+    } else {
+      currentSkills = defaultSkills;
+    }
+  } catch (error) {
+    console.error('Error loading tech stack:', error);
+    currentSkills = defaultSkills;
+  }
+  
+  renderSkillsList();
+  document.getElementById('techStackModal').style.display = 'flex';
+}
+
+function closeTechStackEditor() {
+  document.getElementById('techStackModal').style.display = 'none';
+  document.getElementById('newSkillIcon').value = '';
+  document.getElementById('newSkillName').value = '';
+}
+
+function renderSkillsList() {
+  const listElement = document.getElementById('skillsList');
+  
+  if (currentSkills.length === 0) {
+    listElement.innerHTML = '<p style="text-align: center; opacity: 0.7;">No skills added yet</p>';
+  } else {
+    listElement.innerHTML = currentSkills.map((skill, index) => `
+      <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.8rem; background: rgba(255,255,255,0.05); border-radius: 10px; margin-bottom: 0.5rem;">
+        <span style="font-size: 1.5rem;">${skill.icon}</span>
+        <span style="flex: 1;">${skill.name}</span>
+        <button onclick="removeSkill(${index})" style="padding: 0.4rem 0.8rem; border: 1px solid rgba(231, 76, 60, 0.5); border-radius: 8px; background: rgba(231, 76, 60, 0.2); color: #fff; cursor: pointer; font-size: 0.9rem;">🗑️</button>
+      </div>
+    `).join('');
+  }
+}
+
+function addSkill() {
+  const icon = document.getElementById('newSkillIcon').value.trim();
+  const name = document.getElementById('newSkillName').value.trim();
+  
+  if (!icon || !name) {
+    showToast('⚠️ Please fill both icon and name', '#e74c3c');
+    return;
+  }
+  
+  currentSkills.push({ icon, name });
+  renderSkillsList();
+  
+  document.getElementById('newSkillIcon').value = '';
+  document.getElementById('newSkillName').value = '';
+  document.getElementById('newSkillName').focus();
+}
+
+function removeSkill(index) {
+  currentSkills.splice(index, 1);
+  renderSkillsList();
+}
+
+async function saveTechStack() {
+  try {
+    const response = await fetch('/.netlify/functions/db-save-tech-stack', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ skills: currentSkills })
+    });
+    
+    if (response.ok) {
+      showToast('✅ Tech stack updated!', '#1abc9c');
+      closeTechStackEditor();
+    } else {
+      throw new Error('Failed to save');
+    }
+  } catch (error) {
+    console.error('Error saving tech stack:', error);
+    showToast('❌ Failed to save tech stack', '#e74c3c');
+  }
+}
+
+async function openNewsletterComposer() {
+  try {
+    const response = await fetch('/.netlify/functions/get-subscribers');
+    const data = await response.json();
+    const allSubscribers = data.subscribers || [];
+    const activeSubscribers = allSubscribers.filter(s => s.status === 'Active');
+    const pendingCount = allSubscribers.length - activeSubscribers.length;
+    
+    if (activeSubscribers.length === 0) {
+      const message = pendingCount > 0
+        ? `⚠️ No active subscribers yet (${pendingCount} pending confirmation)`
+        : '⚠️ No subscribers to send to';
+      showToast(message, '#e74c3c');
+      return;
+    }
+    
+    const countText = pendingCount > 0
+      ? `${activeSubscribers.length} (${pendingCount} pending)`
+      : `${activeSubscribers.length}`;
+    
+    document.getElementById('recipientCount').textContent = countText;
+    document.getElementById('newsletterModal').style.display = 'flex';
+  } catch (error) {
+    console.error('Error fetching subscribers:', error);
+    showToast('❌ Failed to load subscribers', '#e74c3c');
+  }
+}
+
+function closeNewsletterComposer() {
+  document.getElementById('newsletterModal').style.display = 'none';
+  document.getElementById('newsletterSubject').value = '';
+  document.getElementById('newsletterMessage').value = '';
+}
+
+async function sendNewsletter() {
+  const subject = document.getElementById('newsletterSubject').value.trim();
+  const message = document.getElementById('newsletterMessage').value.trim();
+  
+  if (!subject || !message) {
+    showToast('⚠️ Please fill in both subject and message', '#e74c3c');
+    return;
+  }
+  
+  const btn = document.getElementById('sendNewsletterBtn');
+  btn.disabled = true;
+  btn.textContent = '📤 Loading subscribers...';
+  
+  try {
+    // Fetch subscribers from Airtable
+    const subscribersResponse = await fetch('/.netlify/functions/get-subscribers');
+    const subscribersData = await subscribersResponse.json();
+    const allSubscribers = subscribersData.subscribers || [];
+    
+    // Filter only Active subscribers (exclude Pending)
+    const subscribers = allSubscribers.filter(s => s.status === 'Active');
+    const pendingCount = allSubscribers.length - subscribers.length;
+    
+    if (subscribers.length === 0) {
+      const message = pendingCount > 0 
+        ? `⚠️ No active subscribers (${pendingCount} pending confirmation)`
+        : '⚠️ No subscribers to send to';
+      showToast(message, '#e74c3c');
+      btn.disabled = false;
+      btn.textContent = '📨 Send to All';
+      return;
+    }
+    
+    const confirmMessage = pendingCount > 0
+      ? `Send newsletter to ${subscribers.length} active subscriber(s)?\n(${pendingCount} pending confirmation will be skipped)`
+      : `Send newsletter to ${subscribers.length} subscriber(s)?`;
+    
+    if (!confirm(confirmMessage)) {
+      btn.disabled = false;
+      btn.textContent = '📨 Send to All';
+      return;
+    }
+    
+    btn.textContent = '📤 Sending...';
+    
+    const token = localStorage.getItem('adminToken');
+    const response = await fetch('/.netlify/functions/send-newsletter', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        subject: subject,
+        message: message,
+        subscribers: subscribers.map(s => s.email)
+      })
+    });
+    
+    const data = await response.json();
+    
+    if (data.success) {
+      showToast(`✅ ${data.message}`, '#1abc9c');
+      closeNewsletterComposer();
+    } else {
+      throw new Error(data.error || 'Failed to send newsletter');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    showToast(`❌ ${error.message}`, '#e74c3c');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '📨 Send to All';
+  }
+}
+
+function togglePageViews() {
+  const details = document.getElementById('pageViewsDetails');
+  
+  if (details.style.display === 'none') {
+    details.style.display = 'block';
+    loadPageViewsDetails();
+  } else {
+    details.style.display = 'none';
+  }
+}
+
+function toggleDonations() {
+  const details = document.getElementById('donationsDetails');
+  
+  if (details.style.display === 'none') {
+    details.style.display = 'block';
+    loadDonationsDetails();
+  } else {
+    details.style.display = 'none';
+  }
+}
+
+async function loadPageViewsDetails() {
+  try {
+    const response = await fetch('/.netlify/functions/get-page-views-details');
+    const data = await response.json();
+    const table = document.getElementById('pageViewsTable');
+    
+    if (data.views && data.views.length > 0) {
+      table.innerHTML = data.views.map(view => `
+        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+          <td style="padding: 0.8rem;">${view.page}</td>
+          <td style="padding: 0.8rem;">${new Date(view.timestamp).toLocaleString()}</td>
+          <td style="padding: 0.8rem; font-family: monospace;">${view.ip}</td>
+        </tr>
+      `).join('');
+    } else {
+      table.innerHTML = '<tr><td colspan="3" style="padding: 1rem; text-align: center; opacity: 0.7;">No page views yet</td></tr>';
+    }
+  } catch (error) {
+    console.error('Error loading page views details:', error);
+    document.getElementById('pageViewsTable').innerHTML = '<tr><td colspan="3" style="padding: 1rem; text-align: center; color: #e74c3c;">Error loading data</td></tr>';
+  }
+}
+
+async function loadDonationsDetails() {
+  try {
+    const response = await fetch('/.netlify/functions/get-donations-details');
+    const data = await response.json();
+    const table = document.getElementById('donationsTable');
+    
+    if (data.donations && data.donations.length > 0) {
+      table.innerHTML = data.donations.map(donation => `
+        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+          <td style="padding: 0.8rem; font-weight: 600; color: #2ecc71;">$${donation.amount.toFixed(2)}</td>
+          <td style="padding: 0.8rem;">${donation.email}</td>
+          <td style="padding: 0.8rem;">${new Date(donation.timestamp).toLocaleString()}</td>
+          <td style="padding: 0.8rem;"><span style="padding: 0.2rem 0.6rem; background: ${donation.status === 'completed' ? '#2ecc71' : '#e74c3c'}; border-radius: 4px; font-size: 0.85rem;">${donation.status}</span></td>
+        </tr>
+      `).join('');
+    } else {
+      table.innerHTML = '<tr><td colspan="4" style="padding: 1rem; text-align: center; opacity: 0.7;">No donations yet</td></tr>';
+    }
+  } catch (error) {
+    console.error('Error loading donations details:', error);
+    document.getElementById('donationsTable').innerHTML = '<tr><td colspan="4" style="padding: 1rem; text-align: center; color: #e74c3c;">Error loading data</td></tr>';
+  }
+}
+
+async function loadAdminUsers() {
+  try {
+    const response = await fetch('/.netlify/functions/get-admin-users');
+    const data = await response.json();
+    const list = document.getElementById('adminUsersList');
+    
+    if (!list) return;
+    
+    const users = data.users || [];
+    if (users.length === 0) {
+      list.innerHTML = '<tr><td colspan="6" style="padding: 1rem; text-align: center; opacity: 0.7;">No admins configured yet</td></tr>';
+      return;
+    }
+    
+    list.innerHTML = users.map(user => `
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <td style="padding: 0.8rem;">${user.name}</td>
+        <td style="padding: 0.8rem; font-family: monospace; font-size: 0.9rem;">${user.email}</td>
+        <td style="padding: 0.8rem;">
+          <span style="background: rgba(74, 86, 226, 0.2); padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.85rem;">${user.role}</span>
+        </td>
+        <td style="padding: 0.8rem;">
+          <span style="background: ${user.status === 'Active' ? 'rgba(26, 188, 156, 0.2)' : 'rgba(243, 156, 18, 0.2)'}; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.85rem;">${user.status}</span>
+        </td>
+        <td style="padding: 0.8rem; font-size: 0.85rem; opacity: 0.7;">${user.lastAccess ? new Date(user.lastAccess).toLocaleDateString() : 'Never'}</td>
+        <td style="padding: 0.8rem; text-align: center; display: flex; gap: 0.5rem; justify-content: center;">
+          <button class="btn-delete" onclick="editAdminUser('${user.id}', '${user.name}', '${user.email}', '${user.role}')" title="Edit">✏️</button>
+          <button class="btn-delete" onclick="removeAdminUser('${user.id}')">🗑️</button>
+        </td>
+      </tr>
+    `).join('');
+  } catch (error) {
+    console.error('Error loading admin users:', error);
+  }
+}
+
+async function addAdminUser() {
+  const email = document.getElementById('adminEmail')?.value?.trim();
+  const name = document.getElementById('adminName')?.value?.trim();
+  const role = document.getElementById('adminRole')?.value || 'Editor';
+  
+  if (!email || !name) {
+    showToast('❌ Email and name required', '#e74c3c');
+    return;
+  }
+  
+  try {
+    const res = await fetch('/.netlify/functions/add-admin-user', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, name, role })
+    });
+    
+    const data = await res.json();
+    
+    if (data.success) {
+      showToast(`✅ Admin added successfully`);
+      document.getElementById('adminEmail').value = '';
+      document.getElementById('adminName').value = '';
+      document.getElementById('adminRole').value = 'Editor';
+      loadAdminUsers();
+    } else {
+      throw new Error(data.error);
+    }
+  } catch (error) {
+    console.error('Add admin error:', error);
+    showToast('❌ Failed to add admin', '#e74c3c');
+  }
+}
+
+async function removeAdminUser(id) {
+  if (!confirm('Remove this admin?')) return;
+  try {
+    const res = await fetch('/.netlify/functions/remove-admin-user', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id })
+    });
+    
+    const data = await res.json();
+    
+    if (data.success) {
+      showToast('✅ Admin removed');
+      loadAdminUsers();
+    } else {
+      throw new Error(data.error);
+    }
+  } catch (error) {
+    console.error('Remove admin error:', error);
+    showToast('❌ Failed to remove admin', '#e74c3c');
+  }
+}
+
+// Global variable to store current edit role data
+let currentEditRoleData = {};
+
+async function editAdminUser(id, currentName, currentEmail, currentRole) {
+  // Store the data for later use
+  currentEditRoleData = { id, currentName, currentEmail, currentRole };
+  
+  // Show the modal with flex display
+  const modal = document.getElementById('editRoleModal');
+  modal.style.display = 'flex';
+  document.getElementById('editRoleAdminName').textContent = `Editing ${currentName} (Current role: ${currentRole})`;
+}
+
+function closeEditRoleModal() {
+  document.getElementById('editRoleModal').style.display = 'none';
+  currentEditRoleData = {};
+}
+
+function selectNewRole(role) {
+  // Update button styles
+  document.querySelectorAll('[data-role]').forEach(btn => {
+    btn.style.background = btn.getAttribute('data-role') === role 
+      ? 'rgba(52, 152, 219, 0.25)' 
+      : (btn.getAttribute('data-role') === 'Owner' ? 'rgba(52, 152, 219, 0.05)' : 
+         btn.getAttribute('data-role') === 'Editor' ? 'rgba(155, 89, 182, 0.05)' : 
+         'rgba(46, 204, 113, 0.05)');
+    btn.style.borderColor = btn.getAttribute('data-role') === role 
+      ? 'rgba(52, 152, 219, 0.8)' 
+      : (btn.getAttribute('data-role') === 'Owner' ? 'rgba(52, 152, 219, 0.3)' : 
+         btn.getAttribute('data-role') === 'Editor' ? 'rgba(155, 89, 182, 0.3)' : 
+         'rgba(46, 204, 113, 0.3)');
+  });
+  currentEditRoleData.selectedRole = role;
+}
+
+async function confirmEditRole() {
+  if (!currentEditRoleData.selectedRole) {
+    showToast('⚠️ Please select a role', '#e74c3c');
+    return;
+  }
+  
+  const { id, selectedRole } = currentEditRoleData;
+  closeEditRoleModal();
+  
+  try {
+    const res = await fetch('/.netlify/functions/update-admin-user', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, role: selectedRole })
+    });
+    
+    const data = await res.json();
+    
+    if (data.success) {
+      showToast(`✅ Role updated to ${selectedRole}`);
+      loadAdminUsers();
+    } else {
+      showToast(`❌ Failed to update role: ${data.error}`, '#e74c3c');
+    }
+  } catch (error) {
+    console.error('Edit role error:', error);
+    showToast('❌ Failed to update role', '#e74c3c');
+  }
+}
+
+function logout() {
+  localStorage.removeItem('adminToken');
+  showToast('✅ Logged out successfully');
+  setTimeout(() => {
+    window.location.href = '/';
+  }, 1000);
+}
+
+function showTab(tabName) {
+  console.log('🔄 Switching to tab:', tabName);
+  
+  // Hide all tabs
+  const tabs = document.querySelectorAll('.tab-content');
+  console.log('Found tabs:', tabs.length);
+  tabs.forEach(t => t.style.display = 'none');
+  
+  // Show selected tab
+  const tab = document.getElementById(`tab-${tabName}`);
+  console.log('Target tab element:', tab ? 'found' : 'NOT FOUND');
+  if (tab) tab.style.display = 'block';
+  
+  // Update button active state
+  const tabBtns = document.querySelectorAll('.tab-btn');
+  tabBtns.forEach(btn => {
+    btn.classList.remove('active');
+    // Check if this button is for the active tab
+    const btnTab = btn.getAttribute('onclick')?.match(/showTab\('([^']+)'\)/)?.[1];
+    if (btnTab === tabName) {
+      btn.classList.add('active');
+    }
+  });
+
+  // Load data for each tab when shown
+  console.log('Loading data for tab:', tabName);
+  try {
+    if (tabName === 'analytics') {
+      loadAnalyticsCharts();
+    } else if (tabName === 'subscribers') {
+      loadSubscribersTab();
+    } else if (tabName === 'pageviews') {
+      loadPageViewsTable();
+    } else if (tabName === 'donations') {
+      loadDonationsTable();
+    } else if (tabName === 'activity') {
+      loadActivityLog();
+      loadRetryQueue();
+      loadUnsubscribeStats();
+    } else if (tabName === 'techstack') {
+      loadTechStack();
+    } else if (tabName === 'settings') {
+      loadAdminUsers();
+    }
+  } catch (e) {
+    console.error('Failed to load data for tab:', tabName, e);
+  }
+  
+  console.log('✅ Tab switch complete');
+}
+
+function showToast(message, color = '#1abc9c') {
+  const toast = document.createElement('div');
+  toast.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: ${color};
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    z-index: 10000;
+    font-weight: 600;
+    animation: slideIn 0.3s ease-out;
+  `;
+  toast.textContent = message;
+  
+  document.body.appendChild(toast);
+  
+  setTimeout(() => {
+    toast.style.animation = 'slideOut 0.3s ease-out';
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
+
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes slideIn {
+    from { transform: translateX(400px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+  @keyframes slideOut {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(400px); opacity: 0; }
+  }
+`;
+document.head.appendChild(style);
+
+// Subscriber Timeline Drawer
+async function openSubscriberTimeline(email) {
+  const drawer = document.getElementById('timelineDrawer');
+  const backdrop = document.getElementById('timelineBackdrop');
+  const content = document.getElementById('timelineContent');
+  
+  if (!drawer) return;
+  
+  drawer.style.display = 'flex';
+  backdrop.style.display = 'block';
+  content.innerHTML = '<p style="padding: 1rem; text-align: center;">Loading timeline...</p>';
+  
+  try {
+    const res = await fetch(`/.netlify/functions/get-subscriber-timeline?email=${encodeURIComponent(email)}`);
+    const data = await res.json();
+    const events = data.timeline || [];
+    
+    let html = `
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1);">
+        <h3 style="margin: 0;">📋 ${email}</h3>
+        <button onclick="closeSubscriberTimeline()" style="background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer;">×</button>
+      </div>
+    `;
+    
+    if (events.length === 0) {
+      html += '<p style="opacity: 0.7;">No events recorded yet</p>';
+    } else {
+      html += '<div style="display: flex; flex-direction: column; gap: 0.5rem;">';
+      events.forEach(event => {
+        const iconMap = { 'Subscribed': '✉️', 'Confirmed': '✅', 'Email Sent': '📬', 'Resend': '🔄', 'Delete': '🗑️', 'Force Confirm': '⚡', 'Admin Action': '👤' };
+        const icon = iconMap[event.type] || '📌';
+        const date = new Date(event.timestamp).toLocaleString();
+        html += `
+          <div style="background: rgba(255,255,255,0.08); padding: 0.8rem; border-radius: 8px; border-left: 3px solid #4a56e2;">
+            <div style="font-weight: 600; margin-bottom: 0.2rem;">${icon} ${event.type}</div>
+            <div style="font-size: 0.85rem; opacity: 0.7; margin-bottom: 0.2rem;">${date}</div>
+            ${event.note ? `<div style="font-size: 0.85rem; opacity: 0.8;">Note: ${event.note}</div>` : ''}
+          </div>
+        `;
+      });
+      html += '</div>';
+    }
+    
+    content.innerHTML = html;
+  } catch (error) {
+    console.error('Error loading timeline:', error);
+    content.innerHTML = '<p style="color: #ff6b6b; padding: 1rem;">Error loading timeline</p>';
+  }
+}
+
+function closeSubscriberTimeline() {
+  const drawer = document.getElementById('timelineDrawer');
+  const backdrop = document.getElementById('timelineBackdrop');
+  if (drawer) drawer.style.display = 'none';
+  if (backdrop) backdrop.style.display = 'none';
+}
+</script>
+
+<!-- Subscriber Timeline Drawer Modal -->
+<div id="timelineBackdrop" onclick="closeSubscriberTimeline()" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9998; cursor: pointer;"></div>
+<div id="timelineDrawer" style="display: none; position: fixed; top: 0; right: 0; width: 400px; height: 100vh; background: #1e293b; overflow-y: auto; z-index: 9999; box-shadow: -2px 0 10px rgba(0,0,0,0.3);">
+  <div id="timelineContent" style="padding: 1.5rem;">
+    <!-- Content will be inserted here -->
+  </div>
+</div>
+
+</body>
+</html>
