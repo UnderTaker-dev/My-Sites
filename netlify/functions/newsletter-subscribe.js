@@ -177,28 +177,29 @@ exports.handler = async (event, context) => {
               body: {
                 contentType: 'HTML',
                 content: `
-                  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 15px;">
-                    <h1 style="font-size: 2.5rem; margin-bottom: 1rem;">👋 Almost There!</h1>
-                    <p style="font-size: 1.2rem; margin-bottom: 1rem;">Thanks for subscribing to my newsletter!</p>
-                    <p style="font-size: 1rem; line-height: 1.6; margin-bottom: 1.5rem;">
-                      Just one more step - please confirm your email address by clicking the button below:
-                    </p>
-                    <div style="text-align: center; margin: 2rem 0;">
-                      <a href="${confirmLink}" style="display: inline-block; padding: 1rem 2rem; background: white; color: #667eea; text-decoration: none; border-radius: 10px; font-weight: 600; font-size: 1.1rem;">
-                        ✅ Confirm Subscription
-                      </a>
+                  <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
+                    <div style="background: linear-gradient(135deg, #667eea, #764ba2); padding: 40px 30px; border-radius: 15px 15px 0 0;">
+                      <h1 style="font-size: 2.2rem; margin: 0 0 1rem 0; color: white;">👋 Almost There!</h1>
+                      <p style="font-size: 1.1rem; margin: 0; color: rgba(255,255,255,0.95);">Thanks for subscribing to Mathi4s Newsletter!</p>
                     </div>
-                    <div style="background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 10px; margin: 2rem 0; font-size: 0.9rem;">
-                      <p style="margin: 0;">Or copy and paste this link into your browser:</p>
-                      <p style="margin: 0.5rem 0 0 0; word-break: break-all;">${confirmLink}</p>
+                    <div style="padding: 40px 30px; background: white; color: #333;">
+                      <p style="font-size: 1.05rem; line-height: 1.6; margin: 0 0 1.5rem 0; color: #555;">
+                        Just one more step to complete your subscription. Please confirm your email address:
+                      </p>
+                      <div style="text-align: center; margin: 2rem 0;">
+                        <a href="${confirmLink}" style="display: inline-block; padding: 14px 32px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1.05rem; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);">
+                          ✅ Confirm My Subscription
+                        </a>
+                      </div>
                     </div>
-                    <hr style="border: none; border-top: 2px solid rgba(255,255,255,0.3); margin: 2rem 0;">
-                    <p style="font-size: 0.85rem; opacity: 0.8;">
-                      Didn't sign up? Just ignore this email - no action needed.
-                    </p>
-                    <p style="font-size: 0.85rem; opacity: 0.8;">
-                      This link will expire in 48 hours for security.
-                    </p>
+                    <div style="background: #f8f9fa; padding: 25px 30px; border-radius: 0 0 15px 15px;">
+                      <p style="font-size: 0.85rem; color: #6c757d; margin: 0 0 8px 0;">
+                        <strong>Didn't sign up?</strong> No worries - just ignore this email.
+                      </p>
+                      <p style="font-size: 0.85rem; color: #6c757d; margin: 0;">
+                        🔒 This link expires in 48 hours for security.
+                      </p>
+                    </div>
                   </div>
                 `
               },
