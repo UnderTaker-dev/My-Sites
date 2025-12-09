@@ -13,10 +13,10 @@ exports.handler = async (event, context) => {
     if (!token) {
       return {
         statusCode: 400,
-        headers: { 'Content-Type': 'text/html' },
+        headers: { 'Content-Type': 'text/html; charset=utf-8' },
         body: `
           <!DOCTYPE html>
-          <html><head><title>Invalid Link</title><style>
+          <html><head><meta charset="UTF-8"><title>Invalid Link</title><style>
             body { font-family: Arial; background: linear-gradient(135deg, #667eea, #764ba2); color: white; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
             .container { text-align: center; background: rgba(0,0,0,0.3); padding: 3rem; border-radius: 20px; max-width: 500px; }
             h1 { font-size: 2.5rem; margin-bottom: 1rem; }
@@ -42,10 +42,10 @@ exports.handler = async (event, context) => {
     if (records.length === 0) {
       return {
         statusCode: 404,
-        headers: { 'Content-Type': 'text/html' },
+        headers: { 'Content-Type': 'text/html; charset=utf-8' },
         body: `
           <!DOCTYPE html>
-          <html><head><title>Not Found</title><style>
+          <html><head><meta charset="UTF-8"><title>Not Found</title><style>
             body { font-family: Arial; background: linear-gradient(135deg, #667eea, #764ba2); color: white; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
             .container { text-align: center; background: rgba(0,0,0,0.3); padding: 3rem; border-radius: 20px; max-width: 500px; }
             h1 { font-size: 2.5rem; margin-bottom: 1rem; }
@@ -68,10 +68,10 @@ exports.handler = async (event, context) => {
     if (currentStatus === 'Active') {
       return {
         statusCode: 200,
-        headers: { 'Content-Type': 'text/html' },
+        headers: { 'Content-Type': 'text/html; charset=utf-8' },
         body: `
           <!DOCTYPE html>
-          <html><head><title>Already Confirmed</title><style>
+          <html><head><meta charset="UTF-8"><title>Already Confirmed</title><style>
             body { font-family: Arial; background: linear-gradient(135deg, #1abc9c, #16a085); color: white; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
             .container { text-align: center; background: rgba(0,0,0,0.3); padding: 3rem; border-radius: 20px; max-width: 500px; }
             h1 { font-size: 2.5rem; margin-bottom: 1rem; }
@@ -199,10 +199,10 @@ exports.handler = async (event, context) => {
     // Return success page
     return {
       statusCode: 200,
-      headers: { 'Content-Type': 'text/html' },
+      headers: { 'Content-Type': 'text/html; charset=utf-8' },
       body: `
         <!DOCTYPE html>
-        <html><head><title>Subscription Confirmed!</title><style>
+        <html><head><meta charset="UTF-8"><title>Subscription Confirmed!</title><style>
           body { font-family: Arial; background: linear-gradient(135deg, #1abc9c, #16a085); color: white; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; animation: fadeIn 0.5s; }
           @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
           .container { text-align: center; background: rgba(0,0,0,0.3); padding: 3rem; border-radius: 20px; max-width: 500px; }
@@ -229,10 +229,10 @@ exports.handler = async (event, context) => {
     console.error('Confirmation error:', error);
     return {
       statusCode: 500,
-      headers: { 'Content-Type': 'text/html' },
+      headers: { 'Content-Type': 'text/html; charset=utf-8' },
       body: `
         <!DOCTYPE html>
-        <html><head><title>Error</title><style>
+        <html><head><meta charset="UTF-8"><title>Error</title><style>
           body { font-family: Arial; background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
           .container { text-align: center; background: rgba(0,0,0,0.3); padding: 3rem; border-radius: 20px; max-width: 500px; }
           h1 { font-size: 2.5rem; margin-bottom: 1rem; }
