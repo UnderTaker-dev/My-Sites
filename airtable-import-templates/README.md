@@ -4,7 +4,7 @@ This folder contains CSV templates for importing into your Airtable base.
 
 ## How to Import
 
-1. Go to your Airtable base: https://airtable.com/app7xU4U24tuWFUUm
+1. Go to your Airtable base (use your AIRTABLE_BASE_ID from .env)
 2. For each table, click the dropdown arrow next to the table name → **Import data** → **CSV file**
 3. Upload the corresponding CSV file
 4. Map the columns correctly
