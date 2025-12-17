@@ -2,38 +2,117 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Coming Soon</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="UnderTaker - Developer, Gamer, F1 Enthusiast. Building innovative projects, breaking boundaries, and learning everything tech.">
+<meta name="keywords" content="developer, gamer, F1, coding, web development, gaming, technology">
+<meta name="author" content="UnderTaker">
+<meta name="theme-color" content="#0f2027">
+<meta name="color-scheme" content="dark light">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://yourdomain.com/">
+<meta property="og:title" content="UnderTaker - Developer & Gamer">
+<meta property="og:description" content="Building things. Breaking things. Learning everything.">
+<meta property="og:image" content="https://yourdomain.com/og-image.jpg">
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:url" content="https://yourdomain.com/">
+<meta property="twitter:title" content="UnderTaker - Developer & Gamer">
+<meta property="twitter:description" content="Building things. Breaking things. Learning everything.">
+<meta property="twitter:image" content="https://yourdomain.com/og-image.jpg">
+
+<!-- Preload critical resources -->
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+
+<title>UnderTaker - Developer, Gamer & Tech Enthusiast</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
 <style>
-/* ========== BASE ========== */
-* {
+/* ========== BASE & PERFORMANCE OPTIMIZATION ========== */
+*, *::before, *::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-body, html {
+:root {
+  /* Color System */
+  --color-primary: #3498db;
+  --color-secondary: #9b59b6;
+  --color-accent: #e74c3c;
+  --color-success: #2ecc71;
+  --color-warning: #f39c12;
+  --color-info: #1abc9c;
+  
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  --gradient-light: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+  --gradient-accent: linear-gradient(135deg, #667eea, #764ba2);
+  
+  /* Spacing */
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 1rem;
+  --spacing-md: 1.5rem;
+  --spacing-lg: 2rem;
+  --spacing-xl: 3rem;
+  
+  /* Border Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  
+  /* Transitions */
+  --transition-fast: 0.2s ease;
+  --transition-base: 0.3s ease;
+  --transition-slow: 0.5s ease;
+  
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.2);
+  --shadow-xl: 0 12px 48px rgba(0, 0, 0, 0.25);
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
   width: 100%;
   min-height: 100vh;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  background: var(--gradient-primary);
   color: #fff;
   overflow-x: hidden;
-  transition: background 0.3s ease, color 0.3s ease;
+  transition: background var(--transition-base), color var(--transition-base);
   opacity: 0;
-  animation: fadeIn 0.3s ease-in forwards;
+  animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  will-change: opacity;
+  line-height: 1.6;
 }
 
 @keyframes fadeIn {
   to { opacity: 1; }
 }
 
-/* Light Mode */
+/* ========== LIGHT MODE IMPROVEMENTS ========== */
 body.light-mode {
-  background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+  background: var(--gradient-light);
   color: #2c3e50;
+}
+
+body.light-mode .main-message h1 {
+  background: linear-gradient(135deg, #2980b9, #8e44ad, #c0392b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 body.light-mode .container::-webkit-scrollbar-thumb {
@@ -186,17 +265,385 @@ body::-webkit-scrollbar-thumb:hover {
   color: rgba(255, 255, 255, 0.8);
 }
 
-/* ========== FLOATING ICONS ========== */
+/* ========== FLOATING ICONS WITH GLOW ========== */
 .floating-icon {
   position: absolute;
   font-size: 2rem;
   opacity: 0.6;
   animation: floatUp linear infinite;
+  filter: drop-shadow(0 0 10px rgba(52, 152, 219, 0.5));
+  transition: all 0.3s ease;
+}
+
+.floating-icon:hover {
+  opacity: 1;
+  filter: drop-shadow(0 0 20px rgba(52, 152, 219, 0.8));
+  transform: scale(1.2);
 }
 
 @keyframes floatUp {
-  0% { transform: translateY(100vh) rotate(0deg); }
-  100% { transform: translateY(-10vh) rotate(360deg); }
+  0% { 
+    transform: translateY(100vh) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.6;
+  }
+  90% {
+    opacity: 0.6;
+  }
+  100% { 
+    transform: translateY(-10vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* ========== GLOWING CARD EFFECTS ========== */
+.status-item, [class*="skill"] {
+  position: relative;
+  overflow: hidden;
+}
+
+.status-item::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  transform: rotate(45deg);
+  transition: all 0.5s ease;
+}
+
+.status-item:hover::before {
+  left: 100%;
+}
+
+/* ========== PULSE ANIMATION FOR ACTIVE ELEMENTS ========== */
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(52, 152, 219, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 20px 10px rgba(52, 152, 219, 0);
+  }
+}
+
+/* ========== TYPING CURSOR ========== */
+@keyframes blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+.typing-cursor {
+  font-weight: 100;
+  font-size: 1.2em;
+  color: var(--color-primary);
+}
+
+/* ========== BUTTON RIPPLE EFFECT ========== */
+button {
+  position: relative;
+  overflow: hidden;
+}
+
+button::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+button:active::after {
+  width: 300px;
+  height: 300px;
+}
+
+/* ========== NEW ANIMATIONS ========== */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+
+/* ========== TOAST NOTIFICATIONS ========== */
+.toast {
+  background: linear-gradient(135deg, rgba(46, 204, 113, 0.95), rgba(39, 174, 96, 0.95));
+  color: white;
+  padding: 1rem 1.5rem;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-xl);
+  min-width: 250px;
+  max-width: 400px;
+  animation: slideInRight 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.toast.error {
+  background: linear-gradient(135deg, rgba(231, 76, 60, 0.95), rgba(192, 57, 43, 0.95));
+}
+
+.toast.warning {
+  background: linear-gradient(135deg, rgba(243, 156, 18, 0.95), rgba(230, 126, 34, 0.95));
+}
+
+.toast.info {
+  background: linear-gradient(135deg, rgba(52, 152, 219, 0.95), rgba(41, 128, 185, 0.95));
+}
+
+.toast-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.toast-content {
+  flex: 1;
+  font-weight: 500;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+}
+
+/* ========== ENHANCED INTERACTIVITY ========== */
+.status-item, [style*="transition"] {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+.status-item:active {
+  transform: translateY(-4px) scale(0.98) !important;
+}
+
+button:active {
+  transform: scale(0.95) !important;
+}
+
+/* ========== LOADING STATES ========== */
+.btn-loading {
+  position: relative;
+  pointer-events: none;
+  color: transparent !important;
+}
+
+.btn-loading::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  top: 50%;
+  left: 50%;
+  margin-left: -10px;
+  margin-top: -10px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ========== ACCESSIBILITY IMPROVEMENTS ========== */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* ========== PERFORMANCE OPTIMIZATIONS ========== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ========== SMOOTH SCROLL ========== */
+html {
+  scroll-padding-top: 2rem;
+}
+
+/* ========== IMPROVED GRADIENTS ========== */
+.gradient-text {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary), var(--color-accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  background-size: 200% 200%;
+  animation: gradientShift 3s ease infinite;
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* ========== ERROR & SUCCESS ANIMATIONS ========== */
+@keyframes errorShake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+  20%, 40%, 60%, 80% { transform: translateX(10px); }
+}
+
+@keyframes successPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.error-shake {
+  animation: errorShake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+  border-color: var(--color-accent) !important;
+}
+
+.success-pulse {
+  animation: successPulse 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
+/* ========== ENHANCED INPUT STYLES ========== */
+input:invalid:not(:placeholder-shown) {
+  border-color: var(--color-accent);
+}
+
+input:valid:not(:placeholder-shown) {
+  border-color: var(--color-success);
+}
+
+/* ========== SKELETON LOADERS ========== */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05) 25%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.05) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-sm);
+}
+
+/* ========== HOVER EFFECTS ENHANCEMENT ========== */
+@media (hover: hover) {
+  button:not(:disabled):hover {
+    box-shadow: var(--shadow-lg);
+  }
+  
+  .status-item:hover {
+    box-shadow: var(--shadow-md);
+  }
+}
+
+/* ========== DARK MODE SPECIFIC IMPROVEMENTS ========== */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+  }
+}
+
+/* ========== PRINT STYLES ========== */
+@media print {
+  .theme-toggle,
+  .footer,
+  .floating-icon,
+  .newsletter-section,
+  .donation-section,
+  #toastContainer {
+    display: none !important;
+  }
+  
+  body {
+    background: white;
+    color: black;
+  }
 }
 
 /* Random positions + different speeds */
@@ -294,7 +741,6 @@ body.light-mode .theme-toggle:hover {
 .skill-badge:hover {
   background: rgba(26, 188, 156, 0.2);
   border-color: rgba(26, 188, 156, 0.5);
-  transform: translateY(-2px);
 }
 
 body.light-mode .skills-section {
@@ -366,7 +812,6 @@ body.light-mode .skills-section h3 {
 }
 
 .btn-subscribe:hover:not(:disabled) {
-  transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
 }
 
@@ -431,7 +876,6 @@ body.light-mode .newsletter-input::placeholder {
 .toggle-view-btn:hover {
   background: rgba(255, 255, 255, 0.15);
   border-color: rgba(255, 255, 255, 0.3);
-  transform: translateY(-2px);
 }
 
 .toggle-view-btn.active {
@@ -471,7 +915,6 @@ body.light-mode .newsletter-input::placeholder {
 }
 
 .status-item:hover {
-  transform: translateY(-3px);
   background: rgba(255, 255, 255, 0.08);
 }
 
@@ -667,7 +1110,6 @@ body.light-mode .status-label {
 }
 
 .btn-admin-login:hover:not(:disabled) {
-  transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(52, 152, 219, 0.6);
 }
 
@@ -840,7 +1282,6 @@ body.light-mode .admin-form-group input::placeholder {
 }
 
 .btn-donate:hover:not(:disabled) {
-  transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(52, 152, 219, 0.5);
 }
 
@@ -872,7 +1313,6 @@ body.light-mode .admin-form-group input::placeholder {
   background: rgba(26, 188, 156, 0.2);
   border-color: rgba(26, 188, 156, 0.5);
   color: #fff;
-  transform: scale(1.05);
 }
 
 .preset-btn.active {
@@ -989,7 +1429,6 @@ body.light-mode .admin-form-group input::placeholder {
 }
 
 .btn-send:hover:not(:disabled) {
-  transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(26, 188, 156, 0.6);
 }
 
@@ -1555,16 +1994,28 @@ body.theme-easter .floating-icon {
 </head>
 <body>
 
-<!-- Theme Toggle -->
-<div class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
-  <span id="themeIcon">🌙</span>
+<!-- Animated Background Particles -->
+<canvas id="particleCanvas" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;"></canvas>
+
+<!-- Theme Toggle with Glow Effect -->
+<div class="theme-toggle" onclick="toggleTheme()" title="Toggle theme" style="position: fixed; top: 20px; right: 20px; width: 50px; height: 50px; background: linear-gradient(135deg, rgba(52, 152, 219, 0.3), rgba(155, 89, 182, 0.3)); backdrop-filter: blur(10px); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); border: 2px solid rgba(255, 255, 255, 0.2); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 0 20px rgba(255, 255, 255, 0.05);" onmouseover="this.style.transform='scale(1.15) rotate(180deg)'; this.style.boxShadow='0 12px 48px rgba(52, 152, 219, 0.5), 0 0 30px rgba(155, 89, 182, 0.3)'" onmouseout="this.style.transform='scale(1) rotate(0deg)'; this.style.boxShadow='0 8px 32px rgba(0, 0, 0, 0.3), inset 0 0 20px rgba(255, 255, 255, 0.05)'">
+  <span id="themeIcon" style="font-size: 1.5rem; transition: all 0.4s ease; filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.5));">🌙</span>
 </div>
 
-<div class="container">
-<div class="main-message">
-  <h1 style="background: linear-gradient(135deg, #3498db, #9b59b6, #e74c3c); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-size: 4rem; font-weight: 900; margin-bottom: 0.5rem;">UnderTaker</h1>
-  <p style="font-size: 1.15rem; margin: 1rem 0 1rem 0; opacity: 0.85; font-weight: 600;">Developer 💻 | Gamer 🎮 | F1 🏎️ | Music 🎵 | Fitness 💪 | Servers 🖥️</p>
-  <p style="opacity: 0.7; margin-bottom: 2.5rem; font-size: 1rem; line-height: 1.6;">Building things. Breaking things. Learning everything.</p>
+<!-- Scroll Progress Bar -->
+<div id="scrollProgress" style="position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(90deg, #3498db, #9b59b6, #e74c3c); width: 0%; z-index: 9999; transition: width 0.1s ease; box-shadow: 0 0 10px rgba(52, 152, 219, 0.8);"></div>
+
+<main class="container" role="main" style="position: relative; z-index: 10;">
+<header class="main-message">
+  <h1 class="hero-title" style="background: linear-gradient(135deg, #3498db, #9b59b6, #e74c3c); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-size: clamp(2.5rem, 8vw, 4rem); font-weight: 900; margin-bottom: 0.5rem; animation: slideDown 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;">
+    UnderTaker
+  </h1>
+  <p class="hero-subtitle" style="font-size: clamp(0.95rem, 3vw, 1.15rem); margin: 1rem 0; opacity: 0.85; font-weight: 600; animation: slideDown 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.1s forwards; animation-fill-mode: both;">
+    Developer 💻 | Gamer 🎮 | F1 🏎️ | Music 🎵 | Fitness 💪 | Servers 🖥️
+  </p>
+  <p class="hero-description" id="typingText" style="opacity: 0.7; margin-bottom: 2.5rem; font-size: clamp(0.9rem, 2.5vw, 1rem); line-height: 1.6; animation: slideDown 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s forwards; animation-fill-mode: both; min-height: 1.6em;">
+    <span id="typedText"></span><span class="typing-cursor" style="opacity: 1; animation: blink 1s infinite;">|</span>
+  </p>
   
   <!-- About Me / What I Do Section -->
   <div class="status-section">
@@ -1579,19 +2030,19 @@ body.theme-easter .floating-icon {
     
     <div class="view-content" id="aboutView">
       <div class="status-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem;">
-        <div class="status-item" style="background: linear-gradient(135deg, rgba(52, 152, 219, 0.15), rgba(52, 152, 219, 0.05)); border: 2px solid rgba(52, 152, 219, 0.3); border-radius: 12px; padding: 1.2rem; text-align: center; transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 10px 20px rgba(52, 152, 219, 0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+        <div class="status-item" style="background: linear-gradient(135deg, rgba(52, 152, 219, 0.15), rgba(52, 152, 219, 0.05)); border: 2px solid rgba(52, 152, 219, 0.3); border-radius: 12px; padding: 1.2rem; text-align: center; transition: all 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 10px 20px rgba(52, 152, 219, 0.3)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'">
           <span class="status-emoji" style="font-size: 2.2rem; display: block; margin-bottom: 0.5rem;">🎮</span>
           <div class="status-label" style="font-weight: 600; font-size: 0.95rem;">Competitive Gamer</div>
         </div>
-        <div class="status-item" style="background: linear-gradient(135deg, rgba(231, 76, 60, 0.15), rgba(231, 76, 60, 0.05)); border: 2px solid rgba(231, 76, 60, 0.3); border-radius: 12px; padding: 1.2rem; text-align: center; transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 10px 20px rgba(231, 76, 60, 0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+        <div class="status-item" style="background: linear-gradient(135deg, rgba(231, 76, 60, 0.15), rgba(231, 76, 60, 0.05)); border: 2px solid rgba(231, 76, 60, 0.3); border-radius: 12px; padding: 1.2rem; text-align: center; transition: all 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 10px 20px rgba(231, 76, 60, 0.3)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'">
           <span class="status-emoji" style="font-size: 2.2rem; display: block; margin-bottom: 0.5rem;">👾</span>
           <div class="status-label" style="font-weight: 600; font-size: 0.95rem;">Bug Slayer</div>
         </div>
-        <div class="status-item" style="background: linear-gradient(135deg, rgba(230, 126, 34, 0.15), rgba(230, 126, 34, 0.05)); border: 2px solid rgba(230, 126, 34, 0.3); border-radius: 12px; padding: 1.2rem; text-align: center; transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 10px 20px rgba(230, 126, 34, 0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+        <div class="status-item" style="background: linear-gradient(135deg, rgba(230, 126, 34, 0.15), rgba(230, 126, 34, 0.05)); border: 2px solid rgba(230, 126, 34, 0.3); border-radius: 12px; padding: 1.2rem; text-align: center; transition: all 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 10px 20px rgba(230, 126, 34, 0.3)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'">
           <span class="status-emoji" style="font-size: 2.2rem; display: block; margin-bottom: 0.5rem;">⚡</span>
           <div class="status-label" style="font-weight: 600; font-size: 0.95rem;">Monsters ∞</div>
         </div>
-        <div class="status-item" style="background: linear-gradient(135deg, rgba(155, 89, 182, 0.15), rgba(155, 89, 182, 0.05)); border: 2px solid rgba(155, 89, 182, 0.3); border-radius: 12px; padding: 1.2rem; text-align: center; transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 10px 20px rgba(155, 89, 182, 0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+        <div class="status-item" style="background: linear-gradient(135deg, rgba(155, 89, 182, 0.15), rgba(155, 89, 182, 0.05)); border: 2px solid rgba(155, 89, 182, 0.3); border-radius: 12px; padding: 1.2rem; text-align: center; transition: all 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 10px 20px rgba(155, 89, 182, 0.3)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'">
           <span class="status-emoji" style="font-size: 2.2rem; display: block; margin-bottom: 0.5rem;">🕐</span>
           <div class="status-label" style="font-weight: 600; font-size: 0.95rem;">My Time <span id="myTime" style="display: block; font-size: 1.1rem; margin-top: 0.3rem; font-weight: 700;">--:--</span></div>
         </div>
@@ -1599,20 +2050,28 @@ body.theme-easter .floating-icon {
     </div>
     
     <div class="view-content" id="doingView" style="display: none;">
-      <div class="status-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem;">
-        <div class="status-item" style="background: linear-gradient(135deg, rgba(231, 76, 60, 0.15), rgba(231, 76, 60, 0.05)); border: 2px solid rgba(231, 76, 60, 0.3); border-radius: 12px; padding: 1.2rem; text-align: center; transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 10px 20px rgba(231, 76, 60, 0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+      <div class="status-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; max-width: 100%; padding: 0 0.5rem;">
+        <div class="status-item" style="background: linear-gradient(135deg, rgba(231, 76, 60, 0.15), rgba(231, 76, 60, 0.05)); border: 2px solid rgba(231, 76, 60, 0.3); border-radius: 12px; padding: 1.2rem; text-align: center; transition: all 0.3s ease;" onmouseover="this.style.transform='scale(1.08)'; this.style.boxShadow='0 10px 20px rgba(231, 76, 60, 0.4)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'">
           <span class="status-emoji" style="font-size: 2.2rem; display: block; margin-bottom: 0.5rem;">🐛</span>
           <div class="status-label" style="font-weight: 600; font-size: 0.95rem;">Debugging at 3am</div>
         </div>
-        <div class="status-item" style="background: linear-gradient(135deg, rgba(230, 126, 34, 0.15), rgba(230, 126, 34, 0.05)); border: 2px solid rgba(230, 126, 34, 0.3); border-radius: 12px; padding: 1.2rem; text-align: center; transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 10px 20px rgba(230, 126, 34, 0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+        <div class="status-item" style="background: linear-gradient(135deg, rgba(230, 126, 34, 0.15), rgba(230, 126, 34, 0.05)); border: 2px solid rgba(230, 126, 34, 0.3); border-radius: 12px; padding: 1.2rem; text-align: center; transition: all 0.3s ease;" onmouseover="this.style.transform='scale(1.08)'; this.style.boxShadow='0 10px 20px rgba(230, 126, 34, 0.4)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'">
           <span class="status-emoji" style="font-size: 2.2rem; display: block; margin-bottom: 0.5rem;">💥</span>
           <div class="status-label" style="font-weight: 600; font-size: 0.95rem;">Learning by breaking</div>
         </div>
-        <div class="status-item" style="background: linear-gradient(135deg, rgba(52, 152, 219, 0.15), rgba(52, 152, 219, 0.05)); border: 2px solid rgba(52, 152, 219, 0.3); border-radius: 12px; padding: 1.2rem; text-align: center; transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 10px 20px rgba(52, 152, 219, 0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
-          <span class="status-emoji" style="font-size: 2.2rem; display: block; margin-bottom: 0.5rem;">😴</span>
-          <div class="status-label" style="font-weight: 600; font-size: 0.95rem;">Sleep? Never heard of it</div>
+        <div class="status-item" style="background: linear-gradient(135deg, rgba(155, 89, 182, 0.15), rgba(155, 89, 182, 0.05)); border: 2px solid rgba(155, 89, 182, 0.3); border-radius: 12px; padding: 1.2rem; text-align: center; transition: all 0.3s ease;" onmouseover="this.style.transform='scale(1.08)'; this.style.boxShadow='0 10px 20px rgba(155, 89, 182, 0.4)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'">
+          <span class="status-emoji" style="font-size: 2.2rem; display: block; margin-bottom: 0.5rem;">🚀</span>
+          <div class="status-label" style="font-weight: 600; font-size: 0.95rem;">Shipping code daily</div>
         </div>
-        <div class="status-item" style="background: linear-gradient(135deg, rgba(230, 126, 34, 0.15), rgba(230, 126, 34, 0.05)); border: 2px solid rgba(230, 126, 34, 0.3); border-radius: 12px; padding: 1.2rem; text-align: center; transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 10px 20px rgba(230, 126, 34, 0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+        <div class="status-item" style="background: linear-gradient(135deg, rgba(52, 152, 219, 0.15), rgba(52, 152, 219, 0.05)); border: 2px solid rgba(52, 152, 219, 0.3); border-radius: 12px; padding: 1.2rem; text-align: center; transition: all 0.3s ease;" onmouseover="this.style.transform='scale(1.08)'; this.style.boxShadow='0 10px 20px rgba(52, 152, 219, 0.4)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'">
+          <span class="status-emoji" style="font-size: 2.2rem; display: block; margin-bottom: 0.5rem;">💻</span>
+          <div class="status-label" style="font-weight: 600; font-size: 0.95rem;">Building cool stuff</div>
+        </div>
+        <div class="status-item" style="background: linear-gradient(135deg, rgba(46, 204, 113, 0.15), rgba(46, 204, 113, 0.05)); border: 2px solid rgba(46, 204, 113, 0.3); border-radius: 12px; padding: 1.2rem; text-align: center; transition: all 0.3s ease;" onmouseover="this.style.transform='scale(1.08)'; this.style.boxShadow='0 10px 20px rgba(46, 204, 113, 0.4)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'">
+          <span class="status-emoji" style="font-size: 2.2rem; display: block; margin-bottom: 0.5rem;">⚙️</span>
+          <div class="status-label" style="font-weight: 600; font-size: 0.95rem;">Automating tasks</div>
+        </div>
+        <div class="status-item" style="background: linear-gradient(135deg, rgba(230, 126, 34, 0.15), rgba(230, 126, 34, 0.05)); border: 2px solid rgba(230, 126, 34, 0.3); border-radius: 12px; padding: 1.2rem; text-align: center; transition: all 0.3s ease;" onmouseover="this.style.transform='scale(1.08)'; this.style.boxShadow='0 10px 20px rgba(230, 126, 34, 0.4)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'">
           <span class="status-emoji" style="font-size: 2.2rem; display: block; margin-bottom: 0.5rem;">🔥</span>
           <div class="status-label" style="font-weight: 600; font-size: 0.95rem;">Fueled by Monsters</div>
         </div>
@@ -1624,32 +2083,32 @@ body.theme-easter .floating-icon {
   <div class="skills-section" style="margin-top: 3rem;">
     <h3 style="margin-bottom: 2rem; font-size: 1.4rem; text-align: center;">🎯 What I'm Into</h3>
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1.2rem; padding: 0;">
-      <div style="background: linear-gradient(135deg, rgba(230, 126, 34, 0.15), rgba(230, 126, 34, 0.05)); border: 2px solid rgba(230, 126, 34, 0.3); border-left: 4px solid #e67e22; padding: 1.2rem; border-radius: 12px; text-align: center; transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 12px 24px rgba(230, 126, 34, 0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+      <div style="background: linear-gradient(135deg, rgba(230, 126, 34, 0.15), rgba(230, 126, 34, 0.05)); border: 2px solid rgba(230, 126, 34, 0.3); border-left: 4px solid #e67e22; padding: 1.2rem; border-radius: 12px; text-align: center; transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 12px 24px rgba(230, 126, 34, 0.3)'; this.style.borderColor='rgba(230, 126, 34, 0.6)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'; this.style.borderColor='rgba(230, 126, 34, 0.3)'">
         <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🎮</div>
         <div style="font-weight: 700; margin: 0.5rem 0; font-size: 1rem;">Gaming</div>
         <div style="font-size: 0.8rem; opacity: 0.6; font-weight: 500;">Competitive</div>
       </div>
-      <div style="background: linear-gradient(135deg, rgba(231, 76, 60, 0.15), rgba(231, 76, 60, 0.05)); border: 2px solid rgba(231, 76, 60, 0.3); border-left: 4px solid #e74c3c; padding: 1.2rem; border-radius: 12px; text-align: center; transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 12px 24px rgba(231, 76, 60, 0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+      <div style="background: linear-gradient(135deg, rgba(231, 76, 60, 0.15), rgba(231, 76, 60, 0.05)); border: 2px solid rgba(231, 76, 60, 0.3); border-left: 4px solid #e74c3c; padding: 1.2rem; border-radius: 12px; text-align: center; transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 12px 24px rgba(231, 76, 60, 0.3)'; this.style.borderColor='rgba(231, 76, 60, 0.6)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'; this.style.borderColor='rgba(231, 76, 60, 0.3)'">
         <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🏎️</div>
         <div style="font-weight: 700; margin: 0.5rem 0; font-size: 1rem;">F1 Racing</div>
         <div style="font-size: 0.8rem; opacity: 0.6; font-weight: 500;">Speed</div>
       </div>
-      <div style="background: linear-gradient(135deg, rgba(52, 152, 219, 0.15), rgba(52, 152, 219, 0.05)); border: 2px solid rgba(52, 152, 219, 0.3); border-left: 4px solid #3498db; padding: 1.2rem; border-radius: 12px; text-align: center; transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 12px 24px rgba(52, 152, 219, 0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+      <div style="background: linear-gradient(135deg, rgba(52, 152, 219, 0.15), rgba(52, 152, 219, 0.05)); border: 2px solid rgba(52, 152, 219, 0.3); border-left: 4px solid #3498db; padding: 1.2rem; border-radius: 12px; text-align: center; transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 12px 24px rgba(52, 152, 219, 0.3)'; this.style.borderColor='rgba(52, 152, 219, 0.6)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'; this.style.borderColor='rgba(52, 152, 219, 0.3)'">
         <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🎵</div>
         <div style="font-weight: 700; margin: 0.5rem 0; font-size: 1rem;">Music</div>
         <div style="font-size: 0.8rem; opacity: 0.6; font-weight: 500;">All genres</div>
       </div>
-      <div style="background: linear-gradient(135deg, rgba(46, 204, 113, 0.15), rgba(46, 204, 113, 0.05)); border: 2px solid rgba(46, 204, 113, 0.3); border-left: 4px solid #2ecc71; padding: 1.2rem; border-radius: 12px; text-align: center; transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 12px 24px rgba(46, 204, 113, 0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+      <div style="background: linear-gradient(135deg, rgba(46, 204, 113, 0.15), rgba(46, 204, 113, 0.05)); border: 2px solid rgba(46, 204, 113, 0.3); border-left: 4px solid #2ecc71; padding: 1.2rem; border-radius: 12px; text-align: center; transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 12px 24px rgba(46, 204, 113, 0.3)'; this.style.borderColor='rgba(46, 204, 113, 0.6)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'; this.style.borderColor='rgba(46, 204, 113, 0.3)'">
         <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">💪</div>
         <div style="font-weight: 700; margin: 0.5rem 0; font-size: 1rem;">Gym</div>
         <div style="font-size: 0.8rem; opacity: 0.6; font-weight: 500;">Gains</div>
       </div>
-      <div style="background: linear-gradient(135deg, rgba(155, 89, 182, 0.15), rgba(155, 89, 182, 0.05)); border: 2px solid rgba(155, 89, 182, 0.3); border-left: 4px solid #9b59b6; padding: 1.2rem; border-radius: 12px; text-align: center; transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 12px 24px rgba(155, 89, 182, 0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+      <div style="background: linear-gradient(135deg, rgba(155, 89, 182, 0.15), rgba(155, 89, 182, 0.05)); border: 2px solid rgba(155, 89, 182, 0.3); border-left: 4px solid #9b59b6; padding: 1.2rem; border-radius: 12px; text-align: center; transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 12px 24px rgba(155, 89, 182, 0.3)'; this.style.borderColor='rgba(155, 89, 182, 0.6)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'; this.style.borderColor='rgba(155, 89, 182, 0.3)'">
         <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">💻</div>
         <div style="font-weight: 700; margin: 0.5rem 0; font-size: 1rem;">Coding</div>
         <div style="font-size: 0.8rem; opacity: 0.6; font-weight: 500;">Building</div>
       </div>
-      <div style="background: linear-gradient(135deg, rgba(26, 188, 156, 0.15), rgba(26, 188, 156, 0.05)); border: 2px solid rgba(26, 188, 156, 0.3); border-left: 4px solid #1abc9c; padding: 1.2rem; border-radius: 12px; text-align: center; transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 12px 24px rgba(26, 188, 156, 0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+      <div style="background: linear-gradient(135deg, rgba(26, 188, 156, 0.15), rgba(26, 188, 156, 0.05)); border: 2px solid rgba(26, 188, 156, 0.3); border-left: 4px solid #1abc9c; padding: 1.2rem; border-radius: 12px; text-align: center; transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 12px 24px rgba(26, 188, 156, 0.3)'; this.style.borderColor='rgba(26, 188, 156, 0.6)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'; this.style.borderColor='rgba(26, 188, 156, 0.3)'">
         <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🖥️</div>
         <div style="font-weight: 700; margin: 0.5rem 0; font-size: 1rem;">Servers</div>
         <div style="font-size: 0.8rem; opacity: 0.6; font-weight: 500;">Infrastructure</div>
@@ -1657,35 +2116,35 @@ body.theme-easter .floating-icon {
     </div>
   </div>
   
-  <!-- Newsletter Section -->
-  <div class="newsletter-section" style="margin-top: 3rem; background: linear-gradient(135deg, rgba(155, 89, 182, 0.1), rgba(52, 152, 219, 0.1)); border-radius: 16px; padding: 2rem; border: 2px solid rgba(155, 89, 182, 0.2);">
-    <h3 style="margin-bottom: 0.5rem; text-align: center;">📬 Stay Updated</h3>
-    <p style="text-align: center; margin-bottom: 1.5rem; opacity: 0.8;">Get notified when I launch something cool (or weird)</p>
-    <form class="newsletter-form" onsubmit="handleNewsletter(event)" style="display: flex; gap: 0.8rem; flex-wrap: wrap; justify-content: center;">
-      <input type="email" id="newsletterEmail" class="newsletter-input" placeholder="your@email.com" required style="flex: 1; min-width: 200px; padding: 0.8rem 1rem; border: 2px solid rgba(155, 89, 182, 0.3); border-radius: 8px; background: transparent; color: inherit; transition: all 0.3s ease;" onmouseover="this.style.borderColor='rgba(155, 89, 182, 0.6)'" onmouseout="this.style.borderColor='rgba(155, 89, 182, 0.3)'">
-      <button type="submit" class="btn-subscribe" id="subscribeBtn" style="padding: 0.8rem 2rem; background: linear-gradient(135deg, #9b59b6, #8e44ad); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 8px 16px rgba(155, 89, 182, 0.3)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'">Subscribe</button>
+  <!-- Newsletter Section with Glow -->
+  <div class="newsletter-section" style="margin-top: 3rem; background: linear-gradient(135deg, rgba(155, 89, 182, 0.1), rgba(52, 152, 219, 0.1)); border-radius: 16px; padding: 2rem; border: 2px solid rgba(155, 89, 182, 0.2); position: relative; overflow: hidden; transition: all 0.4s ease;" onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 15px 40px rgba(155, 89, 182, 0.3), 0 0 30px rgba(155, 89, 182, 0.2)'; this.style.borderColor='rgba(155, 89, 182, 0.5)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'; this.style.borderColor='rgba(155, 89, 182, 0.2)'">
+    <h3 style="margin-bottom: 0.5rem; text-align: center; animation: slideDown 0.6s ease;">📬 Stay Updated</h3>
+    <p style="text-align: center; margin-bottom: 1.5rem; opacity: 0.8; animation: slideDown 0.6s ease 0.1s both;">Get notified when I launch something cool (or weird)</p>
+    <form class="newsletter-form" onsubmit="handleNewsletter(event)" style="display: flex; gap: 0.8rem; flex-wrap: wrap; justify-content: center; animation: slideDown 0.6s ease 0.2s both;">
+      <input type="email" id="newsletterEmail" class="newsletter-input" placeholder="your@email.com" required style="flex: 1; min-width: 200px; padding: 0.8rem 1rem; border: 2px solid rgba(155, 89, 182, 0.3); border-radius: 8px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); color: inherit; transition: all 0.3s ease;" onmouseover="this.style.borderColor='rgba(155, 89, 182, 0.6)'; this.style.boxShadow='0 0 20px rgba(155, 89, 182, 0.3)'; this.style.transform='scale(1.02)'" onmouseout="this.style.borderColor='rgba(155, 89, 182, 0.3)'; this.style.boxShadow='none'; this.style.transform='scale(1)'" onfocus="this.style.borderColor='rgba(155, 89, 182, 0.8)'; this.style.boxShadow='0 0 25px rgba(155, 89, 182, 0.5)'">
+      <button type="submit" class="btn-subscribe" id="subscribeBtn" style="padding: 0.8rem 2rem; background: linear-gradient(135deg, #9b59b6, #8e44ad); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; position: relative; overflow: hidden;" onmouseenter="this.style.transition='transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease'; this.style.transform='scale(1.08)'; this.style.boxShadow='0 12px 24px rgba(155, 89, 182, 0.5), 0 0 40px rgba(155, 89, 182, 0.3)'; this.style.filter='brightness(1.2)'" onmouseleave="this.style.transform='scale(1)'; this.style.boxShadow='none'; this.style.filter='brightness(1)'" onmousedown="this.style.transform='scale(1)'" onmouseup="this.style.transform='scale(1.08)'">✨ Subscribe</button>
     </form>
   </div>
   
   <div class="donation-section" id="donationSection" style="margin-top: 3rem;">
-    <button class="support-toggle-btn" id="supportMeBtn" onclick="toggleDonation()" style="width: 100%; padding: 1rem 2rem; background: linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(52, 152, 219, 0.2)); border: 2px solid rgba(46, 204, 113, 0.4); border-radius: 12px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 8px 20px rgba(46, 204, 113, 0.2)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'">💚 Support Me</button>
+    <button class="support-toggle-btn" id="supportMeBtn" onclick="toggleDonation()" style="width: 100%; padding: 1rem 2rem; background: linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(52, 152, 219, 0.2)); border: 2px solid rgba(46, 204, 113, 0.4); border-radius: 12px; font-size: 1.1rem; font-weight: 700; cursor: pointer; position: relative; overflow: hidden;" onmouseenter="this.style.transition='transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease'; this.style.transform='scale(1.05)'; this.style.boxShadow='0 15px 35px rgba(46, 204, 113, 0.4), 0 0 50px rgba(46, 204, 113, 0.2)'; this.style.borderColor='rgba(46, 204, 113, 0.7)'" onmouseleave="this.style.transform='scale(1)'; this.style.boxShadow='none'; this.style.borderColor='rgba(46, 204, 113, 0.4)'" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1.05)'">💚 Support Me</button>
     
     <div class="donation-content" id="donationContent" style="margin-top: 1.5rem; background: linear-gradient(135deg, rgba(46, 204, 113, 0.1), rgba(52, 152, 219, 0.1)); border-radius: 12px; padding: 2rem; border: 2px solid rgba(46, 204, 113, 0.2);">
       <div class="donation-title" style="font-size: 1.3rem; font-weight: 700; text-align: center; margin-bottom: 0.3rem;">⚡ Buy Me a Monster</div>
       <div class="donation-subtitle" style="text-align: center; opacity: 0.8; margin-bottom: 1.5rem;">Fuel my coding and bad decisions</div>
     
     <div class="preset-amounts" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.8rem; margin-bottom: 1.5rem;">
-      <button class="preset-btn" onclick="setAmount(3)" style="padding: 0.8rem; background: linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(46, 204, 113, 0.1)); border: 2px solid rgba(46, 204, 113, 0.3); border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(46, 204, 113, 0.3)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(46, 204, 113, 0.1))'; this.style.transform='translateY(0)'">$3</button>
-      <button class="preset-btn" onclick="setAmount(5)" style="padding: 0.8rem; background: linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(46, 204, 113, 0.1)); border: 2px solid rgba(46, 204, 113, 0.3); border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(46, 204, 113, 0.3)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(46, 204, 113, 0.1))'; this.style.transform='translateY(0)'">$5</button>
-      <button class="preset-btn" onclick="setAmount(10)" style="padding: 0.8rem; background: linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(46, 204, 113, 0.1)); border: 2px solid rgba(46, 204, 113, 0.3); border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(46, 204, 113, 0.3)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(46, 204, 113, 0.1))'; this.style.transform='translateY(0)'">$10</button>
-      <button class="preset-btn" onclick="setAmount(25)" style="padding: 0.8rem; background: linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(46, 204, 113, 0.1)); border: 2px solid rgba(46, 204, 113, 0.3); border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(46, 204, 113, 0.3)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(46, 204, 113, 0.1))'; this.style.transform='translateY(0)'">$25</button>
+      <button class="preset-btn" onclick="setAmount(3)" style="padding: 0.8rem; background: linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(46, 204, 113, 0.1)); border: 2px solid rgba(46, 204, 113, 0.3); border-radius: 8px; font-weight: 600; cursor: pointer;" onmouseenter="this.style.transition='all 0.2s ease'; this.style.background='rgba(46, 204, 113, 0.3)'; this.style.transform='scale(1.05)'; this.style.borderColor='rgba(46, 204, 113, 0.6)'" onmouseleave="this.style.background='linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(46, 204, 113, 0.1))'; this.style.transform='scale(1)'; this.style.borderColor='rgba(46, 204, 113, 0.3)'" onmousedown="this.style.transform='scale(0.95)'" onmouseup="this.style.transform='scale(1.05)'">$3</button>
+      <button class="preset-btn" onclick="setAmount(5)" style="padding: 0.8rem; background: linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(46, 204, 113, 0.1)); border: 2px solid rgba(46, 204, 113, 0.3); border-radius: 8px; font-weight: 600; cursor: pointer;" onmouseenter="this.style.transition='all 0.2s ease'; this.style.background='rgba(46, 204, 113, 0.3)'; this.style.transform='scale(1.05)'; this.style.borderColor='rgba(46, 204, 113, 0.6)'" onmouseleave="this.style.background='linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(46, 204, 113, 0.1))'; this.style.transform='scale(1)'; this.style.borderColor='rgba(46, 204, 113, 0.3)'" onmousedown="this.style.transform='scale(0.95)'" onmouseup="this.style.transform='scale(1.05)'">$5</button>
+      <button class="preset-btn" onclick="setAmount(10)" style="padding: 0.8rem; background: linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(46, 204, 113, 0.1)); border: 2px solid rgba(46, 204, 113, 0.3); border-radius: 8px; font-weight: 600; cursor: pointer;" onmouseenter="this.style.transition='all 0.2s ease'; this.style.background='rgba(46, 204, 113, 0.3)'; this.style.transform='scale(1.05)'; this.style.borderColor='rgba(46, 204, 113, 0.6)'" onmouseleave="this.style.background='linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(46, 204, 113, 0.1))'; this.style.transform='scale(1)'; this.style.borderColor='rgba(46, 204, 113, 0.3)'" onmousedown="this.style.transform='scale(0.95)'" onmouseup="this.style.transform='scale(1.05)'">$10</button>
+      <button class="preset-btn" onclick="setAmount(25)" style="padding: 0.8rem; background: linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(46, 204, 113, 0.1)); border: 2px solid rgba(46, 204, 113, 0.3); border-radius: 8px; font-weight: 600; cursor: pointer;" onmouseenter="this.style.transition='all 0.2s ease'; this.style.background='rgba(46, 204, 113, 0.3)'; this.style.transform='scale(1.05)'; this.style.borderColor='rgba(46, 204, 113, 0.6)'" onmouseleave="this.style.background='linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(46, 204, 113, 0.1))'; this.style.transform='scale(1)'; this.style.borderColor='rgba(46, 204, 113, 0.3)'" onmousedown="this.style.transform='scale(0.95)'" onmouseup="this.style.transform='scale(1.05)'">$25</button>
     </div>
     
     <div class="amount-input-group" style="margin-bottom: 1.5rem;">
       <input type="number" id="donationAmount" class="amount-input" placeholder="$ Custom" min="1" max="10000" step="1" style="width: 100%; padding: 0.8rem 1rem; border: 2px solid rgba(46, 204, 113, 0.3); border-radius: 8px; background: transparent; color: inherit; transition: all 0.3s ease;" onmouseover="this.style.borderColor='rgba(46, 204, 113, 0.6)'" onmouseout="this.style.borderColor='rgba(46, 204, 113, 0.3)'">
     </div>
     
-    <button class="btn-donate" id="donateBtn" onclick="handleDonation()" style="width: 100%; padding: 0.9rem; background: linear-gradient(135deg, #2ecc71, #27ae60); color: white; border: none; border-radius: 8px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 8px 20px rgba(46, 204, 113, 0.3)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'">⚡ Send Monster</button>
+    <button class="btn-donate" id="donateBtn" onclick="handleDonation()" style="width: 100%; padding: 0.9rem; background: linear-gradient(135deg, #2ecc71, #27ae60); color: white; border: none; border-radius: 8px; font-weight: 700; font-size: 1rem; cursor: pointer;" onmouseenter="this.style.transition='transform 0.2s ease, box-shadow 0.2s ease'; this.style.transform='scale(1.02)'; this.style.boxShadow='0 8px 20px rgba(46, 204, 113, 0.3)'" onmouseleave="this.style.transform='scale(1)'; this.style.boxShadow='none'" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1.02)'">⚡ Send Monster</button>
     </div>
   </div>
 
@@ -1694,6 +2153,11 @@ body.theme-easter .floating-icon {
 
     </div>
   </div>
+
+</main>
+
+<!-- Toast Notification System -->
+<div id="toastContainer" style="position: fixed; top: 20px; right: 20px; z-index: 10001; display: flex; flex-direction: column; gap: 10px; pointer-events: none;"></div>
 
 <!-- Contact Form Modal -->
 <div class="contact-modal" id="contactModal" onclick="closeContactForm(event)">
@@ -1769,19 +2233,141 @@ body.theme-easter .floating-icon {
 </footer>
 
 <script>
-// ========== THEME TOGGLE ==========
+// ========== PARTICLE ANIMATION SYSTEM ==========
+const canvas = document.getElementById('particleCanvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+let mouseX = 0, mouseY = 0;
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+class Particle {
+  constructor() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.size = Math.random() * 3 + 1;
+    this.speedX = Math.random() * 1 - 0.5;
+    this.speedY = Math.random() * 1 - 0.5;
+    this.color = `rgba(${52 + Math.random() * 50}, ${152 + Math.random() * 50}, ${219 + Math.random() * 50}, ${Math.random() * 0.5 + 0.3})`;
+  }
+  
+  update() {
+    this.x += this.speedX;
+    this.y += this.speedY;
+    
+    // Mouse interaction
+    const dx = mouseX - this.x;
+    const dy = mouseY - this.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    if (distance < 100) {
+      this.x -= dx * 0.01;
+      this.y -= dy * 0.01;
+    }
+    
+    // Wrap around screen
+    if (this.x > canvas.width) this.x = 0;
+    if (this.x < 0) this.x = canvas.width;
+    if (this.y > canvas.height) this.y = 0;
+    if (this.y < 0) this.y = canvas.height;
+  }
+  
+  draw() {
+    ctx.fillStyle = this.color;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Glow effect
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = this.color;
+  }
+}
+
+function initParticles() {
+  particles = [];
+  const particleCount = Math.floor((canvas.width * canvas.height) / 15000);
+  for (let i = 0; i < particleCount; i++) {
+    particles.push(new Particle());
+  }
+}
+
+function connectParticles() {
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i + 1; j < particles.length; j++) {
+      const dx = particles[i].x - particles[j].x;
+      const dy = particles[i].y - particles[j].y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      
+      if (distance < 120) {
+        ctx.strokeStyle = `rgba(52, 152, 219, ${0.2 * (1 - distance / 120)})`;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.stroke();
+      }
+    }
+  }
+}
+
+function animateParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+  particles.forEach(particle => {
+    particle.update();
+    particle.draw();
+  });
+  
+  connectParticles();
+  requestAnimationFrame(animateParticles);
+}
+
+// Mouse tracking
+document.addEventListener('mousemove', (e) => {
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+});
+
+// Initialize
+resizeCanvas();
+initParticles();
+animateParticles();
+
+window.addEventListener('resize', () => {
+  resizeCanvas();
+  initParticles();
+});
+
+// ========== SCROLL PROGRESS BAR ==========
+window.addEventListener('scroll', () => {
+  const scrollProgress = document.getElementById('scrollProgress');
+  const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+  const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+  const progress = (scrollTop / scrollHeight) * 100;
+  scrollProgress.style.width = progress + '%';
+});
+
+// ========== THEME TOGGLE WITH ANIMATION ==========
 function toggleTheme() {
   const body = document.body;
   const icon = document.getElementById('themeIcon');
+  
+  // Add transition effect
+  body.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
   
   body.classList.toggle('light-mode');
   
   if (body.classList.contains('light-mode')) {
     icon.textContent = '☀️';
     localStorage.setItem('theme', 'light');
+    showToast('Light mode activated ☀️', '#f39c12');
   } else {
     icon.textContent = '🌙';
     localStorage.setItem('theme', 'dark');
+    showToast('Dark mode activated 🌙', '#3498db');
   }
 }
 
@@ -1800,7 +2386,125 @@ window.addEventListener('DOMContentLoaded', () => {
   if (savedMood) {
     setMood(savedMood);
   }
+  
+  // Add parallax scrolling effect
+  window.addEventListener('scroll', () => {
+    const scrolled = window.pageYOffset;
+    const parallaxElements = document.querySelectorAll('.status-item, .skill-badge, [style*="transition"]');
+    
+    parallaxElements.forEach((el, index) => {
+      const speed = 0.02 + (index % 3) * 0.01;
+      const yPos = -(scrolled * speed);
+      el.style.transform = `translateY(${yPos}px)`;
+    });
+  });
+  
+  // Typing effect
+  typeWriter();
+  
+  // Welcome explosion effect
+  setTimeout(() => {
+    createWelcomeExplosion();
+  }, 500);
 });
+
+// ========== WELCOME CONFETTI EXPLOSION ==========
+function createWelcomeExplosion() {
+  const colors = ['#3498db', '#9b59b6', '#e74c3c', '#2ecc71', '#f39c12', '#1abc9c'];
+  const emojis = ['⚡', '🚀', '💻', '🎮', '🔥', '💪', '🏎️', '🎵', '⭐', '💎'];
+  
+  for (let i = 0; i < 30; i++) {
+    setTimeout(() => {
+      const particle = document.createElement('div');
+      const isEmoji = Math.random() > 0.5;
+      
+      particle.textContent = isEmoji ? emojis[Math.floor(Math.random() * emojis.length)] : '●';
+      particle.style.cssText = `
+        position: fixed;
+        left: 50%;
+        top: 30%;
+        font-size: ${Math.random() * 20 + 15}px;
+        color: ${colors[Math.floor(Math.random() * colors.length)]};
+        pointer-events: none;
+        z-index: 9999;
+        animation: explode ${Math.random() * 1 + 1}s ease-out forwards;
+        transform-origin: center;
+        filter: drop-shadow(0 0 5px currentColor);
+      `;
+      
+      const angle = (Math.random() * 360) * (Math.PI / 180);
+      const velocity = Math.random() * 200 + 100;
+      const vx = Math.cos(angle) * velocity;
+      const vy = Math.sin(angle) * velocity;
+      
+      particle.style.setProperty('--vx', vx + 'px');
+      particle.style.setProperty('--vy', vy + 'px');
+      
+      document.body.appendChild(particle);
+      
+      setTimeout(() => particle.remove(), 2000);
+    }, i * 30);
+  }
+  
+  // Add style for explosion animation
+  if (!document.getElementById('explosionStyles')) {
+    const style = document.createElement('style');
+    style.id = 'explosionStyles';
+    style.textContent = `
+      @keyframes explode {
+        0% {
+          transform: translate(0, 0) rotate(0deg) scale(1);
+          opacity: 1;
+        }
+        100% {
+          transform: translate(var(--vx), var(--vy)) rotate(720deg) scale(0);
+          opacity: 0;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+}
+
+// ========== TYPING ANIMATION ==========
+const phrases = [
+  "Building things. Breaking things. Learning everything.",
+  "Code by day. Game by night. Monster always.",
+  "Debugging at 3am. Living the dream.",
+  "F1 fan. Code warrior. Gym enthusiast.",
+  "Breaking prod. Pushing limits. Learning fast."
+];
+let phraseIndex = 0;
+let charIndex = 0;
+let isDeleting = false;
+let typingSpeed = 80;
+
+function typeWriter() {
+  const typedTextElement = document.getElementById('typedText');
+  if (!typedTextElement) return;
+  
+  const currentPhrase = phrases[phraseIndex];
+  
+  if (isDeleting) {
+    typedTextElement.textContent = currentPhrase.substring(0, charIndex - 1);
+    charIndex--;
+    typingSpeed = 40;
+  } else {
+    typedTextElement.textContent = currentPhrase.substring(0, charIndex + 1);
+    charIndex++;
+    typingSpeed = 80;
+  }
+  
+  if (!isDeleting && charIndex === currentPhrase.length) {
+    setTimeout(() => { isDeleting = true; }, 2000);
+  } else if (isDeleting && charIndex === 0) {
+    isDeleting = false;
+    phraseIndex = (phraseIndex + 1) % phrases.length;
+    typingSpeed = 500;
+  }
+  
+  setTimeout(typeWriter, typingSpeed);
+}
 
 // ========== MOOD SELECTOR ==========
 const moodThemes = {
@@ -1871,15 +2575,29 @@ function showRandomFact() {
   showToast('✨ New fact revealed!', '#1abc9c');
 }
 
-// ========== NEWSLETTER ==========
+// ========== IMPROVED NEWSLETTER WITH VALIDATION ==========
 function handleNewsletter(event) {
   event.preventDefault();
   
-  const email = document.getElementById('newsletterEmail').value;
+  const emailInput = document.getElementById('newsletterEmail');
+  const email = emailInput.value.trim();
   const btn = document.getElementById('subscribeBtn');
   
+  // Enhanced email validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    showToast('Please enter a valid email address', '#e74c3c');
+    emailInput.focus();
+    emailInput.classList.add('error-shake');
+    setTimeout(() => emailInput.classList.remove('error-shake'), 500);
+    return;
+  }
+  
+  // Add loading state
   btn.disabled = true;
-  btn.textContent = 'Subscribing...';
+  btn.classList.add('btn-loading');
+  const originalText = btn.textContent;
+  btn.setAttribute('data-original-text', originalText);
   
   // Call the newsletter-subscribe function
   fetch('/.netlify/functions/newsletter-subscribe', {
@@ -1887,22 +2605,31 @@ function handleNewsletter(event) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email })
   })
-  .then(response => response.json())
+  .then(response => {
+    if (!response.ok) throw new Error('Network response was not ok');
+    return response.json();
+  })
   .then(data => {
     if (data.success) {
-      showToast('📧 Check your email to confirm subscription!', '#1abc9c');
-      document.getElementById('newsletterEmail').value = '';
+      showToast('Check your email to confirm subscription!', '#1abc9c');
+      emailInput.value = '';
+      // Add success animation
+      btn.classList.add('success-pulse');
+      setTimeout(() => btn.classList.remove('success-pulse'), 600);
     } else {
-      showToast('❌ ' + (data.error || 'Subscription failed'), '#e74c3c');
+      throw new Error(data.error || 'Subscription failed');
     }
   })
   .catch(error => {
     console.error('Newsletter error:', error);
-    showToast('❌ Something went wrong. Please try again.', '#e74c3c');
+    showToast(error.message || 'Something went wrong. Please try again.', '#e74c3c');
+    btn.classList.add('error-shake');
+    setTimeout(() => btn.classList.remove('error-shake'), 500);
   })
   .finally(() => {
     btn.disabled = false;
-    btn.textContent = 'Subscribe';
+    btn.classList.remove('btn-loading');
+    btn.textContent = originalText;
   });
 }
 
@@ -2002,13 +2729,31 @@ function toggleView(view) {
   if (view === 'about') {
     aboutView.style.display = 'block';
     doingView.style.display = 'none';
+    
+    // Update button styles
+    aboutBtn.style.background = 'linear-gradient(135deg, rgba(52, 152, 219, 0.2), rgba(52, 152, 219, 0.05))';
+    aboutBtn.style.borderColor = 'rgba(52, 152, 219, 0.3)';
+    aboutBtn.style.boxShadow = '0 5px 15px rgba(52, 152, 219, 0.3)';
     aboutBtn.classList.add('active');
+    
+    doingBtn.style.background = 'transparent';
+    doingBtn.style.borderColor = 'rgba(100, 100, 100, 0.2)';
+    doingBtn.style.boxShadow = 'none';
     doingBtn.classList.remove('active');
   } else {
     aboutView.style.display = 'none';
     doingView.style.display = 'block';
-    aboutBtn.classList.remove('active');
+    
+    // Update button styles
+    doingBtn.style.background = 'linear-gradient(135deg, rgba(231, 76, 60, 0.2), rgba(231, 76, 60, 0.05))';
+    doingBtn.style.borderColor = 'rgba(231, 76, 60, 0.3)';
+    doingBtn.style.boxShadow = '0 5px 15px rgba(231, 76, 60, 0.3)';
     doingBtn.classList.add('active');
+    
+    aboutBtn.style.background = 'transparent';
+    aboutBtn.style.borderColor = 'rgba(100, 100, 100, 0.2)';
+    aboutBtn.style.boxShadow = 'none';
+    aboutBtn.classList.remove('active');
   }
 }
 
@@ -2303,29 +3048,52 @@ async function handleDonation() {
   }
 }
 
+// ========== IMPROVED TOAST NOTIFICATION SYSTEM ==========
 function showToast(message, color = '#1abc9c') {
+  const container = document.getElementById('toastContainer');
+  
+  const typeMap = {
+    '#1abc9c': 'success',
+    '#2ecc71': 'success',
+    '#3498db': 'info',
+    '#f39c12': 'warning',
+    '#e74c3c': 'error',
+    '#e67e22': 'warning'
+  };
+  
+  const type = typeMap[color] || 'info';
+  
+  const icons = {
+    success: '✓',
+    error: '✕',
+    warning: '⚠',
+    info: 'ℹ'
+  };
+  
   const toast = document.createElement('div');
-  toast.style.cssText = `
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: ${color};
-    color: white;
-    padding: 1rem 1.5rem;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    z-index: 10000;
-    font-weight: 600;
-    animation: slideIn 0.3s ease-out;
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `
+    <span class="toast-icon">${icons[type]}</span>
+    <span class="toast-content">${message}</span>
   `;
-  toast.textContent = message;
   
-  document.body.appendChild(toast);
+  if (container) {
+    container.appendChild(toast);
+  } else {
+    document.body.appendChild(toast);
+  }
   
+  // Auto-remove after 4 seconds
   setTimeout(() => {
-    toast.style.animation = 'slideOut 0.3s ease-out';
-    setTimeout(() => toast.remove(), 300);
-  }, 3000);
+    toast.style.animation = 'slideOutRight 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+    setTimeout(() => toast.remove(), 400);
+  }, 4000);
+  
+  // Click to dismiss
+  toast.addEventListener('click', () => {
+    toast.style.animation = 'slideOutRight 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+    setTimeout(() => toast.remove(), 400);
+  });
 }
 
 function copyEmail() {
@@ -2427,6 +3195,61 @@ document.head.appendChild(style);
     console.error('Failed to track page view:', error);
   }
 })();
+
+// ========== FIX ALL HOVER TRANSITIONS ==========
+document.addEventListener('DOMContentLoaded', () => {
+  // Get all elements with inline mouseover/mouseout handlers
+  const allElements = document.querySelectorAll('[onmouseover], [onmouseenter]');
+  
+  allElements.forEach(el => {
+    // Remove transition from inline style to prevent movement
+    const currentStyle = el.getAttribute('style') || '';
+    const newStyle = currentStyle.replace(/transition:\s*[^;]+;?/gi, '');
+    el.setAttribute('style', newStyle);
+    
+    // Store original handlers
+    const originalMouseOver = el.onmouseover || el.onmouseenter;
+    const originalMouseOut = el.onmouseout || el.onmouseleave;
+    const originalMouseDown = el.onmousedown;
+    const originalMouseUp = el.onmouseup;
+    
+    // Clear old handlers
+    el.onmouseover = null;
+    el.onmouseout = null;
+    el.onmouseenter = null;
+    el.onmouseleave = null;
+    el.onmousedown = null;
+    el.onmouseup = null;
+    
+    // Add new handlers with transition control
+    el.addEventListener('mouseenter', (e) => {
+      el.style.transition = 'transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, filter 0.2s ease, background 0.2s ease';
+      if (originalMouseOver) originalMouseOver.call(el);
+    });
+    
+    el.addEventListener('mouseleave', (e) => {
+      if (originalMouseOut) originalMouseOut.call(el);
+    });
+    
+    el.addEventListener('mousedown', (e) => {
+      const currentTransform = el.style.transform || 'scale(1)';
+      const scaleMatch = currentTransform.match(/scale\(([\d.]+)\)/);
+      const currentScale = scaleMatch ? parseFloat(scaleMatch[1]) : 1;
+      const newScale = Math.max(0.95, currentScale * 0.95);
+      el.style.transform = currentTransform.replace(/scale\([\d.]+\)/, `scale(${newScale})`);
+      if (originalMouseDown) originalMouseDown.call(el);
+    });
+    
+    el.addEventListener('mouseup', (e) => {
+      const currentTransform = el.style.transform || 'scale(1)';
+      const scaleMatch = currentTransform.match(/scale\(([\d.]+)\)/);
+      const targetScale = scaleMatch ? parseFloat(scaleMatch[1]) / 0.95 : 1.05;
+      el.style.transform = currentTransform.replace(/scale\([\d.]+\)/, `scale(${targetScale})`);
+      if (originalMouseUp) originalMouseUp.call(el);
+    });
+  });
+});
+
 </script>
 
 </body>

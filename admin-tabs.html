@@ -2582,6 +2582,25 @@ function closeSubscriberTimeline() {
   if (drawer) drawer.style.display = 'none';
   if (backdrop) backdrop.style.display = 'none';
 }
+
+// ========== MODAL SYSTEM ==========
+
+function showModal(title, content) {
+  const modal = document.getElementById('genericModal');
+  const modalTitle = document.getElementById('modalTitle');
+  const modalContent = document.getElementById('modalContent');
+  
+  if (modal && modalTitle && modalContent) {
+    modalTitle.textContent = title;
+    modalContent.innerHTML = content;
+    modal.style.display = 'flex';
+  }
+}
+
+function closeModal() {
+  const modal = document.getElementById('genericModal');
+  if (modal) modal.style.display = 'none';
+}
 </script>
 
 <!-- Subscriber Timeline Drawer Modal -->
@@ -2589,6 +2608,19 @@ function closeSubscriberTimeline() {
 <div id="timelineDrawer" style="display: none; position: fixed; top: 0; right: 0; width: 400px; height: 100vh; background: #1e293b; overflow-y: auto; z-index: 9999; box-shadow: -2px 0 10px rgba(0,0,0,0.3);">
   <div id="timelineContent" style="padding: 1.5rem;">
     <!-- Content will be inserted here -->
+  </div>
+</div>
+
+<!-- Generic Modal for Actions -->
+<div id="genericModal" onclick="if(event.target===this) closeModal()" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; justify-content: center; align-items: center;">
+  <div style="background: #1e293b; border-radius: 12px; padding: 2rem; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.5);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+      <h2 id="modalTitle" style="margin: 0;">Modal</h2>
+      <button onclick="closeModal()" style="background: transparent; border: none; color: #94a3b8; font-size: 1.5rem; cursor: pointer; padding: 0; width: 32px; height: 32px;">&times;</button>
+    </div>
+    <div id="modalContent">
+      <!-- Content will be inserted here -->
+    </div>
   </div>
 </div>
 

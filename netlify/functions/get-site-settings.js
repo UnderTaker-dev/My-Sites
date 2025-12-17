@@ -52,19 +52,17 @@ exports.handler = async (event, context) => {
   } else if (event.httpMethod === 'POST') {
     try {
       const { theme, supportMeVisible } = JSON.parse(event.body || '{}');
-      if (!theme) {
-        return { statusCode: 400, body: JSON.stringify({ error: 'theme required' }) };
-      }
 
       const base = new Airtable({ apiKey: process.env.AIRTABLE_TOKEN }).base(process.env.AIRTABLE_BASE_ID);
       
       // Get or create the settings record
       const record = await getOrCreateSettings(base);
 
-      const fields = {
-        Theme: theme,
-        'Support Me Visible': supportMeVisible !== false
-      };
+      const fields = {};
+      
+      // Only update fields that are provided
+      if (theme !== undefined) fields.Theme = theme;
+      if (supportMeVisible !== undefined) fields['Support Me Visible'] = supportMeVisible;
 
       try {
         await base('Settings').update([{ id: record.id, fields }]);
@@ -75,7 +73,7 @@ exports.handler = async (event, context) => {
 
       return {
         statusCode: 200,
-        body: JSON.stringify({ success: true, theme, supportMeVisible })
+        body: JSON.stringify({ success: true, ...fields })
       };
     } catch (error) {
       console.error('update-settings error:', error);
