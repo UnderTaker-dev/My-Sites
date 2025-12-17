@@ -1,0 +1,2 @@
+IP,Reason,BlockedDate,AutoBlocked,Notes
+123.45.67.89,Spam pattern detected - multiple rapid submissions,2024-12-17,true,Automatically blocked by rate limiting system

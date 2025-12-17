@@ -1,0 +1,2 @@
+IP,Email,Reason,Status,SubmittedDate,ReviewedDate,ReviewedBy,AdminNotes,UnblockedDate,TimesAppealed,PreviousStatus,UserAgent
+192.168.1.100,user@example.com,I was trying to subscribe to your newsletter but got blocked by mistake. I'm a real person and would love to receive updates.,Pending,2024-12-17,,,,,1,,Mozilla/5.0 (Windows NT 10.0; Win64; x64)

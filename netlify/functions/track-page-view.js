@@ -50,6 +50,20 @@ exports.handler = async (event, context) => {
 
     const base = new Airtable({ apiKey: process.env.AIRTABLE_TOKEN }).base(process.env.AIRTABLE_BASE_ID);
     
+    // Check if tracking is enabled from Airtable settings
+    try {
+      const settingsRecords = await base('SiteSettings').select({ maxRecords: 1 }).firstPage();
+      if (settingsRecords.length > 0 && settingsRecords[0].fields.TrackIPEnabled === false) {
+        console.log('IP tracking is disabled via settings');
+        return {
+          statusCode: 200,
+          body: JSON.stringify({ success: true, message: 'Tracking disabled' })
+        };
+      }
+    } catch (settingsError) {
+      console.log('Could not check tracking settings, proceeding with tracking:', settingsError.message);
+    }
+    
     // Get IP and location data
     let ip = event.headers['x-forwarded-for']?.split(',')[0].trim() || event.headers['client-ip'] || 'Unknown';
     console.log('Initial detected IP:', ip);

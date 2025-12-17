@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Site Settings</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .container {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 3rem;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 0.5rem;
+      font-size: 2rem;
+    }
+    .subtitle {
+      color: #666;
+      margin-bottom: 2rem;
+      font-size: 0.95rem;
+    }
+    .setting {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .setting-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+    .setting-title {
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: #333;
+    }
+    .setting-desc {
+      color: #666;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    .toggle {
+      position: relative;
+      width: 60px;
+      height: 32px;
+    }
+    .toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: 0.3s;
+      border-radius: 32px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 24px;
+      width: 24px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: 0.3s;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background-color: #667eea;
+    }
+    input:checked + .slider:before {
+      transform: translateX(28px);
+    }
+    .note {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      color: #856404;
+    }
+    .back-btn {
+      display: inline-block;
+      margin-top: 2rem;
+      padding: 0.8rem 1.5rem;
+      background: #667eea;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    .back-btn:hover {
+      background: #5568d3;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>⚙️ Site Settings</h1>
+    <p class="subtitle">Control site behavior and tracking</p>
+
+    <div class="setting">
+      <div class="setting-header">
+        <div class="setting-title">🔧 Maintenance Mode</div>
+        <label class="toggle">
+          <input type="checkbox" id="maintenanceToggle">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="setting-desc">
+        Show a maintenance page to all visitors. Useful during updates or fixes.
+      </div>
+    </div>
+
+    <div class="setting">
+      <div class="setting-header">
+        <div class="setting-title">📍 IP Tracking</div>
+        <label class="toggle">
+          <input type="checkbox" id="trackingToggle" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="setting-desc">
+        Track visitor IP addresses and location data. Disable for privacy-focused mode.
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>✨ Live Settings:</strong> Changes are saved to Airtable and take effect immediately! 
+      No need to redeploy or restart the server.
+    </div>
+
+    <a href="/admin-tabs.html" class="back-btn">← Back to Admin</a>
+  </div>
+
+  <script>
+    const maintenanceToggle = document.getElementById('maintenanceToggle');
+    const trackingToggle = document.getElementById('trackingToggle');
+
+    // Load current settings from Airtable
+    async function loadSettings() {
+      try {
+        const response = await fetch('/.netlify/functions/check-maintenance');
+        const data = await response.json();
+        
+        maintenanceToggle.checked = data.maintenanceMode || false;
+        trackingToggle.checked = data.trackIpEnabled !== false; // Default true
+        
+        console.log('Settings loaded:', data);
+      } catch (error) {
+        console.error('Failed to load settings:', error);
+      }
+    }
+
+    // Save settings to Airtable
+    async function saveSettings() {
+      try {
+        const response = await fetch('/.netlify/functions/update-site-settings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            maintenanceMode: maintenanceToggle.checked,
+            trackIpEnabled: trackingToggle.checked
+          })
+        });
+
+        const result = await response.json();
+        
+        if (result.success) {
+          showToast('✅ Settings updated instantly!', '#2ecc71');
+        } else {
+          throw new Error(result.error);
+        }
+      } catch (error) {
+        console.error('Failed to save settings:', error);
+        showToast('❌ Failed to update settings', '#e74c3c');
+      }
+    }
+
+    function showToast(message, color) {
+      const toast = document.createElement('div');
+      toast.textContent = message;
+      toast.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${color};
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        z-index: 10000;
+        animation: slideIn 0.3s ease;
+      `;
+      document.body.appendChild(toast);
+      setTimeout(() => {
+        toast.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    // Add event listeners
+    maintenanceToggle.addEventListener('change', saveSettings);
+    trackingToggle.addEventListener('change', saveSettings);
+
+    // Load on page load
+    loadSettings();
+  </script>
+  <style>
+    @keyframes slideIn {
+      from { transform: translateX(400px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOut {
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(400px); opacity: 0; }
+    }
+  </style>
+</body>
+</html>

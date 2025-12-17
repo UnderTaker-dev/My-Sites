@@ -2121,6 +2121,8 @@ body.theme-easter .floating-icon {
     <h3 style="margin-bottom: 0.5rem; text-align: center; animation: slideDown 0.6s ease;">📬 Stay Updated</h3>
     <p style="text-align: center; margin-bottom: 1.5rem; opacity: 0.8; animation: slideDown 0.6s ease 0.1s both;">Get notified when I launch something cool (or weird)</p>
     <form class="newsletter-form" onsubmit="handleNewsletter(event)" style="display: flex; gap: 0.8rem; flex-wrap: wrap; justify-content: center; animation: slideDown 0.6s ease 0.2s both;">
+      <!-- Honeypot field (hidden from humans, visible to bots) -->
+      <input type="text" name="website" id="websiteField" style="position: absolute; left: -9999px; width: 1px; height: 1px;" tabindex="-1" autocomplete="off">
       <input type="email" id="newsletterEmail" class="newsletter-input" placeholder="your@email.com" required style="flex: 1; min-width: 200px; padding: 0.8rem 1rem; border: 2px solid rgba(155, 89, 182, 0.3); border-radius: 8px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); color: inherit; transition: all 0.3s ease;" onmouseover="this.style.borderColor='rgba(155, 89, 182, 0.6)'; this.style.boxShadow='0 0 20px rgba(155, 89, 182, 0.3)'; this.style.transform='scale(1.02)'" onmouseout="this.style.borderColor='rgba(155, 89, 182, 0.3)'; this.style.boxShadow='none'; this.style.transform='scale(1)'" onfocus="this.style.borderColor='rgba(155, 89, 182, 0.8)'; this.style.boxShadow='0 0 25px rgba(155, 89, 182, 0.5)'">
       <button type="submit" class="btn-subscribe" id="subscribeBtn" style="padding: 0.8rem 2rem; background: linear-gradient(135deg, #9b59b6, #8e44ad); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; position: relative; overflow: hidden;" onmouseenter="this.style.transition='transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease'; this.style.transform='scale(1.08)'; this.style.boxShadow='0 12px 24px rgba(155, 89, 182, 0.5), 0 0 40px rgba(155, 89, 182, 0.3)'; this.style.filter='brightness(1.2)'" onmouseleave="this.style.transform='scale(1)'; this.style.boxShadow='none'; this.style.filter='brightness(1)'" onmousedown="this.style.transform='scale(1)'" onmouseup="this.style.transform='scale(1.08)'">✨ Subscribe</button>
     </form>
@@ -2233,6 +2235,33 @@ body.theme-easter .floating-icon {
 </footer>
 
 <script>
+// ========== CHECK MAINTENANCE MODE ==========
+(async function() {
+  try {
+    const response = await fetch('/.netlify/functions/check-maintenance');
+    const data = await response.json();
+    
+    if (data.maintenanceMode) {
+      document.body.innerHTML = `
+        <div style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-align: center; font-family: system-ui, -apple-system, sans-serif; padding: 2rem;">
+          <div>
+            <div style="font-size: 5rem; margin-bottom: 1rem;">🔧</div>
+            <h1 style="font-size: 3rem; margin-bottom: 1rem; font-weight: 900;">Under Maintenance</h1>
+            <p style="font-size: 1.3rem; opacity: 0.9; margin-bottom: 2rem;">${data.message}</p>
+            <p style="opacity: 0.7; font-size: 0.95rem;">We'll be back online shortly. Thanks for your patience!</p>
+          </div>
+        </div>
+      `;
+      throw new Error('Maintenance mode active');
+    }
+  } catch (error) {
+    if (error.message === 'Maintenance mode active') {
+      throw error; // Stop script execution
+    }
+    console.log('Maintenance check failed, continuing normally:', error);
+  }
+})();
+
 // ========== PARTICLE ANIMATION SYSTEM ==========
 const canvas = document.getElementById('particleCanvas');
 const ctx = canvas.getContext('2d');
@@ -2576,12 +2605,21 @@ function showRandomFact() {
 }
 
 // ========== IMPROVED NEWSLETTER WITH VALIDATION ==========
-function handleNewsletter(event) {
+async function handleNewsletter(event) {
   event.preventDefault();
   
   const emailInput = document.getElementById('newsletterEmail');
   const email = emailInput.value.trim();
   const btn = document.getElementById('subscribeBtn');
+  const honeypot = document.getElementById('websiteField');
+  
+  // Honeypot check - if filled, it's a bot
+  if (honeypot && honeypot.value) {
+    console.log('Bot detected via honeypot');
+    showToast('Thank you for subscribing!', '#1abc9c'); // Fake success for bots
+    emailInput.value = '';
+    return;
+  }
   
   // Enhanced email validation
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -2599,6 +2637,34 @@ function handleNewsletter(event) {
   const originalText = btn.textContent;
   btn.setAttribute('data-original-text', originalText);
   
+  // Rate limit check
+  try {
+    const rateLimitResponse = await fetch('/.netlify/functions/check-rate-limit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        ip: 'client-side', // Server will get real IP
+        action: 'newsletter'
+      })
+    });
+    
+    const rateLimitData = await rateLimitResponse.json();
+    
+    if (!rateLimitData.allowed) {
+      // If IP is blocked, redirect to appeal page
+      if (rateLimitData.blocked && rateLimitData.appealUrl) {
+        window.location.href = rateLimitData.appealUrl;
+        return;
+      }
+      showToast(rateLimitData.reason || 'Please try again later', '#f39c12');
+      btn.disabled = false;
+      btn.classList.remove('btn-loading');
+      return;
+    }
+  } catch (e) {
+    console.log('Rate limit check failed, continuing:', e);
+  }
+  
   // Call the newsletter-subscribe function
   fetch('/.netlify/functions/newsletter-subscribe', {
     method: 'POST',
@@ -2611,7 +2677,7 @@ function handleNewsletter(event) {
   })
   .then(data => {
     if (data.success) {
-      showToast('Check your email to confirm subscription!', '#1abc9c');
+      showToast('✅ Successfully subscribed! You\'ll receive updates soon.', '#1abc9c');
       emailInput.value = '';
       // Add success animation
       btn.classList.add('success-pulse');
