@@ -2238,16 +2238,27 @@ body.theme-easter .floating-icon {
 // ========== CHECK MAINTENANCE MODE ==========
 (async function() {
   try {
-    const response = await fetch('/.netlify/functions/check-maintenance');
+    const adminToken = localStorage.getItem('adminToken');
+    if (adminToken) return;
+
+    const params = new URLSearchParams(window.location.search);
+    const bypassCode = params.get('bypass');
+    const maintenanceUrl = bypassCode
+      ? `/.netlify/functions/check-maintenance?bypass=${encodeURIComponent(bypassCode)}`
+      : '/.netlify/functions/check-maintenance';
+    const response = await fetch(maintenanceUrl);
     const data = await response.json();
     
     if (data.maintenanceMode) {
+      const endsAtText = data.maintenanceEndsAt ? new Date(data.maintenanceEndsAt).toLocaleString() : null;
+      const message = data.maintenanceMessage || data.message || 'We\'re performing updates to improve your experience';
       document.body.innerHTML = `
         <div style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-align: center; font-family: system-ui, -apple-system, sans-serif; padding: 2rem;">
           <div>
             <div style="font-size: 5rem; margin-bottom: 1rem;">🔧</div>
             <h1 style="font-size: 3rem; margin-bottom: 1rem; font-weight: 900;">Under Maintenance</h1>
-            <p style="font-size: 1.3rem; opacity: 0.9; margin-bottom: 2rem;">${data.message}</p>
+            <p style="font-size: 1.3rem; opacity: 0.9; margin-bottom: 1.5rem;">${message}</p>
+            ${endsAtText ? `<p style=\"opacity: 0.85; font-size: 1rem; margin-bottom: 1.5rem;\">Expected back: ${endsAtText}</p>` : ''}
             <p style="opacity: 0.7; font-size: 0.95rem;">We'll be back online shortly. Thanks for your patience!</p>
           </div>
         </div>
@@ -3236,8 +3247,25 @@ document.head.appendChild(style);
     else if (/mac os x/i.test(userAgent)) os = 'macOS';
     else if (/linux/i.test(userAgent)) os = 'Linux';
     
-    // Get referrer
     const referrer = document.referrer || 'Direct';
+    const params = new URLSearchParams(window.location.search);
+    const sessionKey = 'pv_session_id';
+    const existingSession = localStorage.getItem(sessionKey);
+    const sessionId = existingSession || (crypto?.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`);
+    if (!existingSession) localStorage.setItem(sessionKey, sessionId);
+
+    const utmSource = params.get('utm_source') || '';
+    const utmMedium = params.get('utm_medium') || '';
+    const utmCampaign = params.get('utm_campaign') || '';
+    const utmTerm = params.get('utm_term') || '';
+    const utmContent = params.get('utm_content') || '';
+
+    const screenWidth = window.screen?.width || null;
+    const screenHeight = window.screen?.height || null;
+    const viewportWidth = window.innerWidth || null;
+    const viewportHeight = window.innerHeight || null;
+    const language = navigator.language || 'Unknown';
+    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Unknown';
     
     const response = await fetch('/.netlify/functions/track-page-view', {
       method: 'POST',
@@ -3247,7 +3275,19 @@ document.head.appendChild(style);
         device: device,
         browser: browser,
         os: os,
-        referrer: referrer
+        referrer: referrer,
+        utmSource,
+        utmMedium,
+        utmCampaign,
+        utmTerm,
+        utmContent,
+        screenWidth,
+        screenHeight,
+        viewportWidth,
+        viewportHeight,
+        language,
+        timeZone,
+        sessionId
       })
     });
     

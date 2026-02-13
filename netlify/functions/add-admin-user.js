@@ -1,4 +1,5 @@
 const Airtable = require('airtable');
+const crypto = require('crypto');
 
 exports.handler = async (event, context) => {
   if (event.httpMethod !== 'POST') {

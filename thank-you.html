@@ -213,6 +213,24 @@
         else if (/linux/i.test(userAgent)) os = 'Linux';
         
         const referrer = document.referrer || 'Direct';
+        const params = new URLSearchParams(window.location.search);
+        const sessionKey = 'pv_session_id';
+        const existingSession = localStorage.getItem(sessionKey);
+        const sessionId = existingSession || (crypto?.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`);
+        if (!existingSession) localStorage.setItem(sessionKey, sessionId);
+
+        const utmSource = params.get('utm_source') || '';
+        const utmMedium = params.get('utm_medium') || '';
+        const utmCampaign = params.get('utm_campaign') || '';
+        const utmTerm = params.get('utm_term') || '';
+        const utmContent = params.get('utm_content') || '';
+
+        const screenWidth = window.screen?.width || null;
+        const screenHeight = window.screen?.height || null;
+        const viewportWidth = window.innerWidth || null;
+        const viewportHeight = window.innerHeight || null;
+        const language = navigator.language || 'Unknown';
+        const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Unknown';
         
         await fetch('/.netlify/functions/track-page-view', {
           method: 'POST',
@@ -222,7 +240,19 @@
             device: device,
             browser: browser,
             os: os,
-            referrer: referrer
+            referrer: referrer,
+            utmSource,
+            utmMedium,
+            utmCampaign,
+            utmTerm,
+            utmContent,
+            screenWidth,
+            screenHeight,
+            viewportWidth,
+            viewportHeight,
+            language,
+            timeZone,
+            sessionId
           })
         });
       } catch (error) {

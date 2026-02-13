@@ -9,10 +9,22 @@ exports.handler = async (event, context) => {
     
     let maintenanceMode = false;
     let trackIpEnabled = true;
+    let maintenanceMessage = 'We\'re performing updates to improve your experience';
+    let maintenanceEndsAt = null;
+    let maintenanceBypassCode = null;
     
     if (records.length > 0) {
       maintenanceMode = records[0].fields.MaintenanceMode || false;
       trackIpEnabled = records[0].fields.TrackIPEnabled !== false; // Default true
+      maintenanceMessage = records[0].fields.MaintenanceMessage || maintenanceMessage;
+      maintenanceEndsAt = records[0].fields.MaintenanceEndsAt || null;
+      maintenanceBypassCode = records[0].fields.MaintenanceBypassCode || null;
+    }
+
+    const bypassParam = event.queryStringParameters?.bypass;
+    const bypassed = !!(maintenanceMode && maintenanceBypassCode && bypassParam && bypassParam === maintenanceBypassCode);
+    if (bypassed) {
+      maintenanceMode = false;
     }
     
     return {
@@ -24,7 +36,9 @@ exports.handler = async (event, context) => {
       body: JSON.stringify({
         maintenanceMode,
         trackIpEnabled,
-        message: 'We\'re performing updates to improve your experience'
+        maintenanceMessage,
+        maintenanceEndsAt,
+        bypassed
       })
     };
   } catch (error) {
@@ -39,7 +53,9 @@ exports.handler = async (event, context) => {
       body: JSON.stringify({
         maintenanceMode: false,
         trackIpEnabled: true,
-        message: 'Service check failed, proceeding normally'
+        maintenanceMessage: 'Service check failed, proceeding normally',
+        maintenanceEndsAt: null,
+        bypassed: false
       })
     };
   }

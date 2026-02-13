@@ -11,7 +11,25 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    const { page, device, browser, os, referrer } = JSON.parse(event.body);
+    const {
+      page,
+      device,
+      browser,
+      os,
+      referrer,
+      utmSource,
+      utmMedium,
+      utmCampaign,
+      utmTerm,
+      utmContent,
+      screenWidth,
+      screenHeight,
+      viewportWidth,
+      viewportHeight,
+      language,
+      timeZone,
+      sessionId
+    } = JSON.parse(event.body);
 
     // Normalize page path (strip domain/query/hash, ensure leading slash)
     const normalizePage = (raw) => {
@@ -174,9 +192,42 @@ exports.handler = async (event, context) => {
     if (normalizedReferrer) fields.Referrer = normalizedReferrer;
     if (city !== 'Unknown') fields.City = city;
     if (country !== 'Unknown') fields.Country = country;
+    if (screenWidth && screenHeight) fields.Screen = `${screenWidth}x${screenHeight}`;
+    if (viewportWidth && viewportHeight) fields.Viewport = `${viewportWidth}x${viewportHeight}`;
+    if (language) fields.Language = language;
+    if (timeZone) fields.TimeZone = timeZone;
+    if (sessionId) fields.SessionId = sessionId;
+    if (utmSource) fields.UTMSource = utmSource;
+    if (utmMedium) fields.UTMMedium = utmMedium;
+    if (utmCampaign) fields.UTMCampaign = utmCampaign;
+    if (utmTerm) fields.UTMTerm = utmTerm;
+    if (utmContent) fields.UTMContent = utmContent;
     
     console.log('Saving to Airtable with fields:', JSON.stringify(fields, null, 2));
-    await base('PageViews').create([{ fields }]);
+    const createRecord = async (targetFields) => {
+      await base('PageViews').create([{ fields: targetFields }]);
+    };
+
+    let attempts = 0;
+    const maxAttempts = 15;
+    let currentFields = { ...fields };
+    while (attempts < maxAttempts) {
+      try {
+        await createRecord(currentFields);
+        break;
+      } catch (err) {
+        if (err?.error === 'UNKNOWN_FIELD_NAME' && err?.message) {
+          const match = err.message.match(/"([^"]+)"/);
+          const unknownField = match ? match[1] : null;
+          if (unknownField && Object.prototype.hasOwnProperty.call(currentFields, unknownField)) {
+            delete currentFields[unknownField];
+            attempts += 1;
+            continue;
+          }
+        }
+        throw err;
+      }
+    }
 
     return {
       statusCode: 200,

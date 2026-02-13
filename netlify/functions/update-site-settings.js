@@ -9,27 +9,49 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    const { maintenanceMode, trackIpEnabled } = JSON.parse(event.body);
+    const { maintenanceMode, trackIpEnabled, maintenanceMessage, maintenanceEndsAt, maintenanceBypassCode } = JSON.parse(event.body);
     const base = new Airtable({ apiKey: process.env.AIRTABLE_TOKEN }).base(process.env.AIRTABLE_BASE_ID);
     
     // Get existing settings record or create new one
     const records = await base('SiteSettings').select({ maxRecords: 1 }).firstPage();
     
     const fields = {
-      MaintenanceMode: maintenanceMode,
-      TrackIPEnabled: trackIpEnabled,
       LastUpdated: new Date().toISOString()
     };
 
-    if (records.length > 0) {
-      // Update existing
-      await base('SiteSettings').update([{
-        id: records[0].id,
-        fields: fields
-      }]);
-    } else {
-      // Create new
-      await base('SiteSettings').create([{ fields }]);
+    if (maintenanceMode !== undefined) fields.MaintenanceMode = maintenanceMode;
+    if (trackIpEnabled !== undefined) fields.TrackIPEnabled = trackIpEnabled;
+    if (maintenanceMessage !== undefined) fields.MaintenanceMessage = maintenanceMessage || '';
+    if (maintenanceEndsAt !== undefined) fields.MaintenanceEndsAt = maintenanceEndsAt || null;
+    if (maintenanceBypassCode !== undefined) fields.MaintenanceBypassCode = maintenanceBypassCode || null;
+
+    const applyUpdate = async (targetFields) => {
+      if (records.length > 0) {
+        await base('SiteSettings').update([{
+          id: records[0].id,
+          fields: targetFields
+        }]);
+      } else {
+        await base('SiteSettings').create([{ fields: targetFields }]);
+      }
+    };
+
+    try {
+      await applyUpdate(fields);
+    } catch (err) {
+      if (err?.error === 'UNKNOWN_FIELD_NAME' && err?.message) {
+        const match = err.message.match(/"([^"]+)"/);
+        const unknownField = match ? match[1] : null;
+        if (unknownField && Object.prototype.hasOwnProperty.call(fields, unknownField)) {
+          const retryFields = { ...fields };
+          delete retryFields[unknownField];
+          await applyUpdate(retryFields);
+        } else {
+          throw err;
+        }
+      } else {
+        throw err;
+      }
     }
 
     return {

@@ -22,6 +22,17 @@ body {
   position: relative;
 }
 
+select,
+option {
+  background-color: #1e293b;
+  color: #e2e8f0;
+}
+
+select:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.35);
+}
+
 body::before {
   content: '';
   position: fixed;
@@ -643,7 +654,27 @@ tbody tr:hover {
   <div class="data-section">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
       <h2 style="margin: 0;">Recent Page Views</h2>
-      <button onclick="exportPageViews()" class="export-btn">📥 Export CSV</button>
+      <div style="display: flex; gap: 0.5rem;">
+        <button onclick="refreshPageViews()" class="export-btn">🔄 Refresh</button>
+        <button onclick="exportPageViews()" class="export-btn">📥 Export CSV</button>
+      </div>
+    </div>
+    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem;">
+      <input id="pageViewsSearch" type="text" placeholder="Search page, IP, city, referrer..." style="flex: 1; min-width: 220px; padding: 0.6rem 0.8rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: #fff;">
+      <select id="pageViewsPageFilter" style="min-width: 180px; padding: 0.6rem 0.8rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: #fff;">
+        <option value="All">All Pages</option>
+      </select>
+      <select id="pageViewsReferrerFilter" style="min-width: 180px; padding: 0.6rem 0.8rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: #fff;">
+        <option value="All">All Referrers</option>
+      </select>
+      <select id="pageViewsRangeFilter" style="min-width: 140px; padding: 0.6rem 0.8rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: #fff;">
+        <option value="24h">Last 24h</option>
+        <option value="7d" selected>Last 7d</option>
+        <option value="30d">Last 30d</option>
+        <option value="all">All time</option>
+      </select>
+      <button onclick="clearPageViewsFilters()" class="btn btn-secondary" style="padding: 0.55rem 0.9rem; border-radius: 8px;">Clear</button>
+      <button onclick="deleteFilteredPageViews()" class="btn btn-danger" style="padding: 0.55rem 0.9rem; border-radius: 8px; background: #e74c3c; border: none; color: #fff;">Delete Filtered</button>
     </div>
     <div style="overflow-x: auto;">
       <table style="width: 100%; border-collapse: collapse;">
@@ -654,12 +685,35 @@ tbody tr:hover {
             <th style="padding: 0.8rem; border-bottom: 2px solid rgba(255,255,255,0.1);">Location</th>
             <th style="padding: 0.8rem; border-bottom: 2px solid rgba(255,255,255,0.1);">Device Info</th>
             <th style="padding: 0.8rem; border-bottom: 2px solid rgba(255,255,255,0.1);">Referrer</th>
+            <th style="padding: 0.8rem; border-bottom: 2px solid rgba(255,255,255,0.1);">Extras</th>
+            <th style="padding: 0.8rem; border-bottom: 2px solid rgba(255,255,255,0.1);">Action</th>
           </tr>
         </thead>
         <tbody id="pageViewsTable">
-          <tr><td colspan="5" style="padding: 1rem; text-align: center; opacity: 0.7;">Loading...</td></tr>
+          <tr><td colspan="7" style="padding: 1rem; text-align: center; opacity: 0.7;">Loading...</td></tr>
         </tbody>
       </table>
+    </div>
+  </div>
+
+  <div class="data-section">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <h2 style="margin: 0;">Traffic Insights</h2>
+      <span id="pageStatsRefreshTime" style="font-size: 0.85rem; opacity: 0.6;"></span>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem;">
+      <div style="background: rgba(255,255,255,0.05); border-radius: 12px; padding: 1rem; border: 1px solid rgba(255,255,255,0.1);">
+        <h3 style="font-size: 1rem; margin-bottom: 0.75rem;">Top Pages</h3>
+        <ul id="topPagesList" style="list-style: none; margin: 0; padding: 0;">
+          <li style="opacity: 0.7;">Loading...</li>
+        </ul>
+      </div>
+      <div style="background: rgba(255,255,255,0.05); border-radius: 12px; padding: 1rem; border: 1px solid rgba(255,255,255,0.1);">
+        <h3 style="font-size: 1rem; margin-bottom: 0.75rem;">Top Referrers</h3>
+        <ul id="topReferrersList" style="list-style: none; margin: 0; padding: 0;">
+          <li style="opacity: 0.7;">Loading...</li>
+        </ul>
+      </div>
     </div>
   </div>
   </div>
@@ -718,6 +772,20 @@ tbody tr:hover {
       <h2 style="margin: 0;">Admin Actions & Events</h2>
       <span id="activityRefreshTime" style="font-size: 0.85rem; opacity: 0.6;"></span>
     </div>
+    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem;">
+      <input id="activitySearch" type="text" placeholder="Search email, admin, note..." style="flex: 1; min-width: 200px; padding: 0.6rem 0.8rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: #fff;">
+      <select id="activityTypeFilter" style="min-width: 160px; padding: 0.6rem 0.8rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: #fff;">
+        <option value="All">All Types</option>
+      </select>
+      <select id="activityRangeFilter" style="min-width: 140px; padding: 0.6rem 0.8rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: #fff;">
+        <option value="24h">Last 24h</option>
+        <option value="7d" selected>Last 7d</option>
+        <option value="30d">Last 30d</option>
+        <option value="all">All time</option>
+      </select>
+      <button onclick="exportActivityLog()" class="export-btn">📥 Export CSV</button>
+    </div>
+    <div id="activitySummary" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem; margin-bottom: 1rem;"></div>
     <div style="max-height: 600px; overflow-y: auto; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px;">
       <div id="activityLogList" style="padding: 1rem;">
         <p style="opacity: 0.7; text-align: center;">Loading activity log...</p>
@@ -968,15 +1036,55 @@ window.addEventListener('DOMContentLoaded', () => {
     console.error('Dashboard load error:', err);
   });
 
+  initActivityLogFilters();
+  initPageViewsFilters();
+
   // Preload tab data for instant switching
   initAllTabsData();
 });
+
+function initActivityLogFilters() {
+  const searchInput = document.getElementById('activitySearch');
+  const typeFilter = document.getElementById('activityTypeFilter');
+  const rangeFilter = document.getElementById('activityRangeFilter');
+
+  if (searchInput) {
+    searchInput.addEventListener('input', () => renderActivityLog(window.__activityLogItems || []));
+  }
+  if (typeFilter) {
+    typeFilter.addEventListener('change', () => renderActivityLog(window.__activityLogItems || []));
+  }
+  if (rangeFilter) {
+    rangeFilter.addEventListener('change', () => renderActivityLog(window.__activityLogItems || []));
+  }
+}
+
+function initPageViewsFilters() {
+  const searchInput = document.getElementById('pageViewsSearch');
+  const pageFilter = document.getElementById('pageViewsPageFilter');
+  const referrerFilter = document.getElementById('pageViewsReferrerFilter');
+  const rangeFilter = document.getElementById('pageViewsRangeFilter');
+
+  if (searchInput) {
+    searchInput.addEventListener('input', () => renderPageViewsTable(window.__pageViews || []));
+  }
+  if (pageFilter) {
+    pageFilter.addEventListener('change', () => renderPageViewsTable(window.__pageViews || []));
+  }
+  if (referrerFilter) {
+    referrerFilter.addEventListener('change', () => renderPageViewsTable(window.__pageViews || []));
+  }
+  if (rangeFilter) {
+    rangeFilter.addEventListener('change', () => renderPageViewsTable(window.__pageViews || []));
+  }
+}
 
 async function initAllTabsData() {
   try {
     await Promise.all([
       loadSubscribersTab().catch(e => console.error('Prefetch subscribers failed', e)),
       loadPageViewsTable().catch(e => console.error('Prefetch pageviews failed', e)),
+      loadPageStats().catch(e => console.error('Prefetch page stats failed', e)),
       loadDonationsTable().catch(e => console.error('Prefetch donations failed', e)),
       (async () => {
         try {
@@ -1123,49 +1231,260 @@ async function loadPageViewsTable() {
     const response = await fetch('/.netlify/functions/get-page-views-details');
     const data = await response.json();
     
-    const friendlyPage = (page) => {
-      const path = page || '/';
-      const map = {
-        '/': 'Home',
-        '/thank-you.html': 'Thank You',
-        '/admin-tabs.html': 'Admin Dashboard',
-        '/admin.html': 'Admin Dashboard',
-      };
-      return map[path] ? `${map[path]} (${path})` : path;
-    };
-    
     const now = new Date().toLocaleTimeString();
     updateAllRefreshTimestamps(now);
-    
-    const table = document.getElementById('pageViewsTable');
-    if (data.views && data.views.length > 0) {
-      table.innerHTML = data.views.map(view => `
-        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-          <td style="padding: 0.8rem;">${friendlyPage(view.page)}</td>
-          <td style="padding: 0.8rem; font-size: 0.9em;">${new Date(view.timestamp).toLocaleString()}</td>
-          <td style="padding: 0.8rem;">
-            <div style="font-size: 0.9em;">
-              <div>🌍 ${view.city}, ${view.country}</div>
-              <div style="opacity: 0.6; font-size: 0.85em;">${view.ip}</div>
-            </div>
-          </td>
-          <td style="padding: 0.8rem;">
-            <div style="font-size: 0.9em;">
-              <div>${view.device || 'Unknown'}</div>
-              <div style="opacity: 0.7; font-size: 0.85em;">${view.browser || 'Unknown'} • ${view.os || 'Unknown'}</div>
-            </div>
-          </td>
-          <td style="padding: 0.8rem; font-size: 0.85em; opacity: 0.8; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${view.referrer}">${view.referrer}</td>
-        </tr>
-      `).join('');
-    } else {
-      table.innerHTML = '<tr><td colspan="5" style="padding: 1rem; text-align: center; opacity: 0.7;">No page views yet</td></tr>';
-    }
-    console.log('✅ Page views table rendered:', data.views ? data.views.length : 0);
+
+    const views = data.views || [];
+    window.__pageViews = views;
+    populatePageViewsFilters(views);
+    renderPageViewsTable(views);
+    loadPageStats().catch(err => console.error('Page stats refresh failed', err));
+    console.log('✅ Page views table rendered:', views.length);
   } catch (error) {
     console.error('Error loading page views table:', error);
     document.getElementById('pageViewsTable').innerHTML = 
-      '<tr><td colspan="5" style="padding: 1rem; text-align: center; color: #e74c3c;">Error loading data</td></tr>';
+      '<tr><td colspan="7" style="padding: 1rem; text-align: center; color: #e74c3c;">Error loading data</td></tr>';
+  }
+}
+
+function refreshPageViews() {
+  loadPageViewsTable();
+  loadPageStats();
+}
+
+function friendlyPageLabel(page) {
+  const path = page || '/';
+  const map = {
+    '/': 'Home',
+    '/thank-you.html': 'Thank You',
+    '/admin-tabs.html': 'Admin Dashboard',
+    '/admin.html': 'Admin Dashboard'
+  };
+  return map[path] ? `${map[path]} (${path})` : path;
+}
+
+function populatePageViewsFilters(views) {
+  const pageFilter = document.getElementById('pageViewsPageFilter');
+  const referrerFilter = document.getElementById('pageViewsReferrerFilter');
+  if (!pageFilter || !referrerFilter) return;
+
+  const currentPage = pageFilter.value || 'All';
+  const currentReferrer = referrerFilter.value || 'All';
+
+  const pages = Array.from(new Set(views.map(v => v.page || '/'))).sort();
+  const referrers = Array.from(new Set(views.map(v => v.referrer || 'Direct'))).sort();
+
+  pageFilter.innerHTML = ['All', ...pages]
+    .map(page => `<option value="${page}">${page === 'All' ? 'All Pages' : page}</option>`)
+    .join('');
+  referrerFilter.innerHTML = ['All', ...referrers]
+    .map(ref => `<option value="${ref}">${ref === 'All' ? 'All Referrers' : ref}</option>`)
+    .join('');
+
+  pageFilter.value = pages.includes(currentPage) ? currentPage : 'All';
+  referrerFilter.value = referrers.includes(currentReferrer) ? currentReferrer : 'All';
+}
+
+function getFilteredPageViews(views) {
+  const search = (document.getElementById('pageViewsSearch')?.value || '').toLowerCase().trim();
+  const pageFilter = document.getElementById('pageViewsPageFilter')?.value || 'All';
+  const referrerFilter = document.getElementById('pageViewsReferrerFilter')?.value || 'All';
+  const rangeFilter = document.getElementById('pageViewsRangeFilter')?.value || '7d';
+
+  const now = Date.now();
+  const rangeMs = {
+    '24h': 24 * 60 * 60 * 1000,
+    '7d': 7 * 24 * 60 * 60 * 1000,
+    '30d': 30 * 24 * 60 * 60 * 1000,
+    'all': null
+  }[rangeFilter];
+
+  return views.filter(view => {
+    const timestamp = new Date(view.timestamp).getTime();
+    if (rangeMs && (!timestamp || (now - timestamp) > rangeMs)) return false;
+    if (pageFilter !== 'All' && (view.page || '/') !== pageFilter) return false;
+    if (referrerFilter !== 'All' && (view.referrer || 'Direct') !== referrerFilter) return false;
+    if (!search) return true;
+    const haystack = [
+      view.page,
+      view.ip,
+      view.city,
+      view.country,
+      view.device,
+      view.browser,
+      view.os,
+      view.referrer,
+      view.language,
+      view.timeZone,
+      view.screen,
+      view.viewport,
+      view.utmSource,
+      view.utmMedium,
+      view.utmCampaign,
+      view.utmTerm,
+      view.utmContent,
+      view.sessionId
+    ].filter(Boolean).join(' ').toLowerCase();
+    return haystack.includes(search);
+  });
+}
+
+function renderPageViewsTable(views) {
+  const table = document.getElementById('pageViewsTable');
+  if (!table) return;
+
+  const filtered = getFilteredPageViews(views);
+  if (filtered.length === 0) {
+    table.innerHTML = '<tr><td colspan="7" style="padding: 1rem; text-align: center; opacity: 0.7;">No page views found</td></tr>';
+    return;
+  }
+
+  table.innerHTML = filtered.map(view => `
+    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+      <td style="padding: 0.8rem;">${friendlyPageLabel(view.page)}</td>
+      <td style="padding: 0.8rem; font-size: 0.9em;">${new Date(view.timestamp).toLocaleString()}</td>
+      <td style="padding: 0.8rem;">
+        <div style="font-size: 0.9em;">
+          <div>🌍 ${view.city || 'Unknown'}, ${view.country || 'Unknown'}</div>
+          <div style="opacity: 0.6; font-size: 0.85em;">${view.ip || 'Unknown'}</div>
+        </div>
+      </td>
+      <td style="padding: 0.8rem;">
+        <div style="font-size: 0.9em;">
+          <div>${view.device || 'Unknown'}</div>
+          <div style="opacity: 0.7; font-size: 0.85em;">${view.browser || 'Unknown'} • ${view.os || 'Unknown'}</div>
+        </div>
+      </td>
+      <td style="padding: 0.8rem; font-size: 0.85em; opacity: 0.8; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${view.referrer || 'Direct'}">${view.referrer || 'Direct'}</td>
+      <td style="padding: 0.8rem; font-size: 0.85em; opacity: 0.8; max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${view.utmCampaign || ''}">
+        <div>${view.language || 'Unknown'} • ${view.timeZone || 'Unknown'}</div>
+        <div style="opacity: 0.7;">${view.screen || ''} ${view.viewport ? `• ${view.viewport}` : ''}</div>
+        ${view.utmSource ? `<div style=\"opacity: 0.7;\">UTM: ${view.utmSource}</div>` : ''}
+      </td>
+      <td style="padding: 0.8rem; text-align: center;">
+        ${view.id ? `<button onclick="deletePageView('${view.id}')" class="btn btn-danger" style="padding: 0.35rem 0.6rem; border-radius: 6px; background: #e74c3c; border: none; color: #fff;">Delete</button>` : '<span style="opacity: 0.6;">N/A</span>'}
+      </td>
+    </tr>
+  `).join('');
+}
+
+function clearPageViewsFilters() {
+  const searchInput = document.getElementById('pageViewsSearch');
+  const pageFilter = document.getElementById('pageViewsPageFilter');
+  const referrerFilter = document.getElementById('pageViewsReferrerFilter');
+  const rangeFilter = document.getElementById('pageViewsRangeFilter');
+
+  if (searchInput) searchInput.value = '';
+  if (pageFilter) pageFilter.value = 'All';
+  if (referrerFilter) referrerFilter.value = 'All';
+  if (rangeFilter) rangeFilter.value = '7d';
+
+  renderPageViewsTable(window.__pageViews || []);
+}
+
+async function deletePageView(recordId) {
+  if (!recordId) return;
+  const confirmed = confirm('Delete this page view?');
+  if (!confirmed) return;
+
+  try {
+    const response = await fetch('/.netlify/functions/delete-page-view', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ recordId })
+    });
+    const result = await response.json();
+    if (!response.ok || !result.success) {
+      throw new Error(result.error || 'Delete failed');
+    }
+
+    window.__pageViews = (window.__pageViews || []).filter(view => view.id !== recordId);
+    renderPageViewsTable(window.__pageViews);
+    loadPageStats().catch(err => console.error('Page stats refresh failed', err));
+    showToast('✅ Page view deleted');
+  } catch (error) {
+    console.error('Delete page view error:', error);
+    showToast('❌ Failed to delete page view', '#e74c3c');
+  }
+}
+
+async function deleteFilteredPageViews() {
+  const views = window.__pageViews || [];
+  const filtered = getFilteredPageViews(views);
+  if (filtered.length === 0) {
+    showToast('⚠️ No page views to delete', '#e74c3c');
+    return;
+  }
+
+  const confirmed = confirm(`Delete ${filtered.length} page view(s)? This cannot be undone.`);
+  if (!confirmed) return;
+
+  try {
+    const recordIds = filtered.map(view => view.id).filter(Boolean);
+    if (recordIds.length === 0) {
+      showToast('⚠️ Selected items cannot be deleted', '#e74c3c');
+      return;
+    }
+    const response = await fetch('/.netlify/functions/delete-page-view', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ recordIds })
+    });
+    const result = await response.json();
+    if (!response.ok || !result.success) {
+      throw new Error(result.error || 'Delete failed');
+    }
+
+    window.__pageViews = views.filter(view => !recordIds.includes(view.id));
+    renderPageViewsTable(window.__pageViews);
+    loadPageStats().catch(err => console.error('Page stats refresh failed', err));
+    showToast(`✅ Deleted ${recordIds.length} page view(s)`);
+  } catch (error) {
+    console.error('Delete filtered page views error:', error);
+    showToast('❌ Failed to delete page views', '#e74c3c');
+  }
+}
+
+async function loadPageStats() {
+  console.log('📊 Loading page stats...');
+  try {
+    const response = await fetch('/.netlify/functions/get-page-stats');
+    const data = await response.json();
+
+    const now = new Date().toLocaleTimeString();
+    updateAllRefreshTimestamps(now);
+
+    const topPagesList = document.getElementById('topPagesList');
+    const topReferrersList = document.getElementById('topReferrersList');
+
+    if (topPagesList) {
+      if (data.topPages && data.topPages.length > 0) {
+        topPagesList.innerHTML = data.topPages.map(item => `
+          <li style="display: flex; justify-content: space-between; padding: 0.35rem 0; border-bottom: 1px dashed rgba(255,255,255,0.1);">
+            <span style="opacity: 0.85;">${item.page}</span>
+            <span style="font-weight: 700;">${item.count}</span>
+          </li>
+        `).join('');
+      } else {
+        topPagesList.innerHTML = '<li style="opacity: 0.7;">No data yet</li>';
+      }
+    }
+
+    if (topReferrersList) {
+      if (data.topReferrers && data.topReferrers.length > 0) {
+        topReferrersList.innerHTML = data.topReferrers.map(item => `
+          <li style="display: flex; justify-content: space-between; padding: 0.35rem 0; border-bottom: 1px dashed rgba(255,255,255,0.1);">
+            <span style="opacity: 0.85;">${item.referrer}</span>
+            <span style="font-weight: 700;">${item.count}</span>
+          </li>
+        `).join('');
+      } else {
+        topReferrersList.innerHTML = '<li style="opacity: 0.7;">No data yet</li>';
+      }
+    }
+    console.log('✅ Page stats rendered');
+  } catch (error) {
+    console.error('Error loading page stats:', error);
   }
 }
 
@@ -1210,6 +1529,7 @@ function updateAllRefreshTimestamps(nowText) {
   const ids = [
     'analyticsRefreshTime',
     'pageViewsRefreshTime',
+    'pageStatsRefreshTime',
     'donationsRefreshTime',
     'techStackRefreshTime'
   ];
@@ -1424,17 +1744,17 @@ async function loadAnalyticsCharts() {
 // Export to CSV functions
 async function exportPageViews() {
   try {
-    const response = await fetch('/.netlify/functions/get-page-views-details');
-    const data = await response.json();
+    const views = window.__pageViews || [];
+    const filtered = getFilteredPageViews(views);
     
-    if (!data.views || data.views.length === 0) {
+    if (!filtered || filtered.length === 0) {
       showToast('⚠️ No page views to export', '#e74c3c');
       return;
     }
     
-    const csv = 'Page,Timestamp,IP Address,City,Country,Device,Browser,OS,Referrer\n' +
-      data.views.map(v => 
-        `"${v.page || '/'}", "${new Date(v.timestamp).toLocaleString()}","${v.ip}","${v.city}","${v.country}","${v.device}","${v.browser}","${v.os}","${v.referrer}"`
+    const csv = 'Page,Timestamp,IP Address,City,Country,Device,Browser,OS,Referrer,Language,TimeZone,Screen,Viewport,SessionId,UTM Source,UTM Medium,UTM Campaign,UTM Term,UTM Content\n' +
+      filtered.map(v => 
+        `"${v.page || '/'}", "${new Date(v.timestamp).toLocaleString()}","${v.ip}","${v.city}","${v.country}","${v.device}","${v.browser}","${v.os}","${v.referrer}","${v.language}","${v.timeZone}","${v.screen}","${v.viewport}","${v.sessionId}","${v.utmSource}","${v.utmMedium}","${v.utmCampaign}","${v.utmTerm}","${v.utmContent}"`
       ).join('\n');
     
     downloadCSV(csv, `page-views-${new Date().toISOString().split('T')[0]}.csv`);
@@ -1732,31 +2052,164 @@ async function loadActivityLog() {
     const now = new Date().toLocaleTimeString();
     updateAllRefreshTimestamps(now);
     
-    const list = document.getElementById('activityLogList');
-    if (!list) return;
-    
     const items = data.items || [];
-    if (items.length === 0) {
-      list.innerHTML = '<p style="opacity: 0.7; text-align: center;">No activities yet</p>';
-      return;
-    }
-    
-    list.innerHTML = items.map(item => `
-      <div style="padding: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: start;">
-        <div style="flex: 1;">
-          <div style="font-weight: 600; margin-bottom: 0.3rem;">📝 ${item.type}</div>
-          <div style="font-size: 0.85rem; opacity: 0.7;">Email: ${item.email || 'N/A'}</div>
-          ${item.adminName ? `<div style="font-size: 0.85rem; opacity: 0.7;">👤 Admin: ${item.adminName} (${item.adminEmail})</div>` : ''}
-          ${item.adminIp ? `<div style="font-size: 0.85rem; opacity: 0.7;">🌐 IP: ${item.adminIp}</div>` : ''}
-          ${item.note ? `<div style="font-size: 0.85rem; opacity: 0.7;">Note: ${item.note}</div>` : ''}
-          <div style="font-size: 0.75rem; opacity: 0.5; margin-top: 0.3rem;">${new Date(item.timestamp).toLocaleString()}</div>
-        </div>
-      </div>
-    `).join('');
+    window.__activityLogItems = items;
+    renderActivityLog(items);
+    populateActivityTypeFilter(items);
     console.log('✅ Activity log rendered:', items.length);
   } catch (error) {
     console.error('Error loading activity log:', error);
   }
+}
+
+function populateActivityTypeFilter(items) {
+  const typeFilter = document.getElementById('activityTypeFilter');
+  if (!typeFilter) return;
+
+  const current = typeFilter.value || 'All';
+  const types = Array.from(new Set(items.map(item => item.type).filter(Boolean))).sort();
+  const options = ['All', ...types];
+
+  typeFilter.innerHTML = options.map(type => (
+    `<option value="${type}">${type === 'All' ? 'All Types' : type}</option>`
+  )).join('');
+  typeFilter.value = options.includes(current) ? current : 'All';
+}
+
+function renderActivityLog(items) {
+  const list = document.getElementById('activityLogList');
+  const summary = document.getElementById('activitySummary');
+  if (!list) return;
+
+  const search = (document.getElementById('activitySearch')?.value || '').toLowerCase().trim();
+  const typeFilter = document.getElementById('activityTypeFilter')?.value || 'All';
+  const rangeFilter = document.getElementById('activityRangeFilter')?.value || '7d';
+
+  const now = Date.now();
+  const rangeMs = {
+    '24h': 24 * 60 * 60 * 1000,
+    '7d': 7 * 24 * 60 * 60 * 1000,
+    '30d': 30 * 24 * 60 * 60 * 1000,
+    'all': null
+  }[rangeFilter];
+
+  const filtered = items.filter(item => {
+    const timestamp = new Date(item.timestamp).getTime();
+    if (rangeMs && (!timestamp || (now - timestamp) > rangeMs)) return false;
+    if (typeFilter !== 'All' && item.type !== typeFilter) return false;
+    if (!search) return true;
+    const haystack = [
+      item.type,
+      item.email,
+      item.note,
+      item.adminName,
+      item.adminEmail,
+      item.adminIp
+    ].filter(Boolean).join(' ').toLowerCase();
+    return haystack.includes(search);
+  });
+
+  if (summary) {
+    const total = items.length;
+    const filteredCount = filtered.length;
+    const recentCount = items.filter(item => {
+      const timestamp = new Date(item.timestamp).getTime();
+      return timestamp && (now - timestamp) <= (24 * 60 * 60 * 1000);
+    }).length;
+    const uniqueTypes = Array.from(new Set(items.map(item => item.type).filter(Boolean))).length;
+
+    summary.innerHTML = `
+      <div style="background: rgba(255,255,255,0.05); border-radius: 10px; padding: 0.8rem; border: 1px solid rgba(255,255,255,0.1);">
+        <div style="font-size: 0.8rem; opacity: 0.6;">Total Events</div>
+        <div style="font-size: 1.4rem; font-weight: 700;">${total}</div>
+      </div>
+      <div style="background: rgba(255,255,255,0.05); border-radius: 10px; padding: 0.8rem; border: 1px solid rgba(255,255,255,0.1);">
+        <div style="font-size: 0.8rem; opacity: 0.6;">Last 24h</div>
+        <div style="font-size: 1.4rem; font-weight: 700;">${recentCount}</div>
+      </div>
+      <div style="background: rgba(255,255,255,0.05); border-radius: 10px; padding: 0.8rem; border: 1px solid rgba(255,255,255,0.1);">
+        <div style="font-size: 0.8rem; opacity: 0.6;">Unique Types</div>
+        <div style="font-size: 1.4rem; font-weight: 700;">${uniqueTypes}</div>
+      </div>
+      <div style="background: rgba(255,255,255,0.05); border-radius: 10px; padding: 0.8rem; border: 1px solid rgba(255,255,255,0.1);">
+        <div style="font-size: 0.8rem; opacity: 0.6;">Showing</div>
+        <div style="font-size: 1.4rem; font-weight: 700;">${filteredCount}</div>
+      </div>
+    `;
+  }
+
+  if (filtered.length === 0) {
+    list.innerHTML = '<p style="opacity: 0.7; text-align: center;">No matching activities</p>';
+    return;
+  }
+
+  list.innerHTML = filtered.map(item => `
+    <div style="padding: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: start;">
+      <div style="flex: 1;">
+        <div style="font-weight: 600; margin-bottom: 0.3rem;">📝 ${item.type}</div>
+        <div style="font-size: 0.85rem; opacity: 0.7;">Email: ${item.email || 'N/A'}</div>
+        ${item.adminName ? `<div style="font-size: 0.85rem; opacity: 0.7;">👤 Admin: ${item.adminName} (${item.adminEmail})</div>` : ''}
+        ${item.adminIp ? `<div style="font-size: 0.85rem; opacity: 0.7;">🌐 IP: ${item.adminIp}</div>` : ''}
+        ${item.note ? `<div style="font-size: 0.85rem; opacity: 0.7;">Note: ${item.note}</div>` : ''}
+        <div style="font-size: 0.75rem; opacity: 0.5; margin-top: 0.3rem;">${new Date(item.timestamp).toLocaleString()}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function exportActivityLog() {
+  const items = window.__activityLogItems || [];
+  const search = (document.getElementById('activitySearch')?.value || '').toLowerCase().trim();
+  const typeFilter = document.getElementById('activityTypeFilter')?.value || 'All';
+  const rangeFilter = document.getElementById('activityRangeFilter')?.value || '7d';
+
+  const now = Date.now();
+  const rangeMs = {
+    '24h': 24 * 60 * 60 * 1000,
+    '7d': 7 * 24 * 60 * 60 * 1000,
+    '30d': 30 * 24 * 60 * 60 * 1000,
+    'all': null
+  }[rangeFilter];
+
+  const filtered = items.filter(item => {
+    const timestamp = new Date(item.timestamp).getTime();
+    if (rangeMs && (!timestamp || (now - timestamp) > rangeMs)) return false;
+    if (typeFilter !== 'All' && item.type !== typeFilter) return false;
+    if (!search) return true;
+    const haystack = [
+      item.type,
+      item.email,
+      item.note,
+      item.adminName,
+      item.adminEmail,
+      item.adminIp
+    ].filter(Boolean).join(' ').toLowerCase();
+    return haystack.includes(search);
+  });
+
+  if (filtered.length === 0) {
+    showToast('⚠️ No activity log entries to export', '#e74c3c');
+    return;
+  }
+
+  const header = 'Type,Email,Note,Admin Name,Admin Email,Admin IP,Timestamp\n';
+  const rows = filtered.map(item => [
+    item.type || '',
+    item.email || '',
+    (item.note || '').replace(/\n/g, ' '),
+    item.adminName || '',
+    item.adminEmail || '',
+    item.adminIp || '',
+    item.timestamp || ''
+  ].map(value => `"${String(value).replace(/"/g, '""')}"`).join(',')).join('\n');
+
+  const blob = new Blob([header + rows], { type: 'text/csv' });
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `activity_log_${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+  showToast('✅ Activity log exported');
 }
 
 async function loadRetryQueue() {
@@ -2208,17 +2661,6 @@ async function sendNewsletter() {
   }
 }
 
-function togglePageViews() {
-  const details = document.getElementById('pageViewsDetails');
-  
-  if (details.style.display === 'none') {
-    details.style.display = 'block';
-    loadPageViewsDetails();
-  } else {
-    details.style.display = 'none';
-  }
-}
-
 function toggleDonations() {
   const details = document.getElementById('donationsDetails');
   
@@ -2227,29 +2669,6 @@ function toggleDonations() {
     loadDonationsDetails();
   } else {
     details.style.display = 'none';
-  }
-}
-
-async function loadPageViewsDetails() {
-  try {
-    const response = await fetch('/.netlify/functions/get-page-views-details');
-    const data = await response.json();
-    const table = document.getElementById('pageViewsTable');
-    
-    if (data.views && data.views.length > 0) {
-      table.innerHTML = data.views.map(view => `
-        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-          <td style="padding: 0.8rem;">${view.page}</td>
-          <td style="padding: 0.8rem;">${new Date(view.timestamp).toLocaleString()}</td>
-          <td style="padding: 0.8rem; font-family: monospace;">${view.ip}</td>
-        </tr>
-      `).join('');
-    } else {
-      table.innerHTML = '<tr><td colspan="3" style="padding: 1rem; text-align: center; opacity: 0.7;">No page views yet</td></tr>';
-    }
-  } catch (error) {
-    console.error('Error loading page views details:', error);
-    document.getElementById('pageViewsTable').innerHTML = '<tr><td colspan="3" style="padding: 1rem; text-align: center; color: #e74c3c;">Error loading data</td></tr>';
   }
 }
 
@@ -2476,6 +2895,7 @@ function showTab(tabName) {
       loadSubscribersTab();
     } else if (tabName === 'pageviews') {
       loadPageViewsTable();
+      loadPageStats();
     } else if (tabName === 'donations') {
       loadDonationsTable();
     } else if (tabName === 'activity') {

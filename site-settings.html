@@ -140,6 +140,45 @@
 
     <div class="setting">
       <div class="setting-header">
+        <div class="setting-title">📝 Maintenance Message</div>
+      </div>
+      <div class="setting-desc" style="margin-bottom: 0.75rem;">
+        Customize the message shown on the maintenance screen.
+      </div>
+      <textarea id="maintenanceMessage" rows="3" style="width: 100%; padding: 0.8rem; border-radius: 10px; border: 1px solid rgba(0,0,0,0.1); background: #fff; font-size: 0.95rem; resize: vertical;"></textarea>
+    </div>
+
+    <div class="setting">
+      <div class="setting-header">
+        <div class="setting-title">⏱️ Maintenance End Time</div>
+      </div>
+      <div class="setting-desc" style="margin-bottom: 0.75rem;">
+        Optional. Display an expected end time to visitors.
+      </div>
+      <input type="datetime-local" id="maintenanceEndsAt" style="width: 100%; padding: 0.8rem; border-radius: 10px; border: 1px solid rgba(0,0,0,0.1); background: #fff; font-size: 0.95rem;">
+      <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.6rem;">
+        <button type="button" class="quick-time" data-minutes="60" style="padding: 0.4rem 0.7rem; border-radius: 8px; border: 1px solid #e2e8f0; background: #f8fafc; cursor: pointer;">+1h</button>
+        <button type="button" class="quick-time" data-minutes="240" style="padding: 0.4rem 0.7rem; border-radius: 8px; border: 1px solid #e2e8f0; background: #f8fafc; cursor: pointer;">+4h</button>
+        <button type="button" class="quick-time" data-minutes="1440" style="padding: 0.4rem 0.7rem; border-radius: 8px; border: 1px solid #e2e8f0; background: #f8fafc; cursor: pointer;">+1d</button>
+        <button type="button" id="clearEndsAt" style="padding: 0.4rem 0.7rem; border-radius: 8px; border: 1px solid #e2e8f0; background: #fff; cursor: pointer;">Clear</button>
+      </div>
+    </div>
+
+    <div class="setting">
+      <div class="setting-header">
+        <div class="setting-title">🔑 Maintenance Bypass Code</div>
+      </div>
+      <div class="setting-desc" style="margin-bottom: 0.75rem;">
+        Use <strong>?bypass=CODE</strong> in the URL to access the site during maintenance.
+      </div>
+      <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+        <input type="password" id="maintenanceBypassCode" placeholder="Set or rotate a code" style="flex: 1; min-width: 220px; padding: 0.8rem; border-radius: 10px; border: 1px solid rgba(0,0,0,0.1); background: #fff; font-size: 0.95rem;">
+        <button id="clearBypassCode" style="padding: 0.8rem 1.1rem; border: none; border-radius: 10px; background: #e74c3c; color: #fff; font-weight: 600; cursor: pointer;">Clear Code</button>
+      </div>
+    </div>
+
+    <div class="setting">
+      <div class="setting-header">
         <div class="setting-title">📍 IP Tracking</div>
         <label class="toggle">
           <input type="checkbox" id="trackingToggle" checked>
@@ -152,9 +191,11 @@
     </div>
 
     <div class="note">
-      <strong>✨ Live Settings:</strong> Changes are saved to Airtable and take effect immediately! 
+      <strong>✨ Live Settings:</strong> Text fields autosave, but visitor-impacting toggles require manual save. 
       No need to redeploy or restart the server.
     </div>
+
+    <button id="saveSettingsBtn" style="margin-top: 1rem; padding: 0.8rem 1.5rem; border: none; border-radius: 10px; background: #2d89ef; color: #fff; font-weight: 600; cursor: pointer;">💾 Save Settings</button>
 
     <a href="/admin-tabs.html" class="back-btn">← Back to Admin</a>
   </div>
@@ -162,6 +203,15 @@
   <script>
     const maintenanceToggle = document.getElementById('maintenanceToggle');
     const trackingToggle = document.getElementById('trackingToggle');
+    const maintenanceMessage = document.getElementById('maintenanceMessage');
+    const maintenanceEndsAt = document.getElementById('maintenanceEndsAt');
+    const maintenanceBypassCode = document.getElementById('maintenanceBypassCode');
+    const clearBypassCodeBtn = document.getElementById('clearBypassCode');
+    const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+    const quickTimeButtons = document.querySelectorAll('.quick-time');
+    const clearEndsAtBtn = document.getElementById('clearEndsAt');
+    let shouldClearBypassCode = false;
+    let autosaveTimer;
 
     // Load current settings from Airtable
     async function loadSettings() {
@@ -171,6 +221,14 @@
         
         maintenanceToggle.checked = data.maintenanceMode || false;
         trackingToggle.checked = data.trackIpEnabled !== false; // Default true
+        maintenanceMessage.value = data.maintenanceMessage || '';
+        if (data.maintenanceEndsAt) {
+          const endsAt = new Date(data.maintenanceEndsAt);
+          if (!Number.isNaN(endsAt.getTime())) {
+            const local = new Date(endsAt.getTime() - (endsAt.getTimezoneOffset() * 60000));
+            maintenanceEndsAt.value = local.toISOString().slice(0, 16);
+          }
+        }
         
         console.log('Settings loaded:', data);
       } catch (error) {
@@ -179,14 +237,31 @@
     }
 
     // Save settings to Airtable
-    async function saveSettings() {
+    async function saveSettings(options = {}) {
+      const { includeToggles = false } = options;
       try {
+        let endsAtValue = maintenanceEndsAt.value;
+        if (endsAtValue) {
+          const localDate = new Date(endsAtValue);
+          if (!Number.isNaN(localDate.getTime())) {
+            endsAtValue = new Date(localDate.getTime() + (localDate.getTimezoneOffset() * 60000)).toISOString();
+          }
+        }
+
+        const bypassValue = maintenanceBypassCode.value.trim();
+        const includeBypass = shouldClearBypassCode || bypassValue.length > 0;
+
         const response = await fetch('/.netlify/functions/update-site-settings', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            maintenanceMode: maintenanceToggle.checked,
-            trackIpEnabled: trackingToggle.checked
+            maintenanceMessage: maintenanceMessage.value,
+            maintenanceEndsAt: endsAtValue || null,
+            ...(includeBypass ? { maintenanceBypassCode: shouldClearBypassCode ? '' : bypassValue } : {}),
+            ...(includeToggles ? {
+              maintenanceMode: maintenanceToggle.checked,
+              trackIpEnabled: trackingToggle.checked
+            } : {})
           })
         });
 
@@ -194,6 +269,8 @@
         
         if (result.success) {
           showToast('✅ Settings updated instantly!', '#2ecc71');
+          maintenanceBypassCode.value = '';
+          shouldClearBypassCode = false;
         } else {
           throw new Error(result.error);
         }
@@ -201,6 +278,11 @@
         console.error('Failed to save settings:', error);
         showToast('❌ Failed to update settings', '#e74c3c');
       }
+    }
+
+    function scheduleAutosave() {
+      if (autosaveTimer) clearTimeout(autosaveTimer);
+      autosaveTimer = setTimeout(() => saveSettings({ includeToggles: false }), 600);
     }
 
     function showToast(message, color) {
@@ -227,8 +309,31 @@
     }
 
     // Add event listeners
-    maintenanceToggle.addEventListener('change', saveSettings);
-    trackingToggle.addEventListener('change', saveSettings);
+    maintenanceMessage.addEventListener('input', scheduleAutosave);
+    maintenanceEndsAt.addEventListener('change', scheduleAutosave);
+    maintenanceBypassCode.addEventListener('input', scheduleAutosave);
+
+    clearBypassCodeBtn.addEventListener('click', () => {
+      shouldClearBypassCode = true;
+      saveSettings({ includeToggles: false });
+    });
+    saveSettingsBtn.addEventListener('click', () => saveSettings({ includeToggles: true }));
+
+    quickTimeButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const minutes = Number(btn.dataset.minutes || 0);
+        if (!minutes) return;
+        const target = new Date(Date.now() + minutes * 60000);
+        const local = new Date(target.getTime() - (target.getTimezoneOffset() * 60000));
+        maintenanceEndsAt.value = local.toISOString().slice(0, 16);
+        scheduleAutosave();
+      });
+    });
+
+    clearEndsAtBtn.addEventListener('click', () => {
+      maintenanceEndsAt.value = '';
+      scheduleAutosave();
+    });
 
     // Load on page load
     loadSettings();
