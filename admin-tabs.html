@@ -533,6 +533,7 @@ tbody tr:hover {
     <button class="tab-btn" onclick="showTab('deleted-users')">🗑️ Deleted Users</button>
     <button class="tab-btn" onclick="showTab('deletion-requests')">⚠️ Deletion Requests</button>
     <button class="tab-btn" onclick="showTab('appeals')">📝 Appeals</button>
+    <button class="tab-btn" onclick="showTab('vpn-alerts')">🛡️ VPN Alerts</button>
     <button class="tab-btn" onclick="showTab('pageviews')">👀 Page Views</button>
     <button class="tab-btn" onclick="showTab('donations')">💰 Donations</button>
     <button class="tab-btn" onclick="showTab('activity')">📋 Activity Log</button>
@@ -869,6 +870,96 @@ tbody tr:hover {
       </div>
     </div>
   </div>
+
+    <!-- VPN Alerts Tab -->
+    <div id="tab-vpn-alerts" class="tab-content" style="display:none;">
+      <div class="section-header">🛡️ VPN Alerts</div>
+
+      <div class="data-section">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <h2 style="margin: 0;">VPN / Proxy Alerts</h2>
+            <div id="vpnAlertStats" style="display: flex; gap: 1rem; margin-top: 0.5rem; font-size: 0.9rem; opacity: 0.8; flex-wrap: wrap;">
+              <span>Total: <strong id="vpnAlertStatsTotal">0</strong></span>
+              <span>Open: <strong id="vpnAlertStatsOpen">0</strong></span>
+              <span>Resolved: <strong id="vpnAlertStatsResolved">0</strong></span>
+              <span>Blocked: <strong id="vpnAlertStatsBlocked">0</strong></span>
+              <span>Allowlisted: <strong id="vpnAlertStatsAllowlisted">0</strong></span>
+              <span>Ignored: <strong id="vpnAlertStatsIgnored">0</strong></span>
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="loadVpnAlerts()">🔄 Refresh</button>
+        </div>
+
+        <div style="display:flex; gap:0.5rem; flex-wrap: wrap; margin-bottom:0.75rem; align-items:center;">
+          <input id="vpnAlertSearch" type="text" placeholder="Search IP, ASN, type, action..." oninput="filterVpnAlerts()" style="flex:1; min-width:220px; padding:0.6rem; border-radius:8px; border:1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color:#fff;">
+          <select id="vpnAlertStatusFilter" onchange="filterVpnAlerts()" style="padding:0.6rem; border-radius:8px; border:1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color:#fff;">
+            <option value="all">All statuses</option>
+            <option value="Open">Open</option>
+            <option value="Resolved">Resolved</option>
+            <option value="Blocked">Blocked</option>
+            <option value="Allowlisted">Allowlisted</option>
+            <option value="Ignored">Ignored</option>
+          </select>
+          <select id="vpnAlertActionFilter" onchange="filterVpnAlerts()" style="padding:0.6rem; border-radius:8px; border:1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color:#fff;">
+            <option value="all">All actions</option>
+            <option value="signup">Signup</option>
+            <option value="newsletter">Newsletter</option>
+            <option value="donation">Donation</option>
+            <option value="contact">Contact</option>
+          </select>
+          <button class="btn btn-secondary" onclick="clearVpnAlertFilters()">Reset</button>
+        </div>
+
+        <div style="overflow-x:auto;">
+          <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+              <tr style="text-align: left; border-bottom: 1px solid rgba(255,255,255,0.12);">
+                <th style="padding: 0.7rem;">IP / ASN</th>
+                <th style="padding: 0.7rem;">Type / Risk</th>
+                <th style="padding: 0.7rem;">Action</th>
+                <th style="padding: 0.7rem;">Status</th>
+                <th style="padding: 0.7rem;">Count</th>
+                <th style="padding: 0.7rem;">Last Seen</th>
+                <th style="padding: 0.7rem; text-align: center;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="vpnAlertsTableBody">
+              <tr><td colspan="7" style="padding: 1rem; text-align: center; opacity: 0.7;">Loading alerts...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="data-section">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
+          <h2 style="margin: 0;">Allowlist IPs</h2>
+          <button class="btn btn-primary" onclick="loadAllowlistIps()">🔄 Refresh</button>
+        </div>
+
+        <div style="display:flex; gap:0.5rem; flex-wrap: wrap; margin-bottom:0.75rem; align-items:center;">
+          <input id="allowlistIpInput" type="text" placeholder="IP address" style="flex:1; min-width:200px; padding:0.6rem; border-radius:8px; border:1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color:#fff;">
+          <input id="allowlistNoteInput" type="text" placeholder="Note (optional)" style="flex:2; min-width:220px; padding:0.6rem; border-radius:8px; border:1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color:#fff;">
+          <button class="btn btn-primary" onclick="addAllowlistIp()">➕ Add</button>
+        </div>
+
+        <div style="overflow-x:auto;">
+          <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+              <tr style="text-align: left; border-bottom: 1px solid rgba(255,255,255,0.12);">
+                <th style="padding: 0.7rem;">IP</th>
+                <th style="padding: 0.7rem;">Note</th>
+                <th style="padding: 0.7rem;">Added</th>
+                <th style="padding: 0.7rem; text-align: center;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="allowlistTableBody">
+              <tr><td colspan="4" style="padding: 1rem; text-align: center; opacity: 0.7;">No allowlisted IPs</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
 
   <!-- Page Views Tab -->
   <div id="tab-pageviews" class="tab-content" style="display:none;">
@@ -2270,6 +2361,272 @@ async function denyAppealAction(appealId) {
   } catch (error) {
     console.error('Error denying appeal:', error);
     showToast('Failed to deny appeal', '#c0392b');
+  }
+}
+
+// VPN Alerts Functions
+let vpnAlertsData = [];
+let allowlistData = [];
+
+async function loadVpnAlerts() {
+  try {
+    const token = localStorage.getItem('adminToken');
+    if (!token) throw new Error('No admin token found. Please log in again.');
+
+    const response = await fetch('/.netlify/functions/get-vpn-alerts', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Failed to load VPN alerts');
+    }
+
+    const data = await response.json();
+    vpnAlertsData = data.alerts || [];
+
+    document.getElementById('vpnAlertStatsTotal').textContent = data.stats?.total || 0;
+    document.getElementById('vpnAlertStatsOpen').textContent = data.stats?.open || 0;
+    document.getElementById('vpnAlertStatsResolved').textContent = data.stats?.resolved || 0;
+    document.getElementById('vpnAlertStatsBlocked').textContent = data.stats?.blocked || 0;
+    document.getElementById('vpnAlertStatsAllowlisted').textContent = data.stats?.allowlisted || 0;
+    document.getElementById('vpnAlertStatsIgnored').textContent = data.stats?.ignored || 0;
+
+    renderVpnAlerts(vpnAlertsData);
+  } catch (error) {
+    const table = document.getElementById('vpnAlertsTableBody');
+    if (table) {
+      table.innerHTML = `<tr><td colspan="7" style="padding: 1rem; text-align: center; color: #e74c3c;">❌ ${escapeHtml(error.message)}</td></tr>`;
+    }
+  }
+}
+
+function renderVpnAlerts(alerts) {
+  const table = document.getElementById('vpnAlertsTableBody');
+  if (!table) return;
+
+  if (!alerts || alerts.length === 0) {
+    table.innerHTML = '<tr><td colspan="7" style="padding: 1rem; text-align: center; opacity: 0.7;">No alerts found</td></tr>';
+    return;
+  }
+
+  table.innerHTML = alerts.map(alert => {
+    const lastSeen = alert.lastSeen ? new Date(alert.lastSeen).toLocaleString() : 'Unknown';
+    const statusColor = alert.status === 'Open' ? '#f39c12'
+      : alert.status === 'Resolved' ? '#27ae60'
+      : alert.status === 'Blocked' ? '#e74c3c'
+      : alert.status === 'Allowlisted' ? '#3498db'
+      : alert.status === 'Ignored' ? '#95a5a6'
+      : '#7f8c8d';
+
+    return `
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <td style="padding: 0.8rem;">
+          <div style="font-weight: 600;">${escapeHtml(alert.ip || 'Unknown')}</div>
+          <div style="opacity: 0.7; font-size: 0.85rem;">${escapeHtml(alert.asn || 'Unknown')}</div>
+        </td>
+        <td style="padding: 0.8rem;">
+          <div>${escapeHtml(alert.type || 'Unknown')}</div>
+          <div style="opacity: 0.7; font-size: 0.85rem;">Risk: ${escapeHtml(String(alert.risk || 'Unknown'))}</div>
+        </td>
+        <td style="padding: 0.8rem;">${escapeHtml(alert.action || 'Unknown')}</td>
+        <td style="padding: 0.8rem;">
+          <span style="background: ${statusColor}; padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">${escapeHtml(alert.status || 'Open')}</span>
+        </td>
+        <td style="padding: 0.8rem;">${alert.count || 1}</td>
+        <td style="padding: 0.8rem; font-size: 0.85rem; opacity: 0.8;">${lastSeen}</td>
+        <td style="padding: 0.8rem; text-align: center; display: flex; gap: 0.4rem; flex-wrap: wrap; justify-content: center;">
+          <button class="btn btn-danger" style="padding: 0.35rem 0.6rem; border-radius: 6px;" onclick="updateVpnAlertAction('${alert.id}', 'block', '${alert.ip}')">🚫 Block</button>
+          <button class="btn btn-secondary" style="padding: 0.35rem 0.6rem; border-radius: 6px;" onclick="updateVpnAlertAction('${alert.id}', 'allowlist', '${alert.ip}')">✅ Allowlist</button>
+          <button class="btn btn-success" style="padding: 0.35rem 0.6rem; border-radius: 6px;" onclick="updateVpnAlertAction('${alert.id}', 'resolve', '${alert.ip}')">✔ Resolve</button>
+          <button class="btn btn-secondary" style="padding: 0.35rem 0.6rem; border-radius: 6px;" onclick="updateVpnAlertAction('${alert.id}', 'ignore', '${alert.ip}')">🙈 Ignore</button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function filterVpnAlerts() {
+  const search = (document.getElementById('vpnAlertSearch')?.value || '').toLowerCase().trim();
+  const statusFilter = document.getElementById('vpnAlertStatusFilter')?.value || 'all';
+  const actionFilter = document.getElementById('vpnAlertActionFilter')?.value || 'all';
+
+  let filtered = vpnAlertsData;
+
+  if (statusFilter !== 'all') {
+    filtered = filtered.filter(alert => alert.status === statusFilter);
+  }
+
+  if (actionFilter !== 'all') {
+    filtered = filtered.filter(alert => String(alert.action || '').toLowerCase() === actionFilter);
+  }
+
+  if (search) {
+    filtered = filtered.filter(alert => {
+      const haystack = [
+        alert.ip,
+        alert.asn,
+        alert.type,
+        alert.action,
+        alert.status,
+        alert.note
+      ].filter(Boolean).join(' ').toLowerCase();
+      return haystack.includes(search);
+    });
+  }
+
+  renderVpnAlerts(filtered);
+}
+
+function clearVpnAlertFilters() {
+  const searchInput = document.getElementById('vpnAlertSearch');
+  const statusFilter = document.getElementById('vpnAlertStatusFilter');
+  const actionFilter = document.getElementById('vpnAlertActionFilter');
+
+  if (searchInput) searchInput.value = '';
+  if (statusFilter) statusFilter.value = 'all';
+  if (actionFilter) actionFilter.value = 'all';
+
+  renderVpnAlerts(vpnAlertsData);
+}
+
+async function updateVpnAlertAction(alertId, action, ip) {
+  const prettyAction = action.charAt(0).toUpperCase() + action.slice(1);
+  if (!confirm(`${prettyAction} this IP?\n\n${ip}`)) return;
+
+  const note = prompt('Optional note for this action (leave blank to skip):') || '';
+
+  try {
+    const token = localStorage.getItem('adminToken');
+    const response = await fetch('/.netlify/functions/update-vpn-alert', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ alertId, action, ip, note })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Failed to update alert');
+    }
+
+    showToast(`✅ ${prettyAction} action completed`);
+    await loadVpnAlerts();
+  } catch (error) {
+    showToast(`❌ ${prettyAction} failed: ${error.message}`, '#e74c3c');
+  }
+}
+
+async function loadAllowlistIps() {
+  try {
+    const token = localStorage.getItem('adminToken');
+    if (!token) throw new Error('No admin token found. Please log in again.');
+
+    const response = await fetch('/.netlify/functions/get-allowlist-ips', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Failed to load allowlist');
+    }
+
+    const data = await response.json();
+    allowlistData = data.items || [];
+    renderAllowlistIps(allowlistData);
+  } catch (error) {
+    const table = document.getElementById('allowlistTableBody');
+    if (table) {
+      table.innerHTML = `<tr><td colspan="4" style="padding: 1rem; text-align: center; color: #e74c3c;">❌ ${escapeHtml(error.message)}</td></tr>`;
+    }
+  }
+}
+
+function renderAllowlistIps(items) {
+  const table = document.getElementById('allowlistTableBody');
+  if (!table) return;
+
+  if (!items || items.length === 0) {
+    table.innerHTML = '<tr><td colspan="4" style="padding: 1rem; text-align: center; opacity: 0.7;">No allowlisted IPs</td></tr>';
+    return;
+  }
+
+  table.innerHTML = items.map(item => {
+    const addedAt = item.addedAt ? new Date(item.addedAt).toLocaleString() : 'Unknown';
+    return `
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <td style="padding: 0.8rem; font-weight: 600;">${escapeHtml(item.ip)}</td>
+        <td style="padding: 0.8rem; opacity: 0.8;">${escapeHtml(item.note || '')}</td>
+        <td style="padding: 0.8rem; font-size: 0.85rem; opacity: 0.7;">${addedAt}</td>
+        <td style="padding: 0.8rem; text-align: center;">
+          <button class="btn btn-danger" style="padding: 0.35rem 0.6rem; border-radius: 6px;" onclick="removeAllowlistIp('${item.id}', '${item.ip}')">🗑️ Remove</button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+async function addAllowlistIp() {
+  const ipInput = document.getElementById('allowlistIpInput');
+  const noteInput = document.getElementById('allowlistNoteInput');
+  const ip = ipInput?.value?.trim();
+  const note = noteInput?.value?.trim();
+
+  if (!ip) {
+    showToast('⚠️ IP is required', '#e74c3c');
+    return;
+  }
+
+  try {
+    const token = localStorage.getItem('adminToken');
+    const response = await fetch('/.netlify/functions/add-allowlist-ip', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ ip, note })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Failed to add allowlist IP');
+    }
+
+    if (ipInput) ipInput.value = '';
+    if (noteInput) noteInput.value = '';
+    showToast('✅ Allowlist updated');
+    await loadAllowlistIps();
+  } catch (error) {
+    showToast(`❌ Allowlist update failed: ${error.message}`, '#e74c3c');
+  }
+}
+
+async function removeAllowlistIp(id, ip) {
+  if (!confirm(`Remove ${ip} from allowlist?`)) return;
+
+  try {
+    const token = localStorage.getItem('adminToken');
+    const response = await fetch('/.netlify/functions/remove-allowlist-ip', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ id })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Failed to remove allowlist IP');
+    }
+
+    showToast('✅ Allowlist entry removed');
+    await loadAllowlistIps();
+  } catch (error) {
+    showToast(`❌ Remove failed: ${error.message}`, '#e74c3c');
   }
 }
 
@@ -4141,6 +4498,9 @@ function showTab(tabName) {
       loadDonationsTable();
     } else if (tabName === 'appeals') {
       loadAppealsList();
+    } else if (tabName === 'vpn-alerts') {
+      loadVpnAlerts();
+      loadAllowlistIps();
     } else if (tabName === 'activity') {
       loadActivityLog();
       loadRetryQueue();

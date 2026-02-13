@@ -39,6 +39,34 @@ Fields:
 - `Created` (Created time) - Account creation date
 - `Last Access` (Last modified time) - Last login
 
+### 5. **AllowlistIPs** (for trusted IPs)
+Fields:
+- `IP` (Single line text) - IPv4/IPv6 address
+- `Note` (Single line text) - Optional reason/source
+- `AddedAt` (Date) - When the IP was allowlisted
+
+### 6. **VpnAlerts** (for VPN/proxy detections)
+Fields:
+- `IP` (Single line text) - IP address
+- `Action` (Single line text) - signup/newsletter/donation/contact
+- `Status` (Single select: "Open", "Resolved", "Blocked", "Allowlisted", "Ignored")
+- `Count` (Number) - Number of detections
+- `FirstSeen` (Date) - First time detected
+- `LastSeen` (Date) - Most recent detection
+- `Type` (Single line text) - VPN/proxy type
+- `Risk` (Single line text) - Risk score/label
+- `ASN` (Single line text) - ASN info
+- `AdminNote` (Long text) - Optional admin note
+- `LastActionAt` (Date) - Last admin action time
+
+### 7. **BlockedIPs** (for blocked IPs)
+Fields:
+- `IP` (Single line text) - IP address
+- `Reason` (Single line text) - Why blocked
+- `BlockedDate` (Date) - When blocked
+- `ExpiresAt` (Date) - Optional expiry
+- `AutoBlocked` (Checkbox) - True for automatic blocks
+
 ## How to Create These Tables:
 
 1. Go to your Airtable Base

@@ -178,6 +178,9 @@ exports.handler = async (event, context) => {
           timestamp: new Date().toISOString(),
           footer: { text: 'Security Monitor' }
         };
+        if (!mention) {
+          content = process.env.DISCORD_MENTION_ID || '';
+        }
         break;
 
       default:

@@ -82,6 +82,32 @@ exports.handler = async (event, context) => {
         };
     }
 
+    // Server-side rate limit + VPN soft check
+    try {
+      const baseUrl = event.headers.origin || process.env.SITE_URL || 'https://mathi4s.com';
+      const rateResponse = await fetch(`${baseUrl}/.netlify/functions/check-rate-limit`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'newsletter' })
+      });
+
+      const rateData = await rateResponse.json();
+      if (!rateData.allowed) {
+        return {
+          statusCode: rateData.blocked ? 403 : 429,
+          headers,
+          body: JSON.stringify({
+            success: false,
+            error: rateData.reason || 'Too many requests. Please try again later.',
+            blocked: rateData.blocked || false,
+            appealUrl: rateData.appealUrl
+          })
+        };
+      }
+    } catch (rateError) {
+      // Fail open if rate limit check fails
+    }
+
     // Extract domain and verify it has valid MX records
     const domain = email.split('@')[1];
     try {
