@@ -3675,6 +3675,19 @@ async function saveTechStack() {
   }
 }
 
+// Utility function to safely escape HTML entities
+function escapeHtml(text) {
+  if (!text) return '';
+  const map = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  };
+  return text.replace(/[&<>"']/g, m => map[m]);
+}
+
 async function openNewsletterComposer() {
   try {
     const response = await fetch('/.netlify/functions/get-subscribers');
@@ -3741,19 +3754,109 @@ async function sendNewsletter() {
       btn.textContent = '📨 Send to All';
       return;
     }
+
+    // Show confirmation modal instead of confirm()
+    showNewsletterConfirmation(subject, message, subscribers, pendingCount, btn);
     
-    const confirmMessage = pendingCount > 0
-      ? `Send newsletter to ${subscribers.length} active subscriber(s)?\n(${pendingCount} pending confirmation will be skipped)`
-      : `Send newsletter to ${subscribers.length} subscriber(s)?`;
-    
-    if (!confirm(confirmMessage)) {
-      btn.disabled = false;
-      btn.textContent = '📨 Send to All';
-      return;
-    }
-    
-    btn.textContent = '📤 Sending...';
-    
+  } catch (error) {
+    console.error('Error:', error);
+    showToast(`❌ ${error.message}`, '#e74c3c');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '📨 Send to All';
+  }
+}
+
+function showNewsletterConfirmation(subject, message, subscribers, pendingCount, btn) {
+  const confirmModal = document.createElement('div');
+  confirmModal.id = 'newsletterConfirmModal';
+  confirmModal.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 10001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+  `;
+  
+  confirmModal.innerHTML = `
+    <div style="
+      background: linear-gradient(135deg, #2c3e50, #34495e);
+      padding: 2rem;
+      border-radius: 20px;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      animation: slideUp 0.3s ease;
+    ">
+      <h3 style="margin: 0 0 1rem 0; color: #1abc9c;">📧 Confirm Send Newsletter</h3>
+      
+      <div style="background: rgba(255, 255, 255, 0.05); padding: 1rem; border-radius: 10px; margin-bottom: 1.5rem;">
+        <p style="margin: 0.5rem 0;"><strong>Subject:</strong> ${escapeHtml(subject)}</p>
+        <p style="margin: 0.5rem 0;"><strong>Recipients:</strong> ${subscribers.length} active subscriber(s)</p>
+        ${pendingCount > 0 ? `<p style="margin: 0.5rem 0; color: #f39c12;"><strong>⚠️ Note:</strong> ${pendingCount} subscriber(s) pending confirmation will be skipped</p>` : ''}
+        <p style="margin: 0.5rem 0; font-size: 0.9rem; color: #888;">Message preview: ${escapeHtml(message.substring(0, 100))}...</p>
+      </div>
+      
+      <p style="color: #e74c3c; font-weight: 600; margin-bottom: 1.5rem;">⚠️ This cannot be undone. Are you sure?</p>
+      
+      <div style="display: flex; gap: 0.5rem;">
+        <button onclick="closeNewsletterConfirmation()" style="
+          flex: 1;
+          padding: 0.8rem;
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          border-radius: 10px;
+          background: rgba(255, 255, 255, 0.1);
+          color: #fff;
+          cursor: pointer;
+          font-weight: 600;
+          transition: all 0.3s;
+        " onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">
+          ✗ Cancel
+        </button>
+        <button onclick="confirmAndSendNewsletter('${btoa(JSON.stringify({subject, message, subscribers, pendingCount}))}', '${btn.id}')" style="
+          flex: 1;
+          padding: 0.8rem;
+          border: none;
+          border-radius: 10px;
+          background: linear-gradient(135deg, #1abc9c, #16a085);
+          color: #fff;
+          cursor: pointer;
+          font-weight: 600;
+          box-shadow: 0 3px 10px rgba(26, 188, 156, 0.4);
+          transition: all 0.3s;
+        " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+          ✓ Send Now
+        </button>
+      </div>
+    </div>
+  `;
+  
+  document.body.appendChild(confirmModal);
+}
+
+function closeNewsletterConfirmation() {
+  const modal = document.getElementById('newsletterConfirmModal');
+  if (modal) {
+    modal.style.animation = 'fadeOut 0.3s ease';
+    setTimeout(() => modal.remove(), 300);
+  }
+}
+
+async function confirmAndSendNewsletter(encodedData, btnId) {
+  const data = JSON.parse(atob(encodedData));
+  const btn = document.getElementById(btnId);
+  
+  btn.disabled = true;
+  btn.textContent = '📤 Sending...';
+  closeNewsletterConfirmation();
+  
+  try {
     const token = localStorage.getItem('adminToken');
     const response = await fetch('/.netlify/functions/send-newsletter', {
       method: 'POST',
@@ -3762,19 +3865,20 @@ async function sendNewsletter() {
         'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify({
-        subject: subject,
-        message: message,
-        subscribers: subscribers.map(s => s.email)
+        subject: data.subject,
+        message: data.message,
+        subscribers: data.subscribers.map(s => ({ email: s.email, id: s.id })),
+        count: data.subscribers.length
       })
     });
     
-    const data = await response.json();
+    const result = await response.json();
     
-    if (data.success) {
-      showToast(`✅ ${data.message}`, '#1abc9c');
+    if (result.success) {
+      showToast(`✅ Newsletter sent to ${result.sentCount} subscribers!`, '#1abc9c');
       closeNewsletterComposer();
     } else {
-      throw new Error(data.error || 'Failed to send newsletter');
+      throw new Error(result.error || 'Failed to send newsletter');
     }
   } catch (error) {
     console.error('Error:', error);
@@ -3783,6 +3887,7 @@ async function sendNewsletter() {
     btn.disabled = false;
     btn.textContent = '📨 Send to All';
   }
+}
 }
 
 function toggleDonations() {
