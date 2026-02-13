@@ -309,14 +309,18 @@ async function sendVerificationEmail({
           body: {
             contentType: 'HTML',
             content: `
-              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 15px;">
-                <h1 style="font-size: 2.2rem; margin-bottom: 1rem;">Confirm your subscription</h1>
-                <p style="font-size: 1.1rem; line-height: 1.6;">Thanks for subscribing! Please confirm your email to start receiving updates.</p>
-                <div style="text-align: center; margin: 25px 0;">
-                  <a href="${confirmLink}" style="display: inline-block; background: white; color: #5b5bd6; padding: 12px 24px; border-radius: 10px; text-decoration: none; font-weight: 600;">Confirm Subscription</a>
+              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #f6f7fb; color: #111827; border-radius: 16px;">
+                <div style="background: #ffffff; padding: 24px; border-radius: 14px; border: 1px solid #e5e7eb;">
+                  <h1 style="font-size: 24px; margin: 0 0 12px 0; color: #111827;">Confirm your subscription</h1>
+                  <p style="font-size: 15px; line-height: 1.6; margin: 0 0 18px 0; color: #374151;">Thanks for subscribing! Please confirm your email to start receiving updates.</p>
+                  <div style="text-align: center; margin: 22px 0;">
+                    <a href="${confirmLink}" style="display: inline-block; background: #4f46e5; color: #ffffff; padding: 12px 22px; border-radius: 10px; text-decoration: none; font-weight: 600;">Confirm Subscription</a>
+                  </div>
+                  <p style="font-size: 13px; color: #6b7280; margin: 0 0 6px 0;">This link expires in 24 hours.</p>
+                  <p style="font-size: 13px; color: #6b7280; margin: 0;">If you did not request this, you can ignore this email.</p>
+                  <p style="font-size: 12px; color: #9ca3af; margin: 16px 0 0 0;">If the button doesn't work, copy and paste this link into your browser:</p>
+                  <p style="font-size: 12px; color: #4f46e5; word-break: break-all; margin: 4px 0 0 0;">${confirmLink}</p>
                 </div>
-                <p style="font-size: 0.9rem; opacity: 0.85;">This link expires in 24 hours.</p>
-                <p style="font-size: 0.9rem; opacity: 0.85;">If you did not request this, you can ignore this email.</p>
               </div>
             `
           },

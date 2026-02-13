@@ -196,11 +196,16 @@ exports.handler = async (event) => {
 
 async function checkProxyStatus(ip) {
   const apiKey = process.env.PROXYCHECK_API_KEY;
+  const trackIpEnabled = process.env.TRACK_IP_ENABLED;
+  if (trackIpEnabled === 'false' || trackIpEnabled === '0') return null;
   if (!apiKey || !ip || ip === 'Unknown') return null;
 
   try {
     const url = `https://proxycheck.io/v2/${ip}?key=${apiKey}&vpn=1&asn=1&risk=1`;
-    const response = await fetch(url, { method: 'GET' });
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 2000);
+    const response = await fetch(url, { method: 'GET', signal: controller.signal });
+    clearTimeout(timeout);
     const data = await response.json();
 
     if (data?.status !== 'ok') return null;

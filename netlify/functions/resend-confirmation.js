@@ -87,15 +87,19 @@ exports.handler = async (event, context) => {
         body: {
           contentType: 'HTML',
           content: `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 15px;">
-              <h1 style="font-size: 2.5rem; margin-bottom: 1rem;">👋 Almost There!</h1>
-              <p style="font-size: 1.2rem; margin-bottom: 1rem;">Please confirm your subscription.</p>
-              <div style="text-align: center; margin: 2rem 0;">
-                <a href="${confirmLink}" style="display: inline-block; padding: 1rem 2rem; background: white; color: #667eea; text-decoration: none; border-radius: 10px; font-weight: 600; font-size: 1.1rem;">
-                  ✅ Confirm Subscription
-                </a>
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #f6f7fb; color: #111827; border-radius: 16px;">
+              <div style="background: #ffffff; padding: 24px; border-radius: 14px; border: 1px solid #e5e7eb;">
+                <h1 style="font-size: 22px; margin: 0 0 12px 0; color: #111827;">👋 Almost There!</h1>
+                <p style="font-size: 15px; margin: 0 0 18px 0; color: #374151;">Please confirm your subscription.</p>
+                <div style="text-align: center; margin: 20px 0;">
+                  <a href="${confirmLink}" style="display: inline-block; padding: 12px 22px; background: #4f46e5; color: #ffffff; text-decoration: none; border-radius: 10px; font-weight: 600; font-size: 15px;">
+                    ✅ Confirm Subscription
+                  </a>
+                </div>
+                <p style="font-size: 13px; color: #6b7280; margin: 0;">If you didn’t request this, you can ignore it.</p>
+                <p style="font-size: 12px; color: #9ca3af; margin: 16px 0 0 0;">If the button doesn't work, copy and paste this link into your browser:</p>
+                <p style="font-size: 12px; color: #4f46e5; word-break: break-all; margin: 4px 0 0 0;">${confirmLink}</p>
               </div>
-              <p style="font-size: 0.9rem; opacity: 0.85;">If you didn’t request this, you can ignore it.</p>
             </div>
           `
         },

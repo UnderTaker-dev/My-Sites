@@ -20,9 +20,15 @@ exports.handler = async (event, context) => {
     let embed;
     let content = ''; // For @mentions
 
+    const normalizeMention = (value) => {
+      if (!value) return '';
+      if (value.startsWith('<@')) return value;
+      return `<@&${value}>`;
+    };
+
     // Add @mention if requested (mention can be user ID like <@123456789> or role like <@&123456789>)
     if (mention) {
-      content = mention;
+      content = normalizeMention(String(mention));
     }
 
     switch (type) {
@@ -54,7 +60,7 @@ exports.handler = async (event, context) => {
         };
         // Ping for donations over $10
         if (data.amount && data.amount >= 10 && !mention) {
-          content = process.env.DISCORD_MENTION_ID || '';
+          content = normalizeMention(process.env.DISCORD_MENTION_ID || '');
         }
         break;
 
@@ -86,7 +92,7 @@ exports.handler = async (event, context) => {
         };
         // Always ping for errors
         if (!mention) {
-          content = process.env.DISCORD_MENTION_ID || '';
+          content = normalizeMention(process.env.DISCORD_MENTION_ID || '');
         }
         break;
 
@@ -123,7 +129,7 @@ exports.handler = async (event, context) => {
         };
         // Ping for appeals so admin sees it
         if (!mention) {
-          content = process.env.DISCORD_MENTION_ID || '';
+          content = normalizeMention(process.env.DISCORD_MENTION_ID || '');
         }
         break;
 
@@ -159,7 +165,7 @@ exports.handler = async (event, context) => {
         };
         // Ping for deletion requests so admin sees it
         if (!mention) {
-          content = process.env.DISCORD_MENTION_ID || '';
+          content = normalizeMention(process.env.DISCORD_MENTION_ID || '');
         }
         break;
 
@@ -179,7 +185,7 @@ exports.handler = async (event, context) => {
           footer: { text: 'Security Monitor' }
         };
         if (!mention) {
-          content = process.env.DISCORD_MENTION_ID || '';
+          content = normalizeMention(process.env.DISCORD_MENTION_ID || '');
         }
         break;
 

@@ -7,8 +7,20 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    // Get token from query parameters
-    const token = event.queryStringParameters?.token;
+    const extractToken = () => {
+      const queryToken = event.queryStringParameters?.token;
+      if (queryToken) return queryToken;
+
+      const rawUrl = event.rawUrl || '';
+      const path = event.path || '';
+      const match = (rawUrl.match(/\/confirm\/([a-f0-9]{32,})/i)
+        || path.match(/\/confirm\/([a-f0-9]{32,})/i));
+
+      return match ? match[1] : null;
+    };
+
+    // Get token from query parameters or /confirm/:token path
+    const token = extractToken();
     
     if (!token) {
       return {
@@ -151,29 +163,31 @@ exports.handler = async (event, context) => {
                   body: {
                     contentType: 'HTML',
                     content: `
-                      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 15px;">
-                        <h1 style="font-size: 2.5rem; margin-bottom: 1rem;">🎉 Welcome!</h1>
-                        <p style="font-size: 1.2rem; margin-bottom: 1rem;">Thanks for confirming your subscription!</p>
-                        <p style="font-size: 1rem; line-height: 1.6; margin-bottom: 1.5rem;">
-                          You're now part of the crew and will get notified when I launch something cool (or weird). 
-                          Expect updates about new projects, coding adventures, and probably some Monster-fueled chaos. 🚀
-                        </p>
-                        <div style="background: rgba(255,255,255,0.1); padding: 1.5rem; border-radius: 10px; margin: 2rem 0;">
-                          <p style="margin: 0; font-size: 1rem;">
-                            🎯 <strong>What to expect:</strong><br>
-                            • Project launches & updates<br>
-                            • Coding tips & tricks<br>
-                            • Behind-the-scenes content<br>
-                            • No spam, just quality content
+                      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #f6f7fb; color: #111827; border-radius: 16px;">
+                        <div style="background: #ffffff; padding: 24px; border-radius: 14px; border: 1px solid #e5e7eb;">
+                          <h1 style="font-size: 24px; margin: 0 0 12px 0; color: #111827;">🎉 Welcome!</h1>
+                          <p style="font-size: 15px; margin: 0 0 12px 0; color: #374151;">Thanks for confirming your subscription!</p>
+                          <p style="font-size: 14px; line-height: 1.6; margin: 0 0 16px 0; color: #374151;">
+                            You're now part of the crew and will get notified when I launch something cool (or weird).
+                            Expect updates about new projects, coding adventures, and probably some Monster-fueled chaos. 🚀
+                          </p>
+                          <div style="background: #f3f4f6; padding: 14px; border-radius: 10px; margin: 18px 0;">
+                            <p style="margin: 0; font-size: 14px; color: #111827;">
+                              🎯 <strong>What to expect:</strong><br>
+                              • Project launches & updates<br>
+                              • Coding tips & tricks<br>
+                              • Behind-the-scenes content<br>
+                              • No spam, just quality content
+                            </p>
+                          </div>
+                          <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 18px 0;">
+                          <p style="font-size: 12px; color: #6b7280; margin: 0 0 6px 0;">
+                            Want to unsubscribe? <a href="https://mathi4s.com/unsubscribe.html?email=${encodeURIComponent(email)}" style="color: #4f46e5; text-decoration: underline;">Click here</a>
+                          </p>
+                          <p style="font-size: 12px; color: #6b7280; margin: 0;">
+                            Visit: <a href="https://mathi4s.com" style="color: #4f46e5; text-decoration: underline;">mathi4s.com</a>
                           </p>
                         </div>
-                        <hr style="border: none; border-top: 2px solid rgba(255,255,255,0.3); margin: 2rem 0;">
-                        <p style="font-size: 0.9rem; opacity: 0.8;">
-                          Want to unsubscribe? <a href="https://mathi4s.com/unsubscribe.html?email=${encodeURIComponent(email)}" style="color: white; text-decoration: underline;">Click here</a>
-                        </p>
-                        <p style="font-size: 0.9rem; opacity: 0.8;">
-                          Visit: <a href="https://mathi4s.com" style="color: white; text-decoration: underline;">mathi4s.com</a>
-                        </p>
                       </div>
                     `
                   },
