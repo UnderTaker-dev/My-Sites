@@ -163,6 +163,23 @@ exports.handler = async (event, context) => {
         }
         break;
 
+      case 'vpn_detected':
+        embed = {
+          title: '🛡️ VPN/Proxy Detected',
+          description: 'A request was made from a VPN/proxy IP',
+          color: 15844367,
+          fields: [
+            { name: 'IP Address', value: data.ip || 'Unknown', inline: true },
+            { name: 'Action', value: data.action || 'Unknown', inline: true },
+            { name: 'Type', value: data.vpnType || 'Unknown', inline: true },
+            { name: 'Risk', value: String(data.vpnRisk || 'Unknown'), inline: true },
+            { name: 'ASN', value: data.vpnAsn || 'Unknown', inline: true }
+          ],
+          timestamp: new Date().toISOString(),
+          footer: { text: 'Security Monitor' }
+        };
+        break;
+
       default:
         embed = {
           title: '🔔 Notification',

@@ -5,10 +5,22 @@ const crypto = require('crypto');
 const { isDisposableEmail } = require('./utils/disposable-emails');
 
 exports.handler = async (event, context) => {
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Content-Type': 'application/json'
+  };
+
+  if (event.httpMethod === 'OPTIONS') {
+    return { statusCode: 204, headers, body: '' };
+  }
+
   // Only allow POST requests
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
+      headers,
       body: JSON.stringify({ error: 'Method not allowed' })
     };
   }
@@ -18,6 +30,7 @@ exports.handler = async (event, context) => {
     console.error('Airtable credentials not configured. AIRTABLE_TOKEN:', !!process.env.AIRTABLE_TOKEN, 'AIRTABLE_BASE_ID:', !!process.env.AIRTABLE_BASE_ID);
     return {
       statusCode: 500,
+      headers,
       body: JSON.stringify({
         success: false,
         error: 'Newsletter system not configured. Please contact support.'
@@ -33,6 +46,7 @@ exports.handler = async (event, context) => {
   if (!CLIENT_ID || !CLIENT_SECRET || !TENANT_ID) {
     return {
       statusCode: 500,
+      headers,
       body: JSON.stringify({
         success: false,
         error: 'Email service not configured. Please contact support.'
@@ -46,24 +60,26 @@ exports.handler = async (event, context) => {
     // Validate email format
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!email || !emailRegex.test(email)) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({
-          success: false,
-          error: 'Invalid email format'
-        })
-      };
+        return {
+          statusCode: 400,
+          headers,
+          body: JSON.stringify({
+            success: false,
+            error: 'Invalid email format'
+          })
+        };
     }
 
     // Block disposable/temporary emails
     if (isDisposableEmail(email)) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({
-          success: false,
-          error: 'Temporary email addresses are not allowed'
-        })
-      };
+        return {
+          statusCode: 400,
+          headers,
+          body: JSON.stringify({
+            success: false,
+            error: 'Temporary email addresses are not allowed'
+          })
+        };
     }
 
     // Extract domain and verify it has valid MX records
@@ -73,6 +89,7 @@ exports.handler = async (event, context) => {
       if (!mxRecords || mxRecords.length === 0) {
         return {
           statusCode: 400,
+          headers,
           body: JSON.stringify({
             success: false,
             error: 'Invalid email domain - no mail server found'
@@ -83,6 +100,7 @@ exports.handler = async (event, context) => {
       console.log('DNS verification failed for domain:', domain);
       return {
         statusCode: 400,
+        headers,
         body: JSON.stringify({
           success: false,
           error: 'Invalid email domain'
@@ -106,6 +124,7 @@ exports.handler = async (event, context) => {
       if (status === 'Active') {
         return {
           statusCode: 400,
+          headers,
           body: JSON.stringify({
             success: false,
             error: 'Already subscribed'
@@ -138,6 +157,7 @@ exports.handler = async (event, context) => {
 
       return {
         statusCode: 200,
+        headers,
         body: JSON.stringify({
           success: true,
           message: 'Verification email resent. Please check your inbox to confirm.'
@@ -195,6 +215,7 @@ exports.handler = async (event, context) => {
 
     return {
       statusCode: 200,
+      headers,
       body: JSON.stringify({
         success: true,
         message: 'Please check your email to confirm your subscription.',
@@ -203,11 +224,15 @@ exports.handler = async (event, context) => {
     };
   } catch (error) {
     console.error('Subscription error:', error);
+    const isSchemaError = error?.message?.includes('Unknown field name');
     return {
       statusCode: 500,
+      headers,
       body: JSON.stringify({
         success: false,
-        error: 'Subscription failed'
+        error: isSchemaError
+          ? 'Newsletter setup is missing required fields. Please add Verification Token and Verification Expiry to Subscribers.'
+          : 'Subscription failed'
       })
     };
   }

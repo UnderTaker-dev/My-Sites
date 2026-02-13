@@ -1,13 +1,22 @@
 const Airtable = require('airtable');
+const fetch = require('node-fetch');
 
 // In-memory rate limit cache (resets when function cold-starts)
 const rateLimitCache = new Map();
 
 // Configuration
 const RATE_LIMITS = {
-  newsletter: { maxRequests: 3, windowMinutes: 60 }, // 3 submissions per hour per IP
-  donation: { maxRequests: 10, windowMinutes: 60 }, // 10 donations per hour
-  contact: { maxRequests: 5, windowMinutes: 30 } // 5 contact forms per 30 mins
+  newsletter: { maxRequests: 3, windowMinutes: 60 },
+  donation: { maxRequests: 10, windowMinutes: 60 },
+  contact: { maxRequests: 5, windowMinutes: 30 },
+  signup: { maxRequests: 3, windowMinutes: 60 }
+};
+
+const VPN_RATE_LIMITS = {
+  newsletter: { maxRequests: 1, windowMinutes: 60 },
+  donation: { maxRequests: 3, windowMinutes: 60 },
+  contact: { maxRequests: 2, windowMinutes: 30 },
+  signup: { maxRequests: 1, windowMinutes: 60 }
 };
 
 // Known spam IP patterns (will be stored in Airtable)
@@ -35,6 +44,23 @@ exports.handler = async (event, context) => {
     const ip = event.headers['x-forwarded-for']?.split(',')[0].trim() || event.headers['client-ip'] || 'Unknown';
 
     const base = new Airtable({ apiKey: process.env.AIRTABLE_TOKEN }).base(process.env.AIRTABLE_BASE_ID);
+
+    const proxyInfo = await checkProxyStatus(ip);
+    const vpnDetected = Boolean(proxyInfo && proxyInfo.proxy);
+    const vpnType = proxyInfo?.type || 'Unknown';
+    const vpnRisk = proxyInfo?.risk || 'Unknown';
+    const vpnAsn = proxyInfo?.asn || 'Unknown';
+
+    if (vpnDetected) {
+      await notifyVpnDetection({
+        event,
+        ip,
+        action,
+        vpnType,
+        vpnRisk,
+        vpnAsn
+      });
+    }
 
     // Check if IP is blocked
     try {
@@ -94,7 +120,8 @@ exports.handler = async (event, context) => {
     }
 
     // Check rate limit
-    const limit = RATE_LIMITS[action] || RATE_LIMITS.newsletter;
+    const limitMap = vpnDetected ? VPN_RATE_LIMITS : RATE_LIMITS;
+    const limit = limitMap[action] || limitMap.newsletter;
     const cacheKey = `${ip}:${action}`;
     const now = Date.now();
     const windowMs = limit.windowMinutes * 60 * 1000;
@@ -116,7 +143,10 @@ exports.handler = async (event, context) => {
             allowed: false,
             reason: `Too many requests. Please try again in ${resetIn} minute(s).`,
             rateLimited: true,
-            retryAfterMinutes: resetIn
+            retryAfterMinutes: resetIn,
+            vpnDetected,
+            vpnType,
+            vpnRisk
           })
         };
       }
@@ -145,7 +175,10 @@ exports.handler = async (event, context) => {
       statusCode: 200,
       body: JSON.stringify({
         allowed: true,
-        message: 'Request allowed'
+        message: 'Request allowed',
+        vpnDetected,
+        vpnType,
+        vpnRisk
       })
     };
 
@@ -161,3 +194,44 @@ exports.handler = async (event, context) => {
     };
   }
 };
+
+async function checkProxyStatus(ip) {
+  const apiKey = process.env.PROXYCHECK_API_KEY;
+  if (!apiKey || !ip || ip === 'Unknown') return null;
+
+  try {
+    const url = `https://proxycheck.io/v2/${ip}?key=${apiKey}&vpn=1&asn=1&risk=1`;
+    const response = await fetch(url, { method: 'GET' });
+    const data = await response.json();
+
+    if (data?.status !== 'ok') return null;
+    const result = data[ip];
+    if (!result) return null;
+
+    return {
+      proxy: result.proxy === 'yes',
+      type: result.type || 'Unknown',
+      risk: result.risk || 'Unknown',
+      asn: result.asn || 'Unknown'
+    };
+  } catch (error) {
+    console.log('Proxy check failed:', error.message);
+    return null;
+  }
+}
+
+async function notifyVpnDetection({ event, ip, action, vpnType, vpnRisk, vpnAsn }) {
+  try {
+    const baseUrl = event.headers.origin || process.env.SITE_URL || 'https://mathi4s.com';
+    await fetch(`${baseUrl}/.netlify/functions/send-discord-notification`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type: 'vpn_detected',
+        data: { ip, action, vpnType, vpnRisk, vpnAsn }
+      })
+    });
+  } catch (error) {
+    console.log('VPN notify failed:', error.message);
+  }
+}

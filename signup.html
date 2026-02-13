@@ -383,6 +383,34 @@ body {
       }, 5000);
     }
 
+    async function runRateLimitCheck(action) {
+      try {
+        const rateLimitResponse = await fetch('/.netlify/functions/check-rate-limit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ip: 'client-side',
+            action
+          })
+        });
+
+        const rateLimitData = await rateLimitResponse.json();
+
+        if (!rateLimitData.allowed) {
+          showAlert(rateLimitData.reason || 'Please try again later');
+          return { allowed: false, data: rateLimitData };
+        }
+
+        if (rateLimitData.vpnDetected) {
+          showAlert('⚠️ VPN/proxy detected. Extra verification applies.', 'error');
+        }
+
+        return { allowed: true, data: rateLimitData };
+      } catch (e) {
+        return { allowed: true, data: null };
+      }
+    }
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
@@ -413,6 +441,13 @@ body {
       signupBtn.classList.add('loading');
 
       try {
+        const rateLimit = await runRateLimitCheck('signup');
+        if (!rateLimit.allowed) {
+          signupBtn.disabled = false;
+          signupBtn.classList.remove('loading');
+          return;
+        }
+
         const response = await fetch('/.netlify/functions/register-user', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

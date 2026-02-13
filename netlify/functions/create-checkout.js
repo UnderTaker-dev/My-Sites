@@ -1,3 +1,5 @@
+const fetch = require('node-fetch');
+
 exports.handler = async (event) => {
   // Only allow POST
   if (event.httpMethod !== 'POST') {
@@ -5,12 +7,7 @@ exports.handler = async (event) => {
   }
 
   // Check if Stripe key is configured
-  console.log('STRIPE_SECRET_KEY exists:', !!process.env.STRIPE_SECRET_KEY);
-  console.log('STRIPE_SECRET_KEY length:', process.env.STRIPE_SECRET_KEY?.length);
-  console.log('STRIPE_SECRET_KEY starts with:', process.env.STRIPE_SECRET_KEY?.substring(0, 10));
-  
   if (!process.env.STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY.trim() === '') {
-    console.error('STRIPE_SECRET_KEY is not configured properly');
     return {
       statusCode: 500,
       body: JSON.stringify({ error: 'Payment system not configured. Please contact support.' })
@@ -20,14 +17,8 @@ exports.handler = async (event) => {
   let stripe;
   try {
     const Stripe = require('stripe');
-    console.log('Stripe module loaded:', typeof Stripe);
     stripe = Stripe(process.env.STRIPE_SECRET_KEY);
-    console.log('Stripe instance created:', typeof stripe);
-    console.log('Stripe.checkout:', typeof stripe?.checkout);
-    console.log('Stripe.checkout.Session:', typeof stripe?.checkout?.Session);
-    console.log('Stripe.checkout.Session.create:', typeof stripe?.checkout?.Session?.create);
   } catch (err) {
-    console.error('Error loading Stripe:', err);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: 'Failed to initialize payment system: ' + err.message })
@@ -43,6 +34,30 @@ exports.handler = async (event) => {
         statusCode: 400,
         body: JSON.stringify({ error: 'Amount must be between $1 and $10,000' })
       };
+    }
+
+    // Server-side rate limit + VPN soft check
+    try {
+      const baseUrl = event.headers.origin || process.env.SITE_URL || 'https://mathi4s.com';
+      const rateResponse = await fetch(`${baseUrl}/.netlify/functions/check-rate-limit`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'donation' })
+      });
+
+      const rateData = await rateResponse.json();
+      if (!rateData.allowed) {
+        return {
+          statusCode: rateData.blocked ? 403 : 429,
+          body: JSON.stringify({
+            error: rateData.reason || 'Too many requests. Please try again later.',
+            blocked: rateData.blocked || false,
+            appealUrl: rateData.appealUrl
+          })
+        };
+      }
+    } catch (rateError) {
+      // Fail open if rate limit check fails
     }
 
     // Create Checkout Session

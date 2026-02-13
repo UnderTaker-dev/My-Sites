@@ -2918,6 +2918,39 @@ function showRandomFact() {
   showToast('✨ New fact revealed!', '#1abc9c');
 }
 
+async function runRateLimitCheck(action) {
+  try {
+    const rateLimitResponse = await fetch('/.netlify/functions/check-rate-limit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ip: 'client-side',
+        action
+      })
+    });
+
+    const rateLimitData = await rateLimitResponse.json();
+
+    if (!rateLimitData.allowed) {
+      if (rateLimitData.blocked && rateLimitData.appealUrl) {
+        window.location.href = rateLimitData.appealUrl;
+        return { allowed: false, data: rateLimitData };
+      }
+
+      showToast(rateLimitData.reason || 'Please try again later', '#f39c12');
+      return { allowed: false, data: rateLimitData };
+    }
+
+    if (rateLimitData.vpnDetected) {
+      showToast('⚠️ VPN/proxy detected. Extra verification applies.', '#f39c12');
+    }
+
+    return { allowed: true, data: rateLimitData };
+  } catch (e) {
+    return { allowed: true, data: null };
+  }
+}
+
 // ========== IMPROVED NEWSLETTER WITH VALIDATION ==========
 async function handleNewsletter(event) {
   event.preventDefault();
@@ -2951,32 +2984,11 @@ async function handleNewsletter(event) {
   const originalText = btn.textContent;
   btn.setAttribute('data-original-text', originalText);
   
-  // Rate limit check
-  try {
-    const rateLimitResponse = await fetch('/.netlify/functions/check-rate-limit', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-        ip: 'client-side', // Server will get real IP
-        action: 'newsletter'
-      })
-    });
-    
-    const rateLimitData = await rateLimitResponse.json();
-    
-    if (!rateLimitData.allowed) {
-      // If IP is blocked, redirect to appeal page
-      if (rateLimitData.blocked && rateLimitData.appealUrl) {
-        window.location.href = rateLimitData.appealUrl;
-        return;
-      }
-      showToast(rateLimitData.reason || 'Please try again later', '#f39c12');
-      btn.disabled = false;
-      btn.classList.remove('btn-loading');
-      return;
-    }
-  } catch (e) {
-    console.log('Rate limit check failed, continuing:', e);
+  const rateLimit = await runRateLimitCheck('newsletter');
+  if (!rateLimit.allowed) {
+    btn.disabled = false;
+    btn.classList.remove('btn-loading');
+    return;
   }
   
   // Call the newsletter-subscribe function
@@ -3361,30 +3373,38 @@ function handleContactSubmit(event) {
   
   sendBtn.disabled = true;
   sendBtn.textContent = '⏳ Sending...';
-  
-  // Send via serverless function
-  fetch('/.netlify/functions/send-contact', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name, email, message })
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.success) {
-      showToast('✅ Message sent successfully!');
-      closeContactForm();
-    } else {
-      throw new Error(data.error || 'Failed to send');
-    }
-  })
-  .catch(error => {
-    console.error('Error:', error);
-    showToast('❌ Failed to send. Try emailing directly: support@mathi4s.com', '#e74c3c');
-  })
-  .finally(() => {
-    sendBtn.disabled = false;
-    sendBtn.textContent = '📧 Send Message';
-  });
+
+  runRateLimitCheck('contact')
+    .then((rateLimit) => {
+      if (!rateLimit.allowed) {
+        sendBtn.disabled = false;
+        sendBtn.textContent = '📧 Send Message';
+        return Promise.reject(new Error('Rate limited'));
+      }
+      return fetch('/.netlify/functions/send-contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, message })
+      });
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        showToast('✅ Message sent successfully!');
+        closeContactForm();
+      } else {
+        throw new Error(data.error || 'Failed to send');
+      }
+    })
+    .catch(error => {
+      if (error.message !== 'Rate limited') {
+        showToast('❌ Failed to send. Try emailing directly: support@mathi4s.com', '#e74c3c');
+      }
+    })
+    .finally(() => {
+      sendBtn.disabled = false;
+      sendBtn.textContent = '📧 Send Message';
+    });
 }
 
 function toggleDonation() {
@@ -3423,6 +3443,13 @@ async function handleDonation() {
   
   btn.disabled = true;
   btn.textContent = '⏳ Processing...';
+
+  const rateLimit = await runRateLimitCheck('donation');
+  if (!rateLimit.allowed) {
+    btn.disabled = false;
+    btn.textContent = '⚡ Send Monster';
+    return;
+  }
   
   try {
     const response = await fetch('/.netlify/functions/create-checkout', {

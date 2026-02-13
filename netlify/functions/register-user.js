@@ -104,6 +104,31 @@ exports.handler = async (event) => {
       };
     }
 
+    // Server-side rate limit + VPN soft check
+    try {
+      const baseUrl = event.headers.origin || process.env.SITE_URL || 'https://mathi4s.com';
+      const rateResponse = await fetch(`${baseUrl}/.netlify/functions/check-rate-limit`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'signup' })
+      });
+
+      const rateData = await rateResponse.json();
+      if (!rateData.allowed) {
+        return {
+          statusCode: rateData.blocked ? 403 : 429,
+          headers,
+          body: JSON.stringify({
+            error: rateData.reason || 'Too many requests. Please try again later.',
+            blocked: rateData.blocked || false,
+            appealUrl: rateData.appealUrl
+          })
+        };
+      }
+    } catch (rateError) {
+      // Fail open if rate limit check fails
+    }
+
     // Check if email already exists
     const existingUsers = await base('Users')
       .select({
