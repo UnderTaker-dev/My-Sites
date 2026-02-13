@@ -1,10 +1,23 @@
 const fetch = require('node-fetch');
 
 exports.handler = async (event, context) => {
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Content-Type': 'application/json'
+  };
+
+  // Handle preflight
+  if (event.httpMethod === 'OPTIONS') {
+    return { statusCode: 204, headers, body: '' };
+  }
+
   // Only allow POST requests
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
+      headers,
       body: JSON.stringify({ error: 'Method not allowed' })
     };
   }
@@ -17,6 +30,7 @@ exports.handler = async (event, context) => {
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return {
         statusCode: 401,
+        headers,
         body: JSON.stringify({ error: 'Unauthorized' })
       };
     }
@@ -25,6 +39,7 @@ exports.handler = async (event, context) => {
     if (!subject || !message || !subscribers || !Array.isArray(subscribers)) {
       return {
         statusCode: 400,
+        headers,
         body: JSON.stringify({ error: 'Invalid request body' })
       };
     }
@@ -33,13 +48,14 @@ exports.handler = async (event, context) => {
     const CLIENT_ID = process.env.MICROSOFT_CLIENT_ID;
     const CLIENT_SECRET = process.env.MICROSOFT_CLIENT_SECRET;
     const TENANT_ID = process.env.MICROSOFT_TENANT_ID;
-    const SENDER_EMAIL = process.env.SENDER_EMAIL || 'noreply@mathi4s.com';
+    const SENDER_EMAIL = process.env.SENDER_EMAIL || 'support@mathi4s.com';
     const AIRTABLE_TOKEN = process.env.AIRTABLE_TOKEN;
     const AIRTABLE_BASE = process.env.AIRTABLE_BASE;
 
     if (!CLIENT_ID || !CLIENT_SECRET || !TENANT_ID) {
       return {
         statusCode: 500,
+        headers,
         body: JSON.stringify({ 
           error: 'Email service not configured',
           details: 'Missing Microsoft Graph credentials in environment variables'
@@ -157,6 +173,7 @@ exports.handler = async (event, context) => {
 
     return {
       statusCode: 200,
+      headers,
       body: JSON.stringify({
         success: true,
         sentCount: sentCount,
@@ -171,6 +188,7 @@ exports.handler = async (event, context) => {
     console.error('Send newsletter error:', error);
     return {
       statusCode: 500,
+      headers,
       body: JSON.stringify({
         success: false,
         error: 'Failed to send newsletter',
