@@ -1,5 +1,4 @@
 const fetch = require('node-fetch');
-const { v4: uuidv4 } = require('uuid');
 
 exports.handler = async (event, context) => {
   // Only allow POST requests
