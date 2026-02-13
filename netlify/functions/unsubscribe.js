@@ -1,4 +1,5 @@
 const Airtable = require('airtable');
+const fetch = require('node-fetch');
 
 exports.handler = async (event, context) => {
   // Only allow POST requests
@@ -59,6 +60,25 @@ exports.handler = async (event, context) => {
       timestamp: new Date().toISOString(),
       userAgent: event.headers['user-agent']
     });
+
+    // Send Discord notification (non-blocking)
+    try {
+      const baseUrl = event.headers.origin || process.env.SITE_URL || 'https://mathi4s.com';
+      await fetch(`${baseUrl}/.netlify/functions/send-discord-notification`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'unsubscribed',
+          data: {
+            email,
+            reason: reason || 'Not specified',
+            ip: event.headers['x-forwarded-for'] || event.headers['client-ip'] || 'Unknown'
+          }
+        })
+      });
+    } catch (notifyError) {
+      console.error('Failed to send unsubscribe notification:', notifyError);
+    }
 
     // Return success
     return {

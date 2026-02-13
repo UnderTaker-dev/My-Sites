@@ -17,7 +17,17 @@ async function getOrCreateSettings(base) {
     const created = await base('Settings').create([{
       fields: {
         'Theme': 'default',
-        'Support Me Visible': true
+        'Support Me Visible': true,
+        'Notify New Subscriber': true,
+        'Notify Unsubscribed': true,
+        'Notify New Donation': true,
+        'Notify VPN Detected': true,
+        'Notify User Signup': true,
+        'Notify Deletion Request': true,
+        'Notify Appeal': true,
+        'Notify IP Blocked': true,
+        'Notify Error Alert': true,
+        'Notify Traffic Spike': true
       }
     }]);
     console.log('Created default Settings record');
@@ -37,21 +47,71 @@ exports.handler = async (event, context) => {
       
       const theme = record?.fields?.Theme || 'default';
       const supportMeVisible = record?.fields?.['Support Me Visible'] !== false;
+      const notifyNewSubscriber = record?.fields?.['Notify New Subscriber'] !== false;
+      const notifyUnsubscribed = record?.fields?.['Notify Unsubscribed'] !== false;
+      const notifyNewDonation = record?.fields?.['Notify New Donation'] !== false;
+      const notifyVpnDetected = record?.fields?.['Notify VPN Detected'] !== false;
+      const notifyUserSignup = record?.fields?.['Notify User Signup'] !== false;
+      const notifyDeletionRequest = record?.fields?.['Notify Deletion Request'] !== false;
+      const notifyAppeal = record?.fields?.['Notify Appeal'] !== false;
+      const notifyIpBlocked = record?.fields?.['Notify IP Blocked'] !== false;
+      const notifyErrorAlert = record?.fields?.['Notify Error Alert'] !== false;
+      const notifyTrafficSpike = record?.fields?.['Notify Traffic Spike'] !== false;
 
       return {
         statusCode: 200,
-        body: JSON.stringify({ theme, supportMeVisible })
+        body: JSON.stringify({
+          theme,
+          supportMeVisible,
+          notifyNewSubscriber,
+          notifyUnsubscribed,
+          notifyNewDonation,
+          notifyVpnDetected,
+          notifyUserSignup,
+          notifyDeletionRequest,
+          notifyAppeal,
+          notifyIpBlocked,
+          notifyErrorAlert,
+          notifyTrafficSpike
+        })
       };
     } catch (error) {
       console.error('get-settings error:', error);
       return {
         statusCode: 200,
-        body: JSON.stringify({ error: 'Using defaults', theme: 'default', supportMeVisible: true })
+        body: JSON.stringify({
+          error: 'Using defaults',
+          theme: 'default',
+          supportMeVisible: true,
+          notifyNewSubscriber: true,
+          notifyUnsubscribed: true,
+          notifyNewDonation: true,
+          notifyVpnDetected: true,
+          notifyUserSignup: true,
+          notifyDeletionRequest: true,
+          notifyAppeal: true,
+          notifyIpBlocked: true,
+          notifyErrorAlert: true,
+          notifyTrafficSpike: true
+        })
       };
     }
   } else if (event.httpMethod === 'POST') {
     try {
-      const { theme, supportMeVisible } = JSON.parse(event.body || '{}');
+      const {
+        theme,
+        supportMeVisible,
+        notifyNewSubscriber,
+        notifyUnsubscribed,
+        notifyNewDonation,
+        notifyVpnDetected,
+        notifyUserSignup,
+        notifyDeletionRequest,
+        notifyAppeal,
+        notifyIpBlocked,
+        notifyErrorAlert,
+        notifyTrafficSpike
+      } = JSON.parse(event.body || '{}');
 
       const base = new Airtable({ apiKey: process.env.AIRTABLE_TOKEN }).base(process.env.AIRTABLE_BASE_ID);
       
@@ -63,6 +123,16 @@ exports.handler = async (event, context) => {
       // Only update fields that are provided
       if (theme !== undefined) fields.Theme = theme;
       if (supportMeVisible !== undefined) fields['Support Me Visible'] = supportMeVisible;
+      if (notifyNewSubscriber !== undefined) fields['Notify New Subscriber'] = notifyNewSubscriber;
+      if (notifyUnsubscribed !== undefined) fields['Notify Unsubscribed'] = notifyUnsubscribed;
+      if (notifyNewDonation !== undefined) fields['Notify New Donation'] = notifyNewDonation;
+      if (notifyVpnDetected !== undefined) fields['Notify VPN Detected'] = notifyVpnDetected;
+      if (notifyUserSignup !== undefined) fields['Notify User Signup'] = notifyUserSignup;
+      if (notifyDeletionRequest !== undefined) fields['Notify Deletion Request'] = notifyDeletionRequest;
+      if (notifyAppeal !== undefined) fields['Notify Appeal'] = notifyAppeal;
+      if (notifyIpBlocked !== undefined) fields['Notify IP Blocked'] = notifyIpBlocked;
+      if (notifyErrorAlert !== undefined) fields['Notify Error Alert'] = notifyErrorAlert;
+      if (notifyTrafficSpike !== undefined) fields['Notify Traffic Spike'] = notifyTrafficSpike;
 
       try {
         await base('Settings').update([{ id: record.id, fields }]);

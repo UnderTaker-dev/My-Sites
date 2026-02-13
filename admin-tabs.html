@@ -685,6 +685,13 @@ tbody tr:hover {
         <option value="Active">Active</option>
         <option value="Pending">Pending</option>
       </select>
+      <select id="subscriberSortFilter" onchange="renderSubscribersWithFilters()" style="padding:0.6rem; border-radius:8px; border:1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color:#fff;">
+        <option value="newest">Newest first</option>
+        <option value="oldest">Oldest first</option>
+        <option value="emailAsc">Email A-Z</option>
+        <option value="emailDesc">Email Z-A</option>
+        <option value="status">Status</option>
+      </select>
       <input id="subscriberDomainFilter" type="text" placeholder="Filter by domain (e.g. gmail.com)" oninput="renderSubscribersWithFilters()" style="flex:1; min-width:200px; padding:0.6rem; border-radius:8px; border:1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color:#fff;">
       <button class="btn btn-secondary" onclick="clearSubscriberFilters()">Reset</button>
     </div>
@@ -697,16 +704,47 @@ tbody tr:hover {
         <button class="btn-delete" onclick="bulkDeleteSubscribers()">🗑️ Delete</button>
       </div>
     </div>
-    <ul class="subscriber-list" id="subscriberList">
-      <li class="empty-state">No subscribers yet</li>
-    </ul>
+    <div style="overflow-x:auto;">
+      <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+          <tr style="background: rgba(255,255,255,0.05); text-align: left;">
+            <th style="padding: 0.8rem; border-bottom: 2px solid rgba(255,255,255,0.1); width: 36px;">
+              <input type="checkbox" id="selectAllSubscribers" onclick="toggleSelectAllSubscribers()" />
+            </th>
+            <th style="padding: 0.8rem; border-bottom: 2px solid rgba(255,255,255,0.1);">Email</th>
+            <th style="padding: 0.8rem; border-bottom: 2px solid rgba(255,255,255,0.1);">Status</th>
+            <th style="padding: 0.8rem; border-bottom: 2px solid rgba(255,255,255,0.1);">Subscribed</th>
+            <th style="padding: 0.8rem; border-bottom: 2px solid rgba(255,255,255,0.1);">Confirmed</th>
+            <th style="padding: 0.8rem; border-bottom: 2px solid rgba(255,255,255,0.1);">Source / IP</th>
+            <th style="padding: 0.8rem; border-bottom: 2px solid rgba(255,255,255,0.1);">Last Resent</th>
+            <th style="padding: 0.8rem; border-bottom: 2px solid rgba(255,255,255,0.1); text-align: center;">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="subscriberTableBody">
+          <tr><td colspan="8" style="padding: 1rem; text-align: center; opacity: 0.7;">No subscribers yet</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <div class="data-section">
     <h2>Unsubscribed Users</h2>
-    <ul class="subscriber-list" id="unsubscribedList">
-      <li class="empty-state">No unsubscribed users yet</li>
-    </ul>
+    <div style="overflow-x:auto;">
+      <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+          <tr style="background: rgba(255,255,255,0.05); text-align: left;">
+            <th style="padding: 0.8rem; border-bottom: 2px solid rgba(255,255,255,0.1);">Email</th>
+            <th style="padding: 0.8rem; border-bottom: 2px solid rgba(255,255,255,0.1);">Reason</th>
+            <th style="padding: 0.8rem; border-bottom: 2px solid rgba(255,255,255,0.1);">IP</th>
+            <th style="padding: 0.8rem; border-bottom: 2px solid rgba(255,255,255,0.1);">Date</th>
+            <th style="padding: 0.8rem; border-bottom: 2px solid rgba(255,255,255,0.1); text-align: center;">Action</th>
+          </tr>
+        </thead>
+        <tbody id="unsubscribedTableBody">
+          <tr><td colspan="5" style="padding: 1rem; text-align: center; opacity: 0.7;">No unsubscribed users yet</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
   </div>
 
@@ -1167,17 +1205,48 @@ tbody tr:hover {
   <div class="data-section">
     <h2>Notifications</h2>
     <p style="opacity: 0.7; font-size: 0.9rem; margin-bottom: 1rem;">
-      💡 Email notifications are automatically sent to <strong>ADMIN_EMAIL</strong> when Microsoft Graph is configured. 
-      These settings are saved locally for future UI enhancements.
+      💡 Discord notifications will follow these preferences. Email alerts (if configured) are unaffected.
     </p>
     <div style="display: flex; flex-direction: column; gap: 0.75rem;">
       <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
         <input type="checkbox" id="notifyNewSubscriber" style="width: 18px; height: 18px;" checked>
-        <span>Email me when someone subscribes</span>
+        <span>Notify on new subscriber</span>
+      </label>
+      <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+        <input type="checkbox" id="notifyUnsubscribed" style="width: 18px; height: 18px;" checked>
+        <span>Notify on unsubscribe</span>
       </label>
       <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
         <input type="checkbox" id="notifyNewDonation" style="width: 18px; height: 18px;" checked>
-        <span>Email me when someone donates</span>
+        <span>Notify on donation</span>
+      </label>
+      <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+        <input type="checkbox" id="notifyVpnDetected" style="width: 18px; height: 18px;" checked>
+        <span>Notify on VPN/proxy detection</span>
+      </label>
+      <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+        <input type="checkbox" id="notifyUserSignup" style="width: 18px; height: 18px;" checked>
+        <span>Notify on new user signup</span>
+      </label>
+      <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+        <input type="checkbox" id="notifyDeletionRequest" style="width: 18px; height: 18px;" checked>
+        <span>Notify on deletion requests</span>
+      </label>
+      <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+        <input type="checkbox" id="notifyAppeal" style="width: 18px; height: 18px;" checked>
+        <span>Notify on appeals</span>
+      </label>
+      <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+        <input type="checkbox" id="notifyIpBlocked" style="width: 18px; height: 18px;" checked>
+        <span>Notify when an IP is blocked</span>
+      </label>
+      <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+        <input type="checkbox" id="notifyErrorAlert" style="width: 18px; height: 18px;" checked>
+        <span>Notify on errors</span>
+      </label>
+      <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+        <input type="checkbox" id="notifyTrafficSpike" style="width: 18px; height: 18px;" checked>
+        <span>Notify on traffic spikes</span>
       </label>
       <button onclick="saveNotificationSettings()" style="padding: 0.6rem 1.2rem; border: none; border-radius: 8px; background: linear-gradient(135deg, #3498db, #2980b9); color: #fff; cursor: pointer; font-weight: 600; width: fit-content; margin-top: 0.5rem;">💾 Save Preferences</button>
     </div>
@@ -1380,6 +1449,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
   initActivityLogFilters();
   initPageViewsFilters();
+  loadNotificationSettings().catch(() => {});
 
   // Preload tab data for instant switching
   initAllTabsData();
@@ -1390,22 +1460,47 @@ function initActivityLogFilters() {
   const typeFilter = document.getElementById('activityTypeFilter');
   const rangeFilter = document.getElementById('activityRangeFilter');
 
+  const sortFilter = document.getElementById('subscriberSortFilter')?.value || 'newest';
   if (searchInput) {
-    searchInput.addEventListener('input', () => renderActivityLog(window.__activityLogItems || []));
+  const filtered = list.filter(s => {
   }
   if (typeFilter) {
     typeFilter.addEventListener('change', () => renderActivityLog(window.__activityLogItems || []));
   }
   if (rangeFilter) {
+
+  const getTime = (value) => {
+    if (!value) return 0;
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? 0 : date.getTime();
+  };
+
+  filtered.sort((a, b) => {
+    switch (sortFilter) {
+      case 'oldest':
+        return getTime(a.date) - getTime(b.date);
+      case 'emailAsc':
+        return (a.email || '').localeCompare(b.email || '');
+      case 'emailDesc':
+        return (b.email || '').localeCompare(a.email || '');
+      case 'status':
+        return (a.status || '').localeCompare(b.status || '');
+      case 'newest':
+      default:
+        return getTime(b.date) - getTime(a.date);
+    }
+  });
+
+  return filtered;
     rangeFilter.addEventListener('change', () => renderActivityLog(window.__activityLogItems || []));
   }
 }
-
+  const listElement = document.getElementById('subscriberTableBody');
 function initPageViewsFilters() {
   const searchInput = document.getElementById('pageViewsSearch');
   const pageFilter = document.getElementById('pageViewsPageFilter');
   const referrerFilter = document.getElementById('pageViewsReferrerFilter');
-  const rangeFilter = document.getElementById('pageViewsRangeFilter');
+    listElement.innerHTML = '<tr><td colspan="8" style="padding: 1rem; text-align: center; opacity: 0.7;">No subscribers yet</td></tr>';
 
   if (searchInput) {
     searchInput.addEventListener('input', () => renderPageViewsTable(window.__pageViews || []));
@@ -1415,28 +1510,43 @@ function initPageViewsFilters() {
   }
   if (referrerFilter) {
     referrerFilter.addEventListener('change', () => renderPageViewsTable(window.__pageViews || []));
-  }
   if (rangeFilter) {
     rangeFilter.addEventListener('change', () => renderPageViewsTable(window.__pageViews || []));
   }
 }
-
+    const lastResent = formatDate(item.lastResent) || 'Never';
+    const subscribedDate = formatDate(item.date) || 'Unknown';
+    const confirmedDate = formatDate(item.confirmedDate) || (status === 'Active' ? 'Unknown' : 'Pending');
+    const source = item.source || 'Unknown';
+    const ip = item.ip || 'Unknown';
 async function initAllTabsData() {
   try {
-    await Promise.all([
-      loadSubscribersTab().catch(e => console.error('Prefetch subscribers failed', e)),
-      loadUsersTab().catch(e => console.error('Prefetch users failed', e)),
-      loadAppealsList().catch(e => console.error('Prefetch appeals failed', e)),
-      loadPageViewsTable().catch(e => console.error('Prefetch pageviews failed', e)),
-      loadPageStats().catch(e => console.error('Prefetch page stats failed', e)),
-      loadDonationsTable().catch(e => console.error('Prefetch donations failed', e)),
-      (async () => {
-        try {
-          await loadActivityLog();
-          await loadRetryQueue();
-          await loadUnsubscribeStats();
-        } catch (e) {
-          console.error('Prefetch activity bundle failed', e);
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); ${status === 'Pending' ? 'opacity: 0.7;' : ''}">
+        <td style="padding: 0.8rem;">
+          <input type="checkbox" class="subscriber-select" value="${item.id}" onchange="toggleBulkBar()">
+        </td>
+        <td style="padding: 0.8rem;">
+          <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+            <span style="cursor: pointer; color: #4a56e2; text-decoration: underline;" onclick="openSubscriberTimeline('${item.email}')">📧 ${escapeHtml(item.email)}</span>
+            <button class="btn-secondary" style="padding: 0.25rem 0.6rem; width: fit-content;" onclick="copySubscriberEmail('${item.email}')">📋 Copy</button>
+          </div>
+        </td>
+        <td style="padding: 0.8rem;">${statusBadge}</td>
+        <td style="padding: 0.8rem; font-size: 0.85rem; opacity: 0.8;">${subscribedDate}</td>
+        <td style="padding: 0.8rem; font-size: 0.85rem; opacity: 0.8;">${confirmedDate}</td>
+        <td style="padding: 0.8rem; font-size: 0.85rem; opacity: 0.8;">
+          <div>${escapeHtml(source)}</div>
+          <div style="opacity: 0.6;">${escapeHtml(ip)}</div>
+        </td>
+        <td style="padding: 0.8rem; font-size: 0.85rem; opacity: 0.8;">${lastResent}</td>
+        <td style="padding: 0.8rem; text-align: center;">
+          <div style="display: flex; gap: 0.4rem; flex-wrap: wrap; justify-content: center;">
+            <button class="btn-secondary" onclick="resendConfirmation('${item.id}', '${item.email}')">📬 Resend</button>
+            ${actionButtons}
+            <button class="btn-delete" onclick="deleteSubscriber('${item.id}', '${item.email}')">🗑️ Delete</button>
+          </div>
+        </td>
+      </tr>
         }
       })(),
       loadTechStack().catch(e => console.error('Prefetch techstack failed', e)),
@@ -1461,17 +1571,22 @@ async function loadSubscribersTab() {
     // Render subscribers list
     renderSubscribersWithFilters();
     
-    // Render unsubscribed list
-    const unsubList = document.getElementById('unsubscribedList');
-    if (unsubList) {
+    // Render unsubscribed table
+    const unsubTable = document.getElementById('unsubscribedTableBody');
+    if (unsubTable) {
       if (window.__unsubscribed.length === 0) {
-        unsubList.innerHTML = '<li class="empty-state">No unsubscribed users yet</li>';
+        unsubTable.innerHTML = '<tr><td colspan="5" style="padding: 1rem; text-align: center; opacity: 0.7;">No unsubscribed users yet</td></tr>';
       } else {
-        unsubList.innerHTML = window.__unsubscribed.map(item => `
-          <li class="subscriber-item">
-            📧 ${item.email} <span style="opacity:0.6; font-size:0.9em;">(${item.date})</span>
-            <button class="btn-delete" style="margin-left: 1rem;" onclick="deleteUnsubscribed('${item.id}', '${item.email}')">🗑️ Delete</button>
-          </li>
+        unsubTable.innerHTML = window.__unsubscribed.map(item => `
+          <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+            <td style="padding: 0.8rem; font-weight: 600;">${escapeHtml(item.email || '')}</td>
+            <td style="padding: 0.8rem; opacity: 0.8;">${escapeHtml(item.reason || 'Not specified')}</td>
+            <td style="padding: 0.8rem; opacity: 0.8;">${escapeHtml(item.ip || 'Unknown')}</td>
+            <td style="padding: 0.8rem; font-size: 0.85rem; opacity: 0.7;">${formatDate(item.date)}</td>
+            <td style="padding: 0.8rem; text-align: center;">
+              <button class="btn-delete" onclick="deleteUnsubscribed('${item.id}', '${item.email}')">🗑️ Delete</button>
+            </td>
+          </tr>
         `).join('');
       }
     }
@@ -1479,9 +1594,9 @@ async function loadSubscribersTab() {
     console.log('✅ Subscribers loaded:', window.__subscribers.length);
   } catch (error) {
     console.error('Error loading subscribers:', error);
-    const listElement = document.getElementById('subscriberList');
+    const listElement = document.getElementById('subscriberTableBody');
     if (listElement) {
-      listElement.innerHTML = '<li class="empty-state" style="color: #e74c3c;">Error loading subscribers</li>';
+      listElement.innerHTML = '<tr><td colspan="8" style="padding: 1rem; text-align: center; color: #e74c3c;">Error loading subscribers</td></tr>';
     }
   }
 }
@@ -3370,53 +3485,93 @@ function getFilteredSubscribers() {
   const term = (document.getElementById('subscriberSearch')?.value || '').toLowerCase();
   const statusFilter = document.getElementById('subscriberStatusFilter')?.value || 'all';
   const domainFilter = (document.getElementById('subscriberDomainFilter')?.value || '').toLowerCase();
+  const sortFilter = document.getElementById('subscriberSortFilter')?.value || 'newest';
 
-  return list.filter(s => {
+  const filtered = list.filter(s => {
     const matchesTerm = !term || (s.email && s.email.toLowerCase().includes(term));
     const matchesStatus = statusFilter === 'all' || (s.status || 'Active') === statusFilter;
     const matchesDomain = !domainFilter || (s.email && s.email.toLowerCase().endsWith(domainFilter));
     return matchesTerm && matchesStatus && matchesDomain;
   });
+
+  const getTime = (value) => {
+    if (!value) return 0;
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? 0 : date.getTime();
+  };
+
+  filtered.sort((a, b) => {
+    switch (sortFilter) {
+      case 'oldest':
+        return getTime(a.date) - getTime(b.date);
+      case 'emailAsc':
+        return (a.email || '').localeCompare(b.email || '');
+      case 'emailDesc':
+        return (b.email || '').localeCompare(a.email || '');
+      case 'status':
+        return (a.status || '').localeCompare(b.status || '');
+      case 'newest':
+      default:
+        return getTime(b.date) - getTime(a.date);
+    }
+  });
+
+  return filtered;
 }
 
 function renderSubscribersWithFilters() {
-  const listElement = document.getElementById('subscriberList');
+  const listElement = document.getElementById('subscriberTableBody');
   const subscribers = getFilteredSubscribers();
 
   if (!listElement) return;
   if (subscribers.length === 0) {
-    listElement.innerHTML = '<li class="empty-state">No subscribers yet</li>';
+    listElement.innerHTML = '<tr><td colspan="8" style="padding: 1rem; text-align: center; opacity: 0.7;">No subscribers yet</td></tr>';
     document.getElementById('bulkActionsBar').style.display = 'none';
     return;
   }
 
   listElement.innerHTML = subscribers.map((item) => {
     const status = item.status || 'Active';
-    const statusBadge = status === 'Active' 
-      ? '<span style="background: #1abc9c; color: white; padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600; margin-left: 0.5rem;">✓ Active</span>'
-      : '<span style="background: #f39c12; color: white; padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600; margin-left: 0.5rem;">⏳ Pending</span>';
-    const opacity = status === 'Pending' ? 'opacity: 0.6;' : '';
+    const statusBadge = status === 'Active'
+      ? '<span style="background: #1abc9c; color: white; padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">✓ Active</span>'
+      : '<span style="background: #f39c12; color: white; padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">⏳ Pending</span>';
     const actionButtons = status === 'Active'
       ? `<button class="btn-secondary" onclick="updateSubscriberStatus('${item.id}', '${item.email}', 'Pending')">⏳ Mark Pending</button>`
       : `<button class="btn-secondary" onclick="updateSubscriberStatus('${item.id}', '${item.email}', 'Active')">✅ Force Confirm</button>`;
-    
-    const lastResent = item['Last Resent'] ? new Date(item['Last Resent']).toLocaleString() : 'Never';
-    
+
+    const lastResent = formatDate(item.lastResent) || 'Never';
+    const subscribedDate = formatDate(item.date) || 'Unknown';
+    const confirmedDate = formatDate(item.confirmedDate) || (status === 'Active' ? 'Unknown' : 'Pending');
+    const source = item.source || 'Unknown';
+    const ip = item.ip || 'Unknown';
+
     return `
-      <li class="subscriber-item" style="${opacity}; display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; justify-content: space-between;">
-        <div style="flex: 1; min-width: 200px;">
-          <label style="display:flex; align-items:center; gap:0.5rem;">
-            <input type="checkbox" class="subscriber-select" value="${item.id}" onchange="toggleBulkBar()">
-            <span style="cursor: pointer; color: #4a56e2; text-decoration: underline;" onclick="openSubscriberTimeline('${item.email}')">📧 ${item.email}</span>${statusBadge}
-          </label>
-          <div style="font-size: 0.8rem; opacity: 0.6; margin-left: 1.5rem;">Last resent: ${lastResent}</div>
-        </div>
-        <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
-          <button class="btn-secondary" onclick="resendConfirmation('${item.id}', '${item.email}')">📬 Resend</button>
-          ${actionButtons}
-          <button class="btn-delete" onclick="deleteSubscriber('${item.id}', '${item.email}')">🗑️ Delete</button>
-        </div>
-      </li>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); ${status === 'Pending' ? 'opacity: 0.7;' : ''}">
+        <td style="padding: 0.8rem;">
+          <input type="checkbox" class="subscriber-select" value="${item.id}" onchange="toggleBulkBar()">
+        </td>
+        <td style="padding: 0.8rem;">
+          <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+            <span style="cursor: pointer; color: #4a56e2; text-decoration: underline;" onclick="openSubscriberTimeline('${item.email}')">📧 ${escapeHtml(item.email)}</span>
+            <button class="btn-secondary" style="padding: 0.25rem 0.6rem; width: fit-content;" onclick="copySubscriberEmail('${item.email}')">📋 Copy</button>
+          </div>
+        </td>
+        <td style="padding: 0.8rem;">${statusBadge}</td>
+        <td style="padding: 0.8rem; font-size: 0.85rem; opacity: 0.8;">${subscribedDate}</td>
+        <td style="padding: 0.8rem; font-size: 0.85rem; opacity: 0.8;">${confirmedDate}</td>
+        <td style="padding: 0.8rem; font-size: 0.85rem; opacity: 0.8;">
+          <div>${escapeHtml(source)}</div>
+          <div style="opacity: 0.6;">${escapeHtml(ip)}</div>
+        </td>
+        <td style="padding: 0.8rem; font-size: 0.85rem; opacity: 0.8;">${lastResent}</td>
+        <td style="padding: 0.8rem; text-align: center;">
+          <div style="display: flex; gap: 0.4rem; flex-wrap: wrap; justify-content: center;">
+            <button class="btn-secondary" onclick="resendConfirmation('${item.id}', '${item.email}')">📬 Resend</button>
+            ${actionButtons}
+            <button class="btn-delete" onclick="deleteSubscriber('${item.id}', '${item.email}')">🗑️ Delete</button>
+          </div>
+        </td>
+      </tr>
     `;
   }).join('');
 }
@@ -3424,16 +3579,49 @@ function renderSubscribersWithFilters() {
 function toggleBulkBar() {
   const anyChecked = Array.from(document.querySelectorAll('.subscriber-select')).some(cb => cb.checked);
   document.getElementById('bulkActionsBar').style.display = anyChecked ? 'flex' : 'none';
+  const selectAll = document.getElementById('selectAllSubscribers');
+  if (selectAll) {
+    const allChecked = Array.from(document.querySelectorAll('.subscriber-select')).every(cb => cb.checked);
+    selectAll.checked = allChecked && document.querySelectorAll('.subscriber-select').length > 0;
+  }
+}
+
+function toggleSelectAllSubscribers() {
+  const selectAll = document.getElementById('selectAllSubscribers');
+  const checked = selectAll?.checked;
+  document.querySelectorAll('.subscriber-select').forEach(cb => {
+    cb.checked = checked;
+  });
+  toggleBulkBar();
 }
 
 function clearSubscriberFilters() {
   const search = document.getElementById('subscriberSearch');
   const status = document.getElementById('subscriberStatusFilter');
+  const sort = document.getElementById('subscriberSortFilter');
   const domain = document.getElementById('subscriberDomainFilter');
   if (search) search.value = '';
   if (status) status.value = 'all';
+  if (sort) sort.value = 'newest';
   if (domain) domain.value = '';
   renderSubscribersWithFilters();
+}
+
+function formatDate(value) {
+  if (!value) return '';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+  return date.toLocaleString();
+}
+
+async function copySubscriberEmail(email) {
+  if (!email) return;
+  try {
+    await navigator.clipboard.writeText(email);
+    showToast('✅ Email copied');
+  } catch (error) {
+    showToast('❌ Failed to copy email', '#e74c3c');
+  }
 }
 
 function getSelectedSubscriberIds() {
@@ -3512,7 +3700,35 @@ async function exportSubscribers() {
       return;
     }
     
-    const csvContent = 'Email,Date\n' + subscribers.map(s => `${s.email},${s.date || 'N/A'}`).join('\n');
+    const escapeCsv = (value) => {
+      const str = String(value ?? '');
+      if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+        return `"${str.replace(/"/g, '""')}"`;
+      }
+      return str;
+    };
+
+    const header = [
+      'Email',
+      'Status',
+      'Subscribed Date',
+      'Confirmed Date',
+      'Source',
+      'IP Address',
+      'Last Resent'
+    ].join(',');
+
+    const rows = subscribers.map(s => [
+      s.email,
+      s.status,
+      s.date,
+      s.confirmedDate,
+      s.source,
+      s.ip,
+      s.lastResent
+    ].map(escapeCsv).join(','));
+
+    const csvContent = [header, ...rows].join('\n');
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -3878,25 +4094,104 @@ function openQuickAddSubscriber() {
   });
 }
 
-function loadNotificationSettings() {
-  const notifySubscriber = localStorage.getItem('notifyNewSubscriber') === 'true';
-  const notifyDonation = localStorage.getItem('notifyNewDonation') === 'true';
-  
-  const subscriberCheckbox = document.getElementById('notifyNewSubscriber');
-  const donationCheckbox = document.getElementById('notifyNewDonation');
-  
-  if (subscriberCheckbox) subscriberCheckbox.checked = notifySubscriber;
-  if (donationCheckbox) donationCheckbox.checked = notifyDonation;
+async function loadNotificationSettings() {
+  const defaults = {
+    notifyNewSubscriber: true,
+    notifyUnsubscribed: true,
+    notifyNewDonation: true,
+    notifyVpnDetected: true,
+    notifyUserSignup: true,
+    notifyDeletionRequest: true,
+    notifyAppeal: true,
+    notifyIpBlocked: true,
+    notifyErrorAlert: true,
+    notifyTrafficSpike: true
+  };
+
+  try {
+    const response = await fetch('/.netlify/functions/get-site-settings');
+    const data = await response.json();
+
+    const settings = {
+      notifyNewSubscriber: data.notifyNewSubscriber ?? defaults.notifyNewSubscriber,
+      notifyUnsubscribed: data.notifyUnsubscribed ?? defaults.notifyUnsubscribed,
+      notifyNewDonation: data.notifyNewDonation ?? defaults.notifyNewDonation,
+      notifyVpnDetected: data.notifyVpnDetected ?? defaults.notifyVpnDetected,
+      notifyUserSignup: data.notifyUserSignup ?? defaults.notifyUserSignup,
+      notifyDeletionRequest: data.notifyDeletionRequest ?? defaults.notifyDeletionRequest,
+      notifyAppeal: data.notifyAppeal ?? defaults.notifyAppeal,
+      notifyIpBlocked: data.notifyIpBlocked ?? defaults.notifyIpBlocked,
+      notifyErrorAlert: data.notifyErrorAlert ?? defaults.notifyErrorAlert,
+      notifyTrafficSpike: data.notifyTrafficSpike ?? defaults.notifyTrafficSpike
+    };
+
+    const map = [
+      ['notifyNewSubscriber', 'notifyNewSubscriber'],
+      ['notifyUnsubscribed', 'notifyUnsubscribed'],
+      ['notifyNewDonation', 'notifyNewDonation'],
+      ['notifyVpnDetected', 'notifyVpnDetected'],
+      ['notifyUserSignup', 'notifyUserSignup'],
+      ['notifyDeletionRequest', 'notifyDeletionRequest'],
+      ['notifyAppeal', 'notifyAppeal'],
+      ['notifyIpBlocked', 'notifyIpBlocked'],
+      ['notifyErrorAlert', 'notifyErrorAlert'],
+      ['notifyTrafficSpike', 'notifyTrafficSpike']
+    ];
+
+    map.forEach(([key, id]) => {
+      const el = document.getElementById(id);
+      if (el) el.checked = Boolean(settings[key]);
+    });
+  } catch (error) {
+    const map = [
+      ['notifyNewSubscriber', defaults.notifyNewSubscriber],
+      ['notifyUnsubscribed', defaults.notifyUnsubscribed],
+      ['notifyNewDonation', defaults.notifyNewDonation],
+      ['notifyVpnDetected', defaults.notifyVpnDetected],
+      ['notifyUserSignup', defaults.notifyUserSignup],
+      ['notifyDeletionRequest', defaults.notifyDeletionRequest],
+      ['notifyAppeal', defaults.notifyAppeal],
+      ['notifyIpBlocked', defaults.notifyIpBlocked],
+      ['notifyErrorAlert', defaults.notifyErrorAlert],
+      ['notifyTrafficSpike', defaults.notifyTrafficSpike]
+    ];
+    map.forEach(([id, value]) => {
+      const el = document.getElementById(id);
+      if (el) el.checked = Boolean(value);
+    });
+  }
 }
 
-function saveNotificationSettings() {
-  const notifySubscriber = document.getElementById('notifyNewSubscriber').checked;
-  const notifyDonation = document.getElementById('notifyNewDonation').checked;
-  
-  localStorage.setItem('notifyNewSubscriber', notifySubscriber);
-  localStorage.setItem('notifyNewDonation', notifyDonation);
-  
-  showToast('✅ Notification preferences saved', '#1abc9c');
+async function saveNotificationSettings() {
+  const payload = {
+    notifyNewSubscriber: document.getElementById('notifyNewSubscriber')?.checked,
+    notifyUnsubscribed: document.getElementById('notifyUnsubscribed')?.checked,
+    notifyNewDonation: document.getElementById('notifyNewDonation')?.checked,
+    notifyVpnDetected: document.getElementById('notifyVpnDetected')?.checked,
+    notifyUserSignup: document.getElementById('notifyUserSignup')?.checked,
+    notifyDeletionRequest: document.getElementById('notifyDeletionRequest')?.checked,
+    notifyAppeal: document.getElementById('notifyAppeal')?.checked,
+    notifyIpBlocked: document.getElementById('notifyIpBlocked')?.checked,
+    notifyErrorAlert: document.getElementById('notifyErrorAlert')?.checked,
+    notifyTrafficSpike: document.getElementById('notifyTrafficSpike')?.checked
+  };
+
+  try {
+    const response = await fetch('/.netlify/functions/get-site-settings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({}));
+      throw new Error(data.error || 'Failed to save notification settings');
+    }
+
+    showToast('✅ Notification preferences saved', '#1abc9c');
+  } catch (error) {
+    showToast(`❌ Failed to save settings: ${error.message}`, '#e74c3c');
+  }
 }
 
 async function backupAllData() {

@@ -1,4 +1,65 @@
 const fetch = require('node-fetch');
+const Airtable = require('airtable');
+
+async function getNotificationSettings() {
+  const defaults = {
+    notifyNewSubscriber: true,
+    notifyUnsubscribed: true,
+    notifyNewDonation: true,
+    notifyVpnDetected: true,
+    notifyUserSignup: true,
+    notifyDeletionRequest: true,
+    notifyAppeal: true,
+    notifyIpBlocked: true,
+    notifyErrorAlert: true,
+    notifyTrafficSpike: true
+  };
+
+  if (!process.env.AIRTABLE_TOKEN || !process.env.AIRTABLE_BASE_ID) {
+    return defaults;
+  }
+
+  try {
+    const base = new Airtable({ apiKey: process.env.AIRTABLE_TOKEN }).base(process.env.AIRTABLE_BASE_ID);
+    const records = await base('Settings').select({ maxRecords: 1 }).all();
+    if (records.length === 0) return defaults;
+
+    const fields = records[0].fields || {};
+    return {
+      notifyNewSubscriber: fields['Notify New Subscriber'] !== false,
+      notifyUnsubscribed: fields['Notify Unsubscribed'] !== false,
+      notifyNewDonation: fields['Notify New Donation'] !== false,
+      notifyVpnDetected: fields['Notify VPN Detected'] !== false,
+      notifyUserSignup: fields['Notify User Signup'] !== false,
+      notifyDeletionRequest: fields['Notify Deletion Request'] !== false,
+      notifyAppeal: fields['Notify Appeal'] !== false,
+      notifyIpBlocked: fields['Notify IP Blocked'] !== false,
+      notifyErrorAlert: fields['Notify Error Alert'] !== false,
+      notifyTrafficSpike: fields['Notify Traffic Spike'] !== false
+    };
+  } catch (error) {
+    return defaults;
+  }
+}
+
+function isNotificationEnabled(type, settings) {
+  const map = {
+    new_subscriber: 'notifyNewSubscriber',
+    unsubscribed: 'notifyUnsubscribed',
+    new_donation: 'notifyNewDonation',
+    vpn_detected: 'notifyVpnDetected',
+    new_user_signup: 'notifyUserSignup',
+    deletion_request: 'notifyDeletionRequest',
+    block_appeal: 'notifyAppeal',
+    ip_blocked: 'notifyIpBlocked',
+    error_alert: 'notifyErrorAlert',
+    traffic_spike: 'notifyTrafficSpike'
+  };
+
+  const key = map[type];
+  if (!key) return true;
+  return settings[key] !== false;
+}
 
 exports.handler = async (event, context) => {
   if (event.httpMethod !== 'POST') {
@@ -17,6 +78,14 @@ exports.handler = async (event, context) => {
       };
     }
 
+    const settings = await getNotificationSettings();
+    if (!isNotificationEnabled(type, settings)) {
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ success: true, skipped: true })
+      };
+    }
+
     let embed;
     let content = ''; // For @mentions
 
@@ -26,9 +95,17 @@ exports.handler = async (event, context) => {
       return `<@&${value}>`;
     };
 
+    const extractRoleId = (value) => {
+      if (!value) return '';
+      const match = String(value).match(/\d{6,}/);
+      return match ? match[0] : '';
+    };
+
     // Add @mention if requested (mention can be user ID like <@123456789> or role like <@&123456789>)
     if (mention) {
       content = normalizeMention(String(mention));
+    } else if (process.env.DISCORD_MENTION_ID) {
+      content = normalizeMention(process.env.DISCORD_MENTION_ID);
     }
 
     switch (type) {
@@ -59,7 +136,7 @@ exports.handler = async (event, context) => {
           footer: { text: 'Donation System' }
         };
         // Ping for donations over $10
-        if (data.amount && data.amount >= 10 && !mention) {
+        if (!mention && !content && data.amount && data.amount >= 10) {
           content = normalizeMention(process.env.DISCORD_MENTION_ID || '');
         }
         break;
@@ -91,9 +168,6 @@ exports.handler = async (event, context) => {
           footer: { text: 'Error Monitoring' }
         };
         // Always ping for errors
-        if (!mention) {
-          content = normalizeMention(process.env.DISCORD_MENTION_ID || '');
-        }
         break;
 
       case 'ip_blocked':
@@ -128,9 +202,6 @@ exports.handler = async (event, context) => {
           footer: { text: 'Appeal System' }
         };
         // Ping for appeals so admin sees it
-        if (!mention) {
-          content = normalizeMention(process.env.DISCORD_MENTION_ID || '');
-        }
         break;
 
       case 'new_user_signup':
@@ -164,9 +235,6 @@ exports.handler = async (event, context) => {
           footer: { text: 'Account Deletion System' }
         };
         // Ping for deletion requests so admin sees it
-        if (!mention) {
-          content = normalizeMention(process.env.DISCORD_MENTION_ID || '');
-        }
         break;
 
       case 'vpn_detected':
@@ -184,9 +252,24 @@ exports.handler = async (event, context) => {
           timestamp: new Date().toISOString(),
           footer: { text: 'Security Monitor' }
         };
-        if (!mention) {
+        if (!mention && !content) {
           content = normalizeMention(process.env.DISCORD_MENTION_ID || '');
         }
+        break;
+
+      case 'unsubscribed':
+        embed = {
+          title: '📭 Unsubscribed',
+          description: 'A user unsubscribed from the newsletter',
+          color: 15105570,
+          fields: [
+            { name: 'Email', value: data.email || 'Unknown', inline: true },
+            { name: 'Reason', value: data.reason || 'Not provided', inline: true },
+            { name: 'IP Address', value: data.ip || 'Unknown', inline: true }
+          ],
+          timestamp: new Date().toISOString(),
+          footer: { text: 'Newsletter Subscription' }
+        };
         break;
 
       default:
@@ -198,9 +281,11 @@ exports.handler = async (event, context) => {
         };
     }
 
+    const roleId = extractRoleId(content || process.env.DISCORD_MENTION_ID || '');
     const payload = {
       content: content || undefined,
-      embeds: [embed]
+      embeds: [embed],
+      allowed_mentions: roleId ? { parse: [], roles: [roleId] } : { parse: [] }
     };
 
     const response = await fetch(webhookUrl, {

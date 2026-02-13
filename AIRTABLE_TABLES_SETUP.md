@@ -8,6 +8,16 @@ The following tables need to be created in your Airtable base. These tables are 
 Fields:
 - `Theme` (Single line text) - Values: "default", "christmas", "halloween", "valentine", "newyear", "easter"
 - `Support Me Visible` (Checkbox) - Default: checked
+- `Notify New Subscriber` (Checkbox) - Default: checked
+- `Notify Unsubscribed` (Checkbox) - Default: checked
+- `Notify New Donation` (Checkbox) - Default: checked
+- `Notify VPN Detected` (Checkbox) - Default: checked
+- `Notify User Signup` (Checkbox) - Default: checked
+- `Notify Deletion Request` (Checkbox) - Default: checked
+- `Notify Appeal` (Checkbox) - Default: checked
+- `Notify IP Blocked` (Checkbox) - Default: checked
+- `Notify Error Alert` (Checkbox) - Default: checked
+- `Notify Traffic Spike` (Checkbox) - Default: checked
 
 ### 2. **ActivityLog** (for audit trail)
 Fields:

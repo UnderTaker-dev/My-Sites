@@ -32,7 +32,12 @@ exports.handler = async (event, context) => {
         id: record.id,
         email: record.fields.Email,
         date: record.fields['Subscribed Date'] || record.fields.Date,
-        status: record.fields.Status || 'Active'
+        status: record.fields.Status || 'Active',
+        source: record.fields.Source || record.fields['Signup Source'] || '',
+        ip: record.fields['IP Address'] || '',
+        confirmedDate: record.fields['Confirmed Date'] || '',
+        verificationExpiry: record.fields['Verification Expiry'] || '',
+        lastResent: record.fields['Last Resent'] || ''
       }));
     } catch (error) {
       console.error('Error fetching subscribers:', error);
@@ -45,7 +50,9 @@ exports.handler = async (event, context) => {
       unsubscribed = unsubscribedRecords.map(record => ({
         id: record.id,
         email: record.fields.Email,
-        date: record.fields.Date
+        date: record.fields['Unsubscribed Date'] || record.fields.Date,
+        reason: record.fields.Reason || '',
+        ip: record.fields['IP Address'] || ''
       }));
     } catch (error) {
       console.error('Error fetching unsubscribed:', error);
