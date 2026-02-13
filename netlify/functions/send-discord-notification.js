@@ -91,8 +91,9 @@ exports.handler = async (event, context) => {
 
     const normalizeMention = (value) => {
       if (!value) return '';
-      if (value.startsWith('<@')) return value;
-      return `<@&${value}>`;
+      const match = String(value).match(/\d{6,}/);
+      if (!match) return '';
+      return `<@&${match[0]}>`;
     };
 
     const extractRoleId = (value) => {
