@@ -1490,35 +1490,23 @@ function initPageViewsFilters() {
     rangeFilter.addEventListener('change', () => renderPageViewsTable(window.__pageViews || []));
   }
 }
-    const ip = item.ip || 'Unknown';
+
 async function initAllTabsData() {
   try {
-      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); ${status === 'Pending' ? 'opacity: 0.7;' : ''}">
-        <td style="padding: 0.8rem;">
-          <input type="checkbox" class="subscriber-select" value="${item.id}" onchange="toggleBulkBar()">
-        </td>
-        <td style="padding: 0.8rem;">
-          <div style="display: flex; flex-direction: column; gap: 0.25rem;">
-            <span style="cursor: pointer; color: #4a56e2; text-decoration: underline;" onclick="openSubscriberTimeline('${item.email}')">📧 ${escapeHtml(item.email)}</span>
-            <button class="btn-secondary" style="padding: 0.25rem 0.6rem; width: fit-content;" onclick="copySubscriberEmail('${item.email}')">📋 Copy</button>
-          </div>
-        </td>
-        <td style="padding: 0.8rem;">${statusBadge}</td>
-        <td style="padding: 0.8rem; font-size: 0.85rem; opacity: 0.8;">${subscribedDate}</td>
-        <td style="padding: 0.8rem; font-size: 0.85rem; opacity: 0.8;">${confirmedDate}</td>
-        <td style="padding: 0.8rem; font-size: 0.85rem; opacity: 0.8;">
-          <div>${escapeHtml(source)}</div>
-          <div style="opacity: 0.6;">${escapeHtml(ip)}</div>
-        </td>
-        <td style="padding: 0.8rem; font-size: 0.85rem; opacity: 0.8;">${lastResent}</td>
-        <td style="padding: 0.8rem; text-align: center;">
-          <div style="display: flex; gap: 0.4rem; flex-wrap: wrap; justify-content: center;">
-            <button class="btn-secondary" onclick="resendConfirmation('${item.id}', '${item.email}')">📬 Resend</button>
-            ${actionButtons}
-            <button class="btn-delete" onclick="deleteSubscriber('${item.id}', '${item.email}')">🗑️ Delete</button>
-          </div>
-        </td>
-      </tr>
+    await Promise.all([
+      loadSubscribersTab().catch(e => console.error('Prefetch subscribers failed', e)),
+      loadUsersTab().catch(e => console.error('Prefetch users failed', e)),
+      loadAppealsList().catch(e => console.error('Prefetch appeals failed', e)),
+      loadPageViewsTable().catch(e => console.error('Prefetch pageviews failed', e)),
+      loadPageStats().catch(e => console.error('Prefetch page stats failed', e)),
+      loadDonationsTable().catch(e => console.error('Prefetch donations failed', e)),
+      (async () => {
+        try {
+          await loadActivityLog();
+          await loadRetryQueue();
+          await loadUnsubscribeStats();
+        } catch (e) {
+          console.error('Prefetch activity bundle failed', e);
         }
       })(),
       loadTechStack().catch(e => console.error('Prefetch techstack failed', e)),
