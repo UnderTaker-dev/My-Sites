@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Create your account - Join the community">
+<title>Sign Up - UnderTaker</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+:root {
+  --gradient-primary: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  --color-primary: #3498db;
+  --color-accent: #e74c3c;
+  --color-success: #2ecc71;
+  --radius-md: 12px;
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  background: var(--gradient-primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.signup-container {
+  width: 100%;
+  max-width: 480px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  padding: 2.5rem;
+  box-shadow: var(--shadow-lg);
+}
+
+.signup-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.signup-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.signup-header p {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.95rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.form-group input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.password-strength {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  display: none;
+}
+
+.password-strength.visible {
+  display: block;
+}
+
+.strength-bar {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  margin-bottom: 0.5rem;
+  overflow: hidden;
+}
+
+.strength-bar-fill {
+  height: 100%;
+  width: 0%;
+  transition: all 0.3s ease;
+  border-radius: 2px;
+}
+
+.strength-weak .strength-bar-fill {
+  width: 33%;
+  background: #e74c3c;
+}
+
+.strength-medium .strength-bar-fill {
+  width: 66%;
+  background: #f39c12;
+}
+
+.strength-strong .strength-bar-fill {
+  width: 100%;
+  background: #2ecc71;
+}
+
+.btn-signup {
+  width: 100%;
+  padding: 0.85rem;
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 0.5rem;
+}
+
+.btn-signup:hover:not(:disabled) {
+  background: #2980b9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+.btn-signup:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-signup .spinner {
+  display: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  margin: 0 auto;
+}
+
+.btn-signup.loading .spinner {
+  display: block;
+}
+
+.btn-signup.loading .btn-text {
+  display: none;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.divider {
+  text-align: center;
+  margin: 1.5rem 0;
+  position: relative;
+}
+
+.divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.divider span {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0 1rem;
+  position: relative;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.85rem;
+}
+
+.login-link {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.login-link a {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.login-link a:hover {
+  color: #2980b9;
+  text-decoration: underline;
+}
+
+.alert {
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  display: none;
+}
+
+.alert.visible {
+  display: block;
+}
+
+.alert-error {
+  background: rgba(231, 76, 60, 0.15);
+  border: 1px solid rgba(231, 76, 60, 0.3);
+  color: #ff6b6b;
+}
+
+.alert-success {
+  background: rgba(46, 204, 113, 0.15);
+  border: 1px solid rgba(46, 204, 113, 0.3);
+  color: #51cf66;
+}
+
+.home-link {
+  position: fixed;
+  top: 1.5rem;
+  left: 1.5rem;
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.home-link:hover {
+  color: white;
+}
+
+@media (max-width: 576px) {
+  body {
+    padding: 1rem;
+  }
+  
+  .signup-container {
+    padding: 1.5rem;
+  }
+  
+  .signup-header h1 {
+    font-size: 1.5rem;
+  }
+}
+</style>
+</head>
+<body>
+  <a href="/" class="home-link">
+    <i class="bi bi-house-door"></i> Back to Home
+  </a>
+
+  <div class="signup-container">
+    <div class="signup-header">
+      <h1>🚀 Create Account</h1>
+      <p>Join the community and get started</p>
+    </div>
+
+    <div id="alertBox" class="alert"></div>
+
+    <form id="signupForm">
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" name="name" placeholder="Enter your full name" required autocomplete="name">
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" name="email" placeholder="your@email.com" required autocomplete="email">
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="Create a strong password" required autocomplete="new-password" minlength="8">
+        <div class="password-strength" id="passwordStrength">
+          <div class="strength-bar">
+            <div class="strength-bar-fill"></div>
+          </div>
+          <span class="strength-text"></span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Re-enter your password" required autocomplete="new-password">
+      </div>
+
+      <button type="submit" class="btn-signup" id="signupBtn">
+        <span class="btn-text">Create Account</span>
+        <div class="spinner"></div>
+      </button>
+    </form>
+
+    <div class="login-link">
+      Already have an account? <a href="/login.html">Log in</a>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('signupForm');
+    const signupBtn = document.getElementById('signupBtn');
+    const alertBox = document.getElementById('alertBox');
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirmPassword');
+    const passwordStrength = document.getElementById('passwordStrength');
+
+    // Password strength checker
+    passwordInput.addEventListener('input', () => {
+      const password = passwordInput.value;
+      if (password.length > 0) {
+        passwordStrength.classList.add('visible');
+        
+        let strength = 0;
+        if (password.length >= 8) strength++;
+        if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+        if (/\d/.test(password)) strength++;
+        if (/[^a-zA-Z0-9]/.test(password)) strength++;
+
+        passwordStrength.className = 'password-strength visible';
+        const strengthText = passwordStrength.querySelector('.strength-text');
+        
+        if (strength <= 2) {
+          passwordStrength.classList.add('strength-weak');
+          strengthText.textContent = 'Weak password';
+        } else if (strength === 3) {
+          passwordStrength.classList.add('strength-medium');
+          strengthText.textContent = 'Medium strength';
+        } else {
+          passwordStrength.classList.add('strength-strong');
+          strengthText.textContent = 'Strong password';
+        }
+      } else {
+        passwordStrength.classList.remove('visible');
+      }
+    });
+
+    function showAlert(message, type = 'error') {
+      alertBox.textContent = message;
+      alertBox.className = `alert alert-${type} visible`;
+      setTimeout(() => {
+        alertBox.classList.remove('visible');
+      }, 5000);
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const password = passwordInput.value;
+      const confirmPassword = confirmPasswordInput.value;
+
+      // Validation
+      if (!name || !email || !password) {
+        showAlert('Please fill in all fields');
+        return;
+      }
+
+      if (password.length < 8) {
+        showAlert('Password must be at least 8 characters');
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        showAlert('Passwords do not match');
+        return;
+      }
+
+      signupBtn.disabled = true;
+      signupBtn.classList.add('loading');
+
+      try {
+        const response = await fetch('/.netlify/functions/register-user', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, password })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Registration failed');
+        }
+
+        showAlert(data.message || 'Account created! Please check your email to verify your account.', 'success');
+        
+        setTimeout(() => {
+          window.location.href = '/login.html';
+        }, 1500);
+
+      } catch (error) {
+        console.error('Signup error:', error);
+        showAlert(error.message || 'Something went wrong. Please try again.');
+      } finally {
+        signupBtn.disabled = false;
+        signupBtn.classList.remove('loading');
+      }
+    });
+  </script>
+</body>
+</html>

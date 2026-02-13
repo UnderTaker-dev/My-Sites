@@ -471,6 +471,7 @@ tbody tr:hover {
     <button class="tab-btn active" onclick="showTab('dashboard')">🎮 Dashboard</button>
     <button class="tab-btn" onclick="showTab('analytics')">📈 Analytics</button>
     <button class="tab-btn" onclick="showTab('subscribers')">📧 Subscribers</button>
+    <button class="tab-btn" onclick="showTab('users')">👥 Users</button>
     <button class="tab-btn" onclick="showTab('pageviews')">👀 Page Views</button>
     <button class="tab-btn" onclick="showTab('donations')">💰 Donations</button>
     <button class="tab-btn" onclick="showTab('activity')">📋 Activity Log</button>
@@ -645,6 +646,59 @@ tbody tr:hover {
       <li class="empty-state">No unsubscribed users yet</li>
     </ul>
   </div>
+  </div>
+
+  <!-- Users Tab -->
+  <div id="tab-users" class="tab-content" style="display:none;">
+    <div class="section-header">👥 Registered Users</div>
+    
+    <div class="data-section">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h2 style="margin: 0;">User Accounts</h2>
+          <div id="userStats" style="display: flex; gap: 1rem; margin-top: 0.5rem; font-size: 0.9rem; opacity: 0.8;">
+            <span>Total: <strong id="userStatsTotal">0</strong></span>
+            <span>Active: <strong id="userStatsActive">0</strong></span>
+            <span>Verified: <strong id="userStatsVerified">0</strong></span>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="refreshUsers()">🔄 Refresh</button>
+      </div>
+
+      <div style="display:flex; gap:0.5rem; flex-wrap: wrap; margin-bottom:0.75rem; align-items:center;">
+        <input id="userSearch" type="text" placeholder="Search name or email" oninput="filterUsers()" style="flex:1; min-width:200px; padding:0.6rem; border-radius:8px; border:1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color:#fff;">
+        
+        <select id="userStatusFilter" onchange="filterUsers()" style="padding:0.6rem; border-radius:8px; border:1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color:#fff;">
+          <option value="all">All statuses</option>
+          <option value="Active">Active</option>
+          <option value="Suspended">Suspended</option>
+          <option value="Inactive">Inactive</option>
+        </select>
+
+        <select id="userVerifiedFilter" onchange="filterUsers()" style="padding:0.6rem; border-radius:8px; border:1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color:#fff;">
+          <option value="all">All verification</option>
+          <option value="true">Verified</option>
+          <option value="false">Unverified</option>
+        </select>
+
+        <select id="userSortFilter" onchange="filterUsers()" style="padding:0.6rem; border-radius:8px; border:1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color:#fff;">
+          <option value="createdDesc">Newest first</option>
+          <option value="createdAsc">Oldest first</option>
+          <option value="nameAsc">Name A-Z</option>
+          <option value="nameDesc">Name Z-A</option>
+          <option value="emailAsc">Email A-Z</option>
+          <option value="emailDesc">Email Z-A</option>
+        </select>
+
+        <button class="btn btn-secondary" onclick="clearUserFilters()">Reset</button>
+      </div>
+
+      <div id="userListContainer" style="background: rgba(30, 41, 59, 0.5); border-radius: 12px; padding: 1rem; max-height: 600px; overflow-y: auto;">
+        <div id="userList" style="display: grid; gap: 0.75rem;">
+          <div class="empty-state">Loading users...</div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Page Views Tab -->
@@ -1083,6 +1137,7 @@ async function initAllTabsData() {
   try {
     await Promise.all([
       loadSubscribersTab().catch(e => console.error('Prefetch subscribers failed', e)),
+      loadUsersTab().catch(e => console.error('Prefetch users failed', e)),
       loadPageViewsTable().catch(e => console.error('Prefetch pageviews failed', e)),
       loadPageStats().catch(e => console.error('Prefetch page stats failed', e)),
       loadDonationsTable().catch(e => console.error('Prefetch donations failed', e)),
@@ -1140,6 +1195,222 @@ async function loadSubscribersTab() {
       listElement.innerHTML = '<li class="empty-state" style="color: #e74c3c;">Error loading subscribers</li>';
     }
   }
+}
+
+
+// ===== USERS TAB FUNCTIONS =====
+let usersData = [];
+
+async function loadUsersTab() {
+  console.log('👥 Loading users tab...');
+  try {
+    const token = localStorage.getItem('adminToken');
+    if (!token) {
+      throw new Error('Admin token not found. Please log in again.');
+    }
+    
+    const response = await fetch('/.netlify/functions/get-users', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    
+    console.log('Response status:', response.status);
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      console.error('Server error:', errorData);
+      throw new Error(errorData.error || `Failed to load users (${response.status})`);
+    }
+    
+    const data = await response.json();
+    console.log('Received data:', data);
+    
+    usersData = data.users || [];
+    
+    // Update stats
+    document.getElementById('userStatsTotal').textContent = data.stats?.total || 0;
+    document.getElementById('userStatsActive').textContent = data.stats?.active || 0;
+    document.getElementById('userStatsVerified').textContent = data.stats?.verified || 0;
+    
+    // Render users
+    renderUsers(usersData);
+    
+    console.log(`✅ Loaded ${usersData.length} users`);
+  } catch (error) {
+    console.error('Error loading users:', error);
+    document.getElementById('userList').innerHTML = `<div class="empty-state" style="color: #e74c3c;">Error loading users: ${error.message}</div>`;
+  }
+}
+
+function renderUsers(users) {
+  const container = document.getElementById('userList');
+  
+  if (users.length === 0) {
+    container.innerHTML = '<div class="empty-state">No users found</div>';
+    return;
+  }
+  
+  container.innerHTML = users.map(user => {
+    const createdDate = new Date(user.createdAt);
+    const lastLoginDate = user.lastLogin ? new Date(user.lastLogin) : null;
+    
+    return `
+      <div style="background: rgba(255,255,255,0.05); border-radius: 10px; padding: 1rem; border: 1px solid rgba(255,255,255,0.1);">
+        <div style="display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; gap: 1rem;">
+          <div style="flex: 1; min-width: 200px;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <strong style="font-size: 1.1rem;">${user.name}</strong>
+              ${user.emailVerified ? '<span style="background: #10b981; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem;">✓ Verified</span>' : '<span style="background: #f59e0b; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem;">⚠ Unverified</span>'}
+            </div>
+            <div style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 0.25rem;">
+              📧 ${user.email}
+            </div>
+            <div style="color: #64748b; font-size: 0.85rem;">
+              Joined: ${createdDate.toLocaleDateString()} ${createdDate.toLocaleTimeString()}
+              ${lastLoginDate ? `<br>Last login: ${lastLoginDate.toLocaleDateString()} ${lastLoginDate.toLocaleTimeString()}` : ''}
+            </div>
+          </div>
+          <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+            <select 
+              id="status-${user.id}" 
+              onchange="updateUserStatus('${user.id}')"
+              style="padding: 0.4rem 0.8rem; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: #fff; font-size: 0.85rem;">
+              <option value="Active" ${user.status === 'Active' ? 'selected' : ''}>Active</option>
+              <option value="Suspended" ${user.status === 'Suspended' ? 'selected' : ''}>Suspended</option>
+              <option value="Inactive" ${user.status === 'Inactive' ? 'selected' : ''}>Inactive</option>
+            </select>
+            ${!user.emailVerified ? `<button onclick="verifyUserEmail('${user.id}')" class="btn btn-primary" style="font-size: 0.85rem; padding: 0.4rem 0.8rem;">Verify Email</button>` : ''}
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+async function updateUserStatus(userId) {
+  const select = document.getElementById(`status-${userId}`);
+  const newStatus = select.value;
+  const oldValue = select.getAttribute('data-old-value');
+  
+  try {
+    const token = localStorage.getItem('adminToken');
+    const response = await fetch('/.netlify/functions/admin-update-user', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        userId: userId,
+        status: newStatus
+      })
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to update user');
+    }
+    
+    select.setAttribute('data-old-value', newStatus);
+    showToast(`User status updated to ${newStatus}`, 'success');
+    
+    // Refresh users
+    await loadUsersTab();
+  } catch (error) {
+    console.error('Error updating user:', error);
+    select.value = oldValue || 'Active';
+    showToast('Failed to update user status', 'error');
+  }
+}
+
+async function verifyUserEmail(userId) {
+  if (!confirm('Manually verify this user\'s email address?')) {
+    return;
+  }
+  
+  try {
+    const token = localStorage.getItem('adminToken');
+    const response = await fetch('/.netlify/functions/admin-update-user', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        userId: userId,
+        emailVerified: true
+      })
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to verify email');
+    }
+    
+    showToast('Email verified successfully', 'success');
+    await loadUsersTab();
+  } catch (error) {
+    console.error('Error verifying email:', error);
+    showToast('Failed to verify email', 'error');
+  }
+}
+
+function filterUsers() {
+  const search = document.getElementById('userSearch').value.toLowerCase();
+  const statusFilter = document.getElementById('userStatusFilter').value;
+  const verifiedFilter = document.getElementById('userVerifiedFilter').value;
+  const sortFilter = document.getElementById('userSortFilter').value;
+  
+  let filtered = usersData.filter(user => {
+    const matchesSearch = !search || 
+      user.name.toLowerCase().includes(search) || 
+      user.email.toLowerCase().includes(search);
+    
+    const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
+    
+    const matchesVerified = verifiedFilter === 'all' || 
+      (verifiedFilter === 'true' && user.emailVerified) ||
+      (verifiedFilter === 'false' && !user.emailVerified);
+    
+    return matchesSearch && matchesStatus && matchesVerified;
+  });
+  
+  // Sort
+  filtered.sort((a, b) => {
+    switch (sortFilter) {
+      case 'nameAsc':
+        return a.name.localeCompare(b.name);
+      case 'nameDesc':
+        return b.name.localeCompare(a.name);
+      case 'emailAsc':
+        return a.email.localeCompare(b.email);
+      case 'emailDesc':
+        return b.email.localeCompare(a.email);
+      case 'createdAsc':
+        return new Date(a.createdAt) - new Date(b.createdAt);
+      case 'createdDesc':
+      default:
+        return new Date(b.createdAt) - new Date(a.createdAt);
+    }
+  });
+  
+  renderUsers(filtered);
+}
+
+function clearUserFilters() {
+  document.getElementById('userSearch').value = '';
+  document.getElementById('userStatusFilter').value = 'all';
+  document.getElementById('userVerifiedFilter').value = 'all';
+  document.getElementById('userSortFilter').value = 'createdDesc';
+  filterUsers();
+}
+
+async function refreshUsers() {
+  const btn = event.target;
+  btn.disabled = true;
+  btn.textContent = '⏳ Loading...';
+  await loadUsersTab();
+  btn.disabled = false;
+  btn.textContent = '🔄 Refresh';
 }
 
 
@@ -2893,6 +3164,8 @@ function showTab(tabName) {
       loadAnalyticsCharts();
     } else if (tabName === 'subscribers') {
       loadSubscribersTab();
+    } else if (tabName === 'users') {
+      loadUsersTab();
     } else if (tabName === 'pageviews') {
       loadPageViewsTable();
       loadPageStats();

@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Your profile">
+<title>Profile - UnderTaker</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+:root {
+  --gradient-primary: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  --color-primary: #3498db;
+  --color-accent: #e74c3c;
+  --color-success: #2ecc71;
+  --radius-md: 12px;
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  background: var(--gradient-primary);
+  color: #fff;
+  padding: 2rem;
+}
+
+.nav-bar {
+  max-width: 1200px;
+  margin: 0 auto 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.home-link {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.home-link:hover {
+  color: white;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-info {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.btn-logout {
+  padding: 0.5rem 1rem;
+  background: rgba(231, 76, 60, 0.2);
+  color: #ff6b6b;
+  border: 1px solid rgba(231, 76, 60, 0.3);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-logout:hover {
+  background: rgba(231, 76, 60, 0.3);
+  border-color: rgba(231, 76, 60, 0.5);
+}
+
+.profile-container {
+  max-width: 800px;
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  padding: 2.5rem;
+  box-shadow: var(--shadow-lg);
+}
+
+.profile-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.profile-avatar {
+  width: 110px;
+  height: 110px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.8rem;
+  font-weight: 700;
+  margin: 0 auto 1rem;
+  color: white;
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+  border: 3px solid rgba(255, 255, 255, 0.2);
+}
+
+.profile-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.verification-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.verification-badge.verified {
+  background: rgba(46, 204, 113, 0.2);
+  color: #2ecc71;
+  border: 1px solid rgba(46, 204, 113, 0.3);
+}
+
+.verification-badge.unverified {
+  background: rgba(241, 196, 15, 0.2);
+  color: #f1c40f;
+  border: 1px solid rgba(241, 196, 15, 0.3);
+}
+
+.profile-header p {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.95rem;
+}
+
+.profile-section {
+  margin-bottom: 2rem;
+}
+
+.section-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.form-group input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.form-group input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #2980b9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn .spinner {
+  display: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+.btn.loading .spinner {
+  display: block;
+}
+
+.btn.loading .btn-text {
+  display: none;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.alert {
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  display: none;
+}
+
+.alert.visible {
+  display: block;
+}
+
+.alert-error {
+  background: rgba(231, 76, 60, 0.15);
+  border: 1px solid rgba(231, 76, 60, 0.3);
+  color: #ff6b6b;
+}
+
+.alert-success {
+  background: rgba(46, 204, 113, 0.15);
+  border: 1px solid rgba(46, 204, 113, 0.3);
+  color: #51cf66;
+}
+
+.info-item {
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.info-label {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 0.25rem;
+}
+
+.info-value {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  body {
+    padding: 1rem;
+  }
+  
+  .nav-bar {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  .profile-container {
+    padding: 1.5rem;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+  }
+  
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+</style>
+</head>
+<body>
+  <nav class="nav-bar">
+    <div class="nav-left">
+      <a href="/" class="home-link">
+        <i class="bi bi-house-door"></i> Home
+      </a>
+    </div>
+    <div class="nav-right">
+      <span class="user-info"><i class="bi bi-person-circle"></i> <span id="navUserName">Loading...</span></span>
+      <button class="btn-logout" onclick="logout()">
+        <i class="bi bi-box-arrow-right"></i> Logout
+      </button>
+    </div>
+  </nav>
+
+  <div class="profile-container">
+    <div class="profile-header">
+      <div class="profile-avatar" id="profileAvatar">?</div>
+      <h1>
+        <span id="profileName">Loading...</span>
+        <span id="verificationBadge" class="verification-badge" style="display: none;"></span>
+      </h1>
+      <p id="profileEmail">Loading...</p>
+    </div>
+
+    <div id="alertBox" class="alert"></div>
+
+    <div class="profile-section">
+      <h2 class="section-title"><i class="bi bi-person"></i> Account Information</h2>
+      
+      <div class="info-item">
+        <div>
+          <div class="info-label">Member Since</div>
+          <div class="info-value" id="memberSince">Loading...</div>
+        </div>
+      </div>
+      
+      <div class="info-item">
+        <div>
+          <div class="info-label">Account Status</div>
+          <div class="info-value" id="accountStatus">
+            <i class="bi bi-check-circle" style="color: #2ecc71;"></i> Active
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="profile-section">
+      <h2 class="section-title"><i class="bi bi-pencil"></i> Edit Profile</h2>
+      
+      <form id="profileForm">
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" name="name" placeholder="Your name" required>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" name="email" placeholder="your@email.com" disabled>
+          <small style="color: rgba(255, 255, 255, 0.5); font-size: 0.8rem;">Email cannot be changed</small>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" id="saveBtn">
+            <span class="btn-text"><i class="bi bi-check-lg"></i> Save Changes</span>
+            <div class="spinner"></div>
+          </button>
+          <button type="button" class="btn btn-secondary" onclick="loadProfile()">
+            <i class="bi bi-arrow-clockwise"></i> Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="profile-section">
+      <h2 class="section-title"><i class="bi bi-shield-lock"></i> Change Password</h2>
+      
+      <form id="passwordForm">
+        <div class="form-group">
+          <label for="currentPassword">Current Password</label>
+          <input type="password" id="currentPassword" name="currentPassword" placeholder="Enter current password" required>
+        </div>
+
+        <div class="form-group">
+          <label for="newPassword">New Password</label>
+          <input type="password" id="newPassword" name="newPassword" placeholder="Enter new password" required minlength="8">
+        </div>
+
+        <div class="form-group">
+          <label for="confirmNewPassword">Confirm New Password</label>
+          <input type="password" id="confirmNewPassword" name="confirmNewPassword" placeholder="Re-enter new password" required>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" id="changePasswordBtn">
+            <span class="btn-text"><i class="bi bi-key"></i> Update Password</span>
+            <div class="spinner"></div>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const alertBox = document.getElementById('alertBox');
+    const profileForm = document.getElementById('profileForm');
+    const passwordForm = document.getElementById('passwordForm');
+
+    function showAlert(message, type = 'error') {
+      alertBox.textContent = message;
+      alertBox.className = `alert alert-${type} visible`;
+      setTimeout(() => {
+        alertBox.classList.remove('visible');
+      }, 5000);
+    }
+
+    function checkAuth() {
+      const userToken = localStorage.getItem('userToken');
+      if (!userToken) {
+        window.location.href = '/login.html';
+        return false;
+      }
+      return true;
+    }
+
+    function logout() {
+      localStorage.removeItem('userToken');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('userName');
+      localStorage.removeItem('userEmail');
+      window.location.href = '/login.html';
+    }
+
+    async function loadProfile() {
+      if (!checkAuth()) return;
+
+      try {
+        const userToken = localStorage.getItem('userToken');
+        const response = await fetch('/.netlify/functions/get-user-profile', {
+          headers: {
+            'Authorization': `Bearer ${userToken}`
+          }
+        });
+
+        if (!response.ok) {
+          if (response.status === 401) {
+            logout();
+            return;
+          }
+          throw new Error('Failed to load profile');
+        }
+
+        const data = await response.json();
+        
+        // Update UI
+        document.getElementById('profileName').textContent = data.name;
+        document.getElementById('profileEmail').textContent = data.email;
+        document.getElementById('navUserName').textContent = data.name;
+        
+        // Update verification badge
+        const badge = document.getElementById('verificationBadge');
+        if (badge) {
+          badge.style.display = 'inline-flex';
+          if (data.emailVerified) {
+            badge.className = 'verification-badge verified';
+            badge.innerHTML = '<i class="bi bi-patch-check-fill"></i> Verified';
+          } else {
+            badge.className = 'verification-badge unverified';
+            badge.innerHTML = '<i class="bi bi-exclamation-circle-fill"></i> Unverified';
+          }
+        }
+        
+        const initials = data.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+        document.getElementById('profileAvatar').textContent = initials;
+
+        // Format date
+        const createdDate = new Date(data.createdAt);
+        document.getElementById('memberSince').textContent = createdDate.toLocaleDateString('en-US', { 
+          month: 'long', 
+          day: 'numeric', 
+          year: 'numeric' 
+        });
+
+        // Fill form
+        document.getElementById('name').value = data.name;
+        document.getElementById('email').value = data.email;
+
+      } catch (error) {
+        console.error('Profile load error:', error);
+        showAlert('Failed to load profile');
+      }
+    }
+
+    profileForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value.trim();
+      if (!name) {
+        showAlert('Name cannot be empty');
+        return;
+      }
+
+      const saveBtn = document.getElementById('saveBtn');
+      saveBtn.disabled = true;
+      saveBtn.classList.add('loading');
+
+      try {
+        const userToken = localStorage.getItem('userToken');
+        const response = await fetch('/.netlify/functions/update-user-profile', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${userToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ name })
+        });
+
+        if (!response.ok) {
+          if (response.status === 401) {
+            logout();
+            return;
+          }
+          throw new Error('Failed to update profile');
+        }
+
+        localStorage.setItem('userName', name);
+        showAlert('Profile updated successfully!', 'success');
+        loadProfile();
+
+      } catch (error) {
+        console.error('Profile update error:', error);
+        showAlert('Failed to update profile');
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.classList.remove('loading');
+      }
+    });
+
+    passwordForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const currentPassword = document.getElementById('currentPassword').value;
+      const newPassword = document.getElementById('newPassword').value;
+      const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+
+      if (newPassword.length < 8) {
+        showAlert('New password must be at least 8 characters');
+        return;
+      }
+
+      if (newPassword !== confirmNewPassword) {
+        showAlert('New passwords do not match');
+        return;
+      }
+
+      const changePasswordBtn = document.getElementById('changePasswordBtn');
+      changePasswordBtn.disabled = true;
+      changePasswordBtn.classList.add('loading');
+
+      try {
+        const userToken = localStorage.getItem('userToken');
+        const response = await fetch('/.netlify/functions/change-password', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${userToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ currentPassword, newPassword })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          if (response.status === 401) {
+            logout();
+            return;
+          }
+          throw new Error(data.error || 'Failed to change password');
+        }
+
+        showAlert('Password changed successfully!', 'success');
+        passwordForm.reset();
+
+      } catch (error) {
+        console.error('Password change error:', error);
+        showAlert(error.message || 'Failed to change password');
+      } finally {
+        changePasswordBtn.disabled = false;
+        changePasswordBtn.classList.remove('loading');
+      }
+    });
+
+    // Load profile on page load
+    if (checkAuth()) {
+      loadProfile();
+    }
+  </script>
+</body>
+</html>

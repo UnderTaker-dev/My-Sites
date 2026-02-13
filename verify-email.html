@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Verify your email address">
+<title>Verify Email - UnderTaker</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+:root {
+  --gradient-primary: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  --color-primary: #3498db;
+  --color-success: #2ecc71;
+  --color-error: #e74c3c;
+  --radius-md: 12px;
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  background: var(--gradient-primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.verify-container {
+  width: 100%;
+  max-width: 480px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  padding: 2.5rem;
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+}
+
+.status-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  animation: scaleIn 0.5s ease;
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0); }
+  to { transform: scale(1); }
+}
+
+h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.message {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1rem;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.btn {
+  padding: 0.85rem 2rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #2980b9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  margin-top: 1rem;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.spinner {
+  width: 60px;
+  height: 60px;
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.resend-section {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: none;
+}
+
+.resend-section.visible {
+  display: block;
+}
+
+.home-link {
+  position: fixed;
+  top: 1.5rem;
+  left: 1.5rem;
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.home-link:hover {
+  color: white;
+}
+
+@media (max-width: 576px) {
+  body {
+    padding: 1rem;
+  }
+  
+  .verify-container {
+    padding: 1.5rem;
+  }
+  
+  h1 {
+    font-size: 1.5rem;
+  }
+}
+</style>
+</head>
+<body>
+  <a href="/" class="home-link">
+    <i class="bi bi-house-door"></i> Back to Home
+  </a>
+
+  <div class="verify-container">
+    <div id="loadingState">
+      <div class="spinner"></div>
+      <h1>Verifying Email...</h1>
+      <p class="message">Please wait while we verify your email address.</p>
+    </div>
+
+    <div id="successState" style="display: none;">
+      <div class="status-icon">✅</div>
+      <h1>Email Verified!</h1>
+      <p class="message">Your email has been successfully verified. You can now log in to your account.</p>
+      <a href="/login.html" class="btn btn-primary">
+        <i class="bi bi-box-arrow-in-right"></i> Log In Now
+      </a>
+    </div>
+
+    <div id="errorState" style="display: none;">
+      <div class="status-icon">❌</div>
+      <h1 id="errorTitle">Verification Failed</h1>
+      <p class="message" id="errorMessage">There was a problem verifying your email.</p>
+      <a href="/login.html" class="btn btn-secondary">
+        <i class="bi bi-box-arrow-in-right"></i> Go to Login
+      </a>
+      
+      <div class="resend-section" id="resendSection">
+        <p class="message">Need a new verification link?</p>
+        <button class="btn btn-primary" id="resendBtn" onclick="resendVerification()">
+          <i class="bi bi-envelope"></i> Resend Verification Email
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Get token from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+
+    if (!token) {
+      showError('Invalid Link', 'This verification link is invalid. Please check your email for the correct link.');
+    } else {
+      verifyEmail(token);
+    }
+
+    async function verifyEmail(token) {
+      try {
+        const response = await fetch('/.netlify/functions/verify-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          if (data.expired) {
+            showError('Link Expired', data.error || 'This verification link has expired.', true);
+          } else {
+            showError('Verification Failed', data.error || 'Unable to verify your email.');
+          }
+          return;
+        }
+
+        showSuccess();
+
+      } catch (error) {
+        console.error('Verification error:', error);
+        showError('Something Went Wrong', 'Unable to verify your email. Please try again later.');
+      }
+    }
+
+    function showSuccess() {
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('successState').style.display = 'block';
+    }
+
+    function showError(title, message, showResend = false) {
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('errorState').style.display = 'block';
+      document.getElementById('errorTitle').textContent = title;
+      document.getElementById('errorMessage').textContent = message;
+      
+      if (showResend) {
+        document.getElementById('resendSection').classList.add('visible');
+      }
+    }
+
+    async function resendVerification() {
+      const email = prompt('Please enter your email address:');
+      if (!email) return;
+
+      const resendBtn = document.getElementById('resendBtn');
+      resendBtn.disabled = true;
+      resendBtn.innerHTML = '<div class="spinner" style="width: 20px; height: 20px; border-width: 2px; margin: 0;"></div>';
+
+      try {
+        const response = await fetch('/.netlify/functions/resend-verification', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          alert(data.error || 'Failed to send verification email');
+        } else {
+          alert('Verification email sent! Please check your inbox.');
+        }
+
+      } catch (error) {
+        console.error('Resend error:', error);
+        alert('Failed to send verification email. Please try again.');
+      } finally {
+        resendBtn.disabled = false;
+        resendBtn.innerHTML = '<i class="bi bi-envelope"></i> Resend Verification Email';
+      }
+    }
+  </script>
+</body>
+</html>

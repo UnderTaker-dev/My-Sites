@@ -205,6 +205,7 @@ body {
   max-width: 750px;
   width: 100%;
   padding: 0 1.5rem;
+  padding-top: 80px; /* Account for fixed navbar */
   margin: 0 auto;
   text-align: center;
 }
@@ -1010,6 +1011,174 @@ body.light-mode .status-label {
 .easter-egg button:hover {
   background: rgba(255, 255, 255, 0.3);
   transform: scale(1.05);
+}
+
+/* ========== NAVIGATION BAR ========== */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 65px;
+  background: rgba(15, 32, 39, 0.98);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(52, 152, 219, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 max(2rem, 5%);
+  z-index: 1000;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.navbar-brand {
+  font-size: 1.4rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #3498db, #9b59b6, #e74c3c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  user-select: none;
+  letter-spacing: -0.5px;
+  cursor: pointer;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.navbar-links a {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.navbar-links a::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(155, 89, 182, 0.1));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.navbar-links a::after {
+  content: '';
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #3498db, #9b59b6);
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 2px;
+}
+
+.navbar-links a:hover {
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+.navbar-links a:hover::before {
+  opacity: 1;
+}
+
+.navbar-links a:hover::after {
+  width: calc(100% - 2rem);
+}
+
+.navbar-user-greeting {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.85rem;
+  padding: 0.5rem 1rem;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  margin-left: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.navbar-user-greeting strong {
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 600;
+}
+
+.navbar-divider {
+  color: rgba(255, 255, 255, 0.2);
+  font-size: 0.8rem;
+  margin: 0 0.25rem;
+}
+
+body.light-mode .navbar {
+  background: rgba(255, 255, 255, 0.98);
+  border-bottom: 1px solid rgba(52, 152, 219, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+body.light-mode .navbar-links a {
+  color: rgba(0, 0, 0, 0.7);
+}
+
+body.light-mode .navbar-links a::before {
+  background: linear-gradient(135deg, rgba(52, 152, 219, 0.08), rgba(155, 89, 182, 0.08));
+}
+
+body.light-mode .navbar-links a:hover {
+  color: rgba(0, 0, 0, 0.95);
+}
+
+body.light-mode .navbar-user-greeting {
+  color: rgba(0, 0, 0, 0.5);
+  border-left-color: rgba(0, 0, 0, 0.1);
+}
+
+body.light-mode .navbar-user-greeting strong {
+  color: rgba(0, 0, 0, 0.9);
+}
+
+body.light-mode .navbar-divider {
+  color: rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0 1rem;
+    height: 60px;
+  }
+  
+  .navbar-brand {
+    font-size: 1.1rem;
+  }
+  
+  .navbar-links {
+    gap: 0.25rem;
+  }
+  
+  .navbar-links a {
+    font-size: 0.85rem;
+    padding: 0.5rem 0.75rem;
+  }
+  
+  .navbar-links a i {
+    display: none;
+  }
+  
+  .navbar-user-greeting {
+    display: none;
+  }
 }
 
 /* Admin Login Modal */
@@ -1994,16 +2163,30 @@ body.theme-easter .floating-icon {
 </head>
 <body>
 
+<!-- Navigation Bar -->
+<nav class="navbar">
+  <div class="navbar-brand">UnderTaker</div>
+  <div class="navbar-links">
+    <a href="/signup.html" id="navSignupLink"><i class="bi bi-person-plus"></i> Sign Up</a>
+    <span id="navAuthDivider" class="navbar-divider">|</span>
+    <a href="/login.html" id="navLoginLink"><i class="bi bi-box-arrow-in-right"></i> Login</a>
+    <div id="navUserGreeting" class="navbar-user-greeting" style="display: none;">
+      Welcome, <strong id="navUserName">User</strong>
+    </div>
+    <a href="/profile.html" id="navProfileLink" style="display: none;"><i class="bi bi-person-circle"></i> Profile</a>
+  </div>
+</nav>
+
 <!-- Animated Background Particles -->
 <canvas id="particleCanvas" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;"></canvas>
 
 <!-- Theme Toggle with Glow Effect -->
-<div class="theme-toggle" onclick="toggleTheme()" title="Toggle theme" style="position: fixed; top: 20px; right: 20px; width: 50px; height: 50px; background: linear-gradient(135deg, rgba(52, 152, 219, 0.3), rgba(155, 89, 182, 0.3)); backdrop-filter: blur(10px); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); border: 2px solid rgba(255, 255, 255, 0.2); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 0 20px rgba(255, 255, 255, 0.05);" onmouseover="this.style.transform='scale(1.15) rotate(180deg)'; this.style.boxShadow='0 12px 48px rgba(52, 152, 219, 0.5), 0 0 30px rgba(155, 89, 182, 0.3)'" onmouseout="this.style.transform='scale(1) rotate(0deg)'; this.style.boxShadow='0 8px 32px rgba(0, 0, 0, 0.3), inset 0 0 20px rgba(255, 255, 255, 0.05)'">
+<div class="theme-toggle" onclick="toggleTheme()" title="Toggle theme" style="position: fixed; top: 70px; right: 20px; width: 50px; height: 50px; background: linear-gradient(135deg, rgba(52, 152, 219, 0.3), rgba(155, 89, 182, 0.3)); backdrop-filter: blur(10px); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 999; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); border: 2px solid rgba(255, 255, 255, 0.2); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 0 20px rgba(255, 255, 255, 0.05);" onmouseover="this.style.transform='scale(1.15) rotate(180deg)'; this.style.boxShadow='0 12px 48px rgba(52, 152, 219, 0.5), 0 0 30px rgba(155, 89, 182, 0.3)'" onmouseout="this.style.transform='scale(1) rotate(0deg)'; this.style.boxShadow='0 8px 32px rgba(0, 0, 0, 0.3), inset 0 0 20px rgba(255, 255, 255, 0.05)'">
   <span id="themeIcon" style="font-size: 1.5rem; transition: all 0.4s ease; filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.5));">🌙</span>
 </div>
 
 <!-- Scroll Progress Bar -->
-<div id="scrollProgress" style="position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(90deg, #3498db, #9b59b6, #e74c3c); width: 0%; z-index: 9999; transition: width 0.1s ease; box-shadow: 0 0 10px rgba(52, 152, 219, 0.8);"></div>
+<div id="scrollProgress" style="position: fixed; top: 60px; left: 0; height: 3px; background: linear-gradient(90deg, #3498db, #9b59b6, #e74c3c); width: 0%; z-index: 999; transition: width 0.1s ease; box-shadow: 0 0 10px rgba(52, 152, 219, 0.8);"></div>
 
 <main class="container" role="main" style="position: relative; z-index: 10;">
 <header class="main-message">
@@ -2231,7 +2414,7 @@ body.theme-easter .floating-icon {
 </div>
 
 <footer class="footer">
-  © 2025 Mathias | Powered by Monster and bad decisions
+  © 2026 Mathias | Powered by Monster and bad decisions
 </footer>
 
 <script>
@@ -3355,6 +3538,39 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
+
+// ========== USER AUTHENTICATION UI ==========
+// Update navbar links based on login status
+function updateAuthLinks() {
+  const userToken = localStorage.getItem('userToken');
+  const userName = localStorage.getItem('userName');
+  const signupLink = document.getElementById('navSignupLink');
+  const loginLink = document.getElementById('navLoginLink');
+  const profileLink = document.getElementById('navProfileLink');
+  const authDivider = document.getElementById('navAuthDivider');
+  const userGreeting = document.getElementById('navUserGreeting');
+  const userNameSpan = document.getElementById('navUserName');
+  
+  if (userToken) {
+    // User is logged in
+    if (signupLink) signupLink.style.display = 'none';
+    if (loginLink) loginLink.style.display = 'none';
+    if (authDivider) authDivider.style.display = 'none';
+    if (profileLink) profileLink.style.display = 'flex';
+    if (userGreeting) userGreeting.style.display = 'flex';
+    if (userNameSpan && userName) userNameSpan.textContent = userName;
+  } else {
+    // User not logged in
+    if (signupLink) signupLink.style.display = 'flex';
+    if (loginLink) loginLink.style.display = 'flex';
+    if (authDivider) authDivider.style.display = 'inline';
+    if (profileLink) profileLink.style.display = 'none';
+    if (userGreeting) userGreeting.style.display = 'none';
+  }
+}
+
+// Update links on page load
+updateAuthLinks();
 
 </script>
 

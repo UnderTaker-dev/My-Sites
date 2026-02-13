@@ -15,17 +15,26 @@ exports.handler = async (event, context) => {
     // Get credentials from environment variables
     const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'UndeTaker';
     const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'changeme123';
+    const ADMIN_TOKEN = process.env.ADMIN_TOKEN;
 
     // Validate credentials
     if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-      // Generate a simple JWT-like token
-      const token = crypto.randomBytes(32).toString('hex');
+      // Return the admin token for API access
+      if (!ADMIN_TOKEN) {
+        return {
+          statusCode: 500,
+          body: JSON.stringify({
+            success: false,
+            error: 'Server configuration error: ADMIN_TOKEN not set'
+          })
+        };
+      }
       
       return {
         statusCode: 200,
         body: JSON.stringify({
           success: true,
-          token: token,
+          token: ADMIN_TOKEN,
           message: 'Authentication successful'
         })
       };
