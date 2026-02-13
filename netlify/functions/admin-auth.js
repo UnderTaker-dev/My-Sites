@@ -15,12 +15,13 @@ exports.handler = async (event, context) => {
     // Get credentials from environment variables
     const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'UndeTaker';
     const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'changeme123';
+    const ADMIN_TOKEN = process.env.ADMIN_TOKEN;
 
     // Validate credentials
     if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-      // Generate a token from ADMIN_TOKEN env var or create one from credentials + timestamp
-      const baseToken = process.env.ADMIN_TOKEN || `${ADMIN_USERNAME}-${ADMIN_PASSWORD}`;
-      const token = Buffer.from(baseToken + '-' + Date.now()).toString('base64');
+      // Return the admin token from env var
+      // If ADMIN_TOKEN is not set, generate a secure one
+      const token = ADMIN_TOKEN || crypto.randomBytes(32).toString('hex');
       
       return {
         statusCode: 200,

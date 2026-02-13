@@ -42,8 +42,6 @@ exports.handler = async (event) => {
         body: JSON.stringify({ error: 'Unauthorized: Invalid token' })
       };
     }
-
-    // Fetch users with deletion requests (DeletionRequested = true)
     const requests = [];
     await base('Users').select({
       filterByFormula: '{DeletionRequested} = TRUE()',
