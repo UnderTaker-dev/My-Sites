@@ -1460,47 +1460,22 @@ function initActivityLogFilters() {
   const typeFilter = document.getElementById('activityTypeFilter');
   const rangeFilter = document.getElementById('activityRangeFilter');
 
-  const sortFilter = document.getElementById('subscriberSortFilter')?.value || 'newest';
   if (searchInput) {
-  const filtered = list.filter(s => {
+    searchInput.addEventListener('input', () => renderActivityLog(window.__activityLogItems || []));
   }
   if (typeFilter) {
     typeFilter.addEventListener('change', () => renderActivityLog(window.__activityLogItems || []));
   }
   if (rangeFilter) {
-
-  const getTime = (value) => {
-    if (!value) return 0;
-    const date = new Date(value);
-    return Number.isNaN(date.getTime()) ? 0 : date.getTime();
-  };
-
-  filtered.sort((a, b) => {
-    switch (sortFilter) {
-      case 'oldest':
-        return getTime(a.date) - getTime(b.date);
-      case 'emailAsc':
-        return (a.email || '').localeCompare(b.email || '');
-      case 'emailDesc':
-        return (b.email || '').localeCompare(a.email || '');
-      case 'status':
-        return (a.status || '').localeCompare(b.status || '');
-      case 'newest':
-      default:
-        return getTime(b.date) - getTime(a.date);
-    }
-  });
-
-  return filtered;
     rangeFilter.addEventListener('change', () => renderActivityLog(window.__activityLogItems || []));
   }
 }
-  const listElement = document.getElementById('subscriberTableBody');
+
 function initPageViewsFilters() {
   const searchInput = document.getElementById('pageViewsSearch');
   const pageFilter = document.getElementById('pageViewsPageFilter');
   const referrerFilter = document.getElementById('pageViewsReferrerFilter');
-    listElement.innerHTML = '<tr><td colspan="8" style="padding: 1rem; text-align: center; opacity: 0.7;">No subscribers yet</td></tr>';
+  const rangeFilter = document.getElementById('pageViewsRangeFilter');
 
   if (searchInput) {
     searchInput.addEventListener('input', () => renderPageViewsTable(window.__pageViews || []));
@@ -1510,14 +1485,11 @@ function initPageViewsFilters() {
   }
   if (referrerFilter) {
     referrerFilter.addEventListener('change', () => renderPageViewsTable(window.__pageViews || []));
+  }
   if (rangeFilter) {
     rangeFilter.addEventListener('change', () => renderPageViewsTable(window.__pageViews || []));
   }
 }
-    const lastResent = formatDate(item.lastResent) || 'Never';
-    const subscribedDate = formatDate(item.date) || 'Unknown';
-    const confirmedDate = formatDate(item.confirmedDate) || (status === 'Active' ? 'Unknown' : 'Pending');
-    const source = item.source || 'Unknown';
     const ip = item.ip || 'Unknown';
 async function initAllTabsData() {
   try {
