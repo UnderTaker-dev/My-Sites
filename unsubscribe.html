@@ -149,7 +149,12 @@ body.theme-easter .btn {
   <a href="/" class="back-link">← Back to Home</a>
 </div>
 
-<script>
+  <script>
+    if (location.hostname !== 'localhost') {
+      ['log', 'info', 'warn', 'error', 'debug'].forEach((key) => {
+        console[key] = () => {};
+      });
+    }
 function getEmailFromUrl() {
   const params = new URLSearchParams(window.location.search);
   return params.get('email');

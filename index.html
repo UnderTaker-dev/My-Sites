@@ -2438,6 +2438,12 @@ body.theme-easter .floating-icon {
 </footer>
 
 <script>
+// Silence console output for production visitors
+if (location.hostname !== 'localhost') {
+  ['log', 'info', 'warn', 'error', 'debug'].forEach((key) => {
+    console[key] = () => {};
+  });
+}
 // ========== CHECK MAINTENANCE MODE ==========
 (async function() {
   try {
@@ -2985,7 +2991,7 @@ async function handleNewsletter(event) {
   })
   .then(data => {
     if (data.success) {
-      showToast('✅ Successfully subscribed! You\'ll receive updates soon.', '#1abc9c');
+      showToast('✅ Check your email to confirm your subscription.', '#1abc9c');
       emailInput.value = '';
       // Add success animation
       btn.classList.add('success-pulse');

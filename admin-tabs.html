@@ -1242,6 +1242,13 @@ tbody tr:hover {
 </div>
 
 <script>
+// Silence console output for production visitors
+if (location.hostname !== 'localhost') {
+  ['log', 'info', 'warn', 'error', 'debug'].forEach((key) => {
+    console[key] = () => {};
+  });
+}
+
 // Global error handling for admin dashboard
 (function setupAdminErrorHandling() {
   window.addEventListener('error', (event) => {

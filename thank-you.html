@@ -191,6 +191,11 @@
   </div>
 
   <script>
+    if (location.hostname !== 'localhost') {
+      ['log', 'info', 'warn', 'error', 'debug'].forEach((key) => {
+        console[key] = () => {};
+      });
+    }
     // Track this page view too
     (async function() {
       try {

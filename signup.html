@@ -333,6 +333,11 @@ body {
   </div>
 
   <script>
+    if (location.hostname !== 'localhost') {
+      ['log', 'info', 'warn', 'error', 'debug'].forEach((key) => {
+        console[key] = () => {};
+      });
+    }
     const form = document.getElementById('signupForm');
     const signupBtn = document.getElementById('signupBtn');
     const alertBox = document.getElementById('alertBox');
@@ -381,6 +386,8 @@ body {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
+      let signupSuccess = false;
+
       const name = document.getElementById('name').value.trim();
       const email = document.getElementById('email').value.trim();
       const password = passwordInput.value;
@@ -419,17 +426,20 @@ body {
         }
 
         showAlert(data.message || 'Account created! Please check your email to verify your account.', 'success');
-        
-        setTimeout(() => {
-          window.location.href = '/login.html';
-        }, 1500);
+        signupBtn.classList.remove('loading');
+        signupBtn.disabled = true;
+        signupBtn.querySelector('.btn-text').textContent = 'Check your email';
+        const loginLink = document.querySelector('.login-link');
+        loginLink.innerHTML = "Once verified, <a href=\"/login.html\">log in</a> to your account.";
+        signupSuccess = true;
 
       } catch (error) {
-        console.error('Signup error:', error);
         showAlert(error.message || 'Something went wrong. Please try again.');
       } finally {
-        signupBtn.disabled = false;
-        signupBtn.classList.remove('loading');
+        if (!signupSuccess) {
+          signupBtn.disabled = false;
+          signupBtn.classList.remove('loading');
+        }
       }
     });
   </script>

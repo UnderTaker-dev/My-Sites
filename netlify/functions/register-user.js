@@ -196,7 +196,8 @@ exports.handler = async (event) => {
 
     // Send Discord notification
     try {
-      await fetch('/.netlify/functions/send-discord-notification', {
+      const baseUrl = event.headers.origin || process.env.SITE_URL || 'https://mathi4s.com';
+      await fetch(`${baseUrl}/.netlify/functions/send-discord-notification`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

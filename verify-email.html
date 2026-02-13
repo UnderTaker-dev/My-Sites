@@ -200,6 +200,11 @@ h1 {
   </div>
 
   <script>
+    if (location.hostname !== 'localhost') {
+      ['log', 'info', 'warn', 'error', 'debug'].forEach((key) => {
+        console[key] = () => {};
+      });
+    }
     // Get token from URL
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');
