@@ -362,6 +362,20 @@ body {
           throw new Error(data.error || 'Login failed');
         }
 
+        // Check account status
+        if (data.status && data.status !== 'Active') {
+          showAlert(`⚠️ Your account is ${data.status.toLowerCase()}. Redirecting to appeals...`, 'warning');
+          
+          // Store minimal data for appeal submission
+          localStorage.setItem('userEmail', data.email);
+          localStorage.setItem('userName', data.name);
+          
+          setTimeout(() => {
+            window.location.href = '/blocked.html?reason=account_' + data.status.toLowerCase();
+          }, 1500);
+          return;
+        }
+
         // Store user token and data
         localStorage.setItem('userToken', data.token);
         localStorage.setItem('userId', data.userId);

@@ -62,16 +62,17 @@ body::before {
   padding: 0;
   border-radius: 12px;
   overflow-x: auto;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   align-items: stretch;
   border: 1px solid #334155;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  justify-content: flex-start;
 }
 
 .tab-nav h2 {
   margin: 0;
-  padding: 1rem 1.5rem;
-  font-size: 1.3rem;
+  padding: 0.8rem 1rem;
+  font-size: 1.1rem;
   font-weight: 700;
   background: linear-gradient(135deg, #3b82f6, #8b5cf6);
   -webkit-background-clip: text;
@@ -84,19 +85,19 @@ body::before {
 }
 
 .tab-btn {
-  padding: 1rem 1.5rem;
+  padding: 0.8rem 1.2rem;
   background: transparent;
   border: none;
   border-right: 1px solid #334155;
   color: #94a3b8;
   cursor: pointer;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   transition: all 0.2s ease;
   white-space: nowrap;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
   position: relative;
 }
 
@@ -134,6 +135,8 @@ body::before {
   margin-left: auto;
   border-left: 1px solid #334155 !important;
   border-right: none !important;
+  white-space: nowrap;
+  padding: 0.8rem 1rem !important;
 }
 
 .tab-content {
@@ -428,6 +431,61 @@ tbody tr:hover {
   box-shadow: 0 6px 20px rgba(79, 172, 254, 0.5) !important;
 }
 
+/* Button Styles */
+.btn {
+  padding: 0.7rem 1.4rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+.btn-success:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+}
+
+.btn-danger:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -472,6 +530,9 @@ tbody tr:hover {
     <button class="tab-btn" onclick="showTab('analytics')">📈 Analytics</button>
     <button class="tab-btn" onclick="showTab('subscribers')">📧 Subscribers</button>
     <button class="tab-btn" onclick="showTab('users')">👥 Users</button>
+    <button class="tab-btn" onclick="showTab('deleted-users')">🗑️ Deleted Users</button>
+    <button class="tab-btn" onclick="showTab('deletion-requests')">⚠️ Deletion Requests</button>
+    <button class="tab-btn" onclick="showTab('appeals')">📝 Appeals</button>
     <button class="tab-btn" onclick="showTab('pageviews')">👀 Page Views</button>
     <button class="tab-btn" onclick="showTab('donations')">💰 Donations</button>
     <button class="tab-btn" onclick="showTab('activity')">📋 Activity Log</button>
@@ -656,6 +717,7 @@ tbody tr:hover {
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
         <div>
           <h2 style="margin: 0;">User Accounts</h2>
+          <p style="font-size: 0.85rem; color: rgba(255,255,255,0.6); margin: 0.25rem 0 0.5rem 0;">Regular user accounts only. Admin users are managed in the Admin Users tab.</p>
           <div id="userStats" style="display: flex; gap: 1rem; margin-top: 0.5rem; font-size: 0.9rem; opacity: 0.8;">
             <span>Total: <strong id="userStatsTotal">0</strong></span>
             <span>Active: <strong id="userStatsActive">0</strong></span>
@@ -697,6 +759,113 @@ tbody tr:hover {
         <div id="userList" style="display: grid; gap: 0.75rem;">
           <div class="empty-state">Loading users...</div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Deleted Users Tab -->
+  <div id="tab-deleted-users" class="tab-content" style="display:none;">
+    <div class="section-header">🗑️ Deleted Users Archive</div>
+    
+    <div class="data-section">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h2 style="margin: 0;">Deleted User Records</h2>
+          <p style="font-size: 0.85rem; color: rgba(255,255,255,0.6); margin: 0.25rem 0 0.5rem 0;">Archived users that were deleted by admin or user request.</p>
+          <div id="deletedUserStats" style="display: flex; gap: 1rem; margin-top: 0.5rem; font-size: 0.9rem; opacity: 0.8;">
+            <span>Total Deleted: <strong id="deletedUserStatsTotal">0</strong></span>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="loadDeletedUsers()">🔄 Refresh</button>
+      </div>
+
+      <div style="display:flex; gap:0.5rem; flex-wrap: wrap; margin-bottom:0.75rem; align-items:center;">
+        <input id="deletedUserSearch" type="text" placeholder="Search name or email" oninput="filterDeletedUsers()" style="flex:1; min-width:200px; padding:0.6rem; border-radius:8px; border:1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color:#fff;">
+        <select id="deletedUserSortFilter" onchange="filterDeletedUsers()" style="padding:0.6rem; border-radius:8px; border:1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color:#fff;">
+          <option value="newest">Newest first</option>
+          <option value="oldest">Oldest first</option>
+          <option value="name">By name</option>
+          <option value="email">By email</option>
+        </select>
+      </div>
+
+      <div id="deletedUserListContainer" style="background: rgba(30, 41, 59, 0.5); border-radius: 12px; padding: 1rem; max-height: 600px; overflow-y: auto;">
+        <div id="deletedUserList" style="display: grid; gap: 0.75rem;">
+          <div class="empty-state">No deleted users</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Deletion Requests Tab -->
+  <div id="tab-deletion-requests" class="tab-content" style="display:none;">
+    <div class="section-header">⚠️ Account Deletion Requests</div>
+    
+    <div class="data-section">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h2 style="margin: 0;">User Deletion Requests</h2>
+          <p style="font-size: 0.85rem; color: rgba(255,255,255,0.6); margin: 0.25rem 0 0.5rem 0;">Review and approve/deny account deletion requests from users.</p>
+          <div id="deletionRequestStats" style="display: flex; gap: 1rem; margin-top: 0.5rem; font-size: 0.9rem; opacity: 0.8;">
+            <span>Total Requests: <strong id="deletionRequestStatsTotal">0</strong></span>
+            <span>Pending: <strong id="deletionRequestStatsPending">0</strong></span>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="loadDeletionRequests()">🔄 Refresh</button>
+      </div>
+
+      <div style="display:flex; gap:0.5rem; flex-wrap: wrap; margin-bottom:0.75rem; align-items:center;">
+        <input id="deletionRequestSearch" type="text" placeholder="Search name or email" oninput="filterDeletionRequests()" style="flex:1; min-width:200px; padding:0.6rem; border-radius:8px; border:1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color:#fff;">
+        <select id="deletionRequestSortFilter" onchange="filterDeletionRequests()" style="padding:0.6rem; border-radius:8px; border:1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color:#fff;">
+          <option value="newest">Newest first</option>
+          <option value="oldest">Oldest first</option>
+          <option value="name">By name</option>
+          <option value="email">By email</option>
+        </select>
+      </div>
+
+      <div id="deletionRequestListContainer" style="background: rgba(30, 41, 59, 0.5); border-radius: 12px; padding: 1rem; max-height: 600px; overflow-y: auto;">
+        <div id="deletionRequestList" style="display: grid; gap: 0.75rem;">
+          <div class="empty-state">No pending deletion requests</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Appeals Tab -->
+  <div id="tab-appeals" class="tab-content" style="display:none;">
+    <div class="section-header">📝 Account & IP Appeals</div>
+    
+    <div class="data-section">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h2 style="margin: 0;">Appeals Management</h2>
+          <div id="appealsStats" style="display: flex; gap: 1rem; margin-top: 0.5rem; font-size: 0.9rem; opacity: 0.8;">
+            <span>Total: <strong id="appealsStatsTotal">0</strong></span>
+            <span>Pending: <strong id="appealsStatsPending">0</strong></span>
+            <span>Approved: <strong id="appealsStatsApproved">0</strong></span>
+            <span>Denied: <strong id="appealsStatsDenied">0</strong></span>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="loadAppealsList()">🔄 Refresh</button>
+      </div>
+
+      <div style="display:flex; gap:0.5rem; flex-wrap: wrap; margin-bottom:0.75rem; align-items:center;">
+        <select id="appealStatusFilter" onchange="filterAppeals()" style="padding:0.6rem; border-radius:8px; border:1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color:#fff;">
+          <option value="">All statuses</option>
+          <option value="Pending">Pending</option>
+          <option value="Approved">Approved</option>
+          <option value="Denied">Denied</option>
+        </select>
+        <select id="appealSortFilter" onchange="filterAppeals()" style="padding:0.6rem; border-radius:8px; border:1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color:#fff;">
+          <option value="newest">Newest first</option>
+          <option value="oldest">Oldest first</option>
+        </select>
+        <button class="btn btn-secondary" onclick="clearAppealFilters()">Reset</button>
+      </div>
+
+      <div id="appealsList" style="display: grid; gap: 1rem;">
+        <div class="empty-state">Loading appeals...</div>
       </div>
     </div>
   </div>
@@ -1073,6 +1242,26 @@ tbody tr:hover {
 </div>
 
 <script>
+// Global error handling for admin dashboard
+(function setupAdminErrorHandling() {
+  window.addEventListener('error', (event) => {
+    console.error('Uncaught admin error:', event.error);
+    reportAdminError(
+      event.error?.message || event.message || 'Unknown error',
+      event.error?.stack || ''
+    );
+  });
+  
+  window.addEventListener('unhandledrejection', (event) => {
+    console.error('Unhandled promise rejection in admin:', event.reason);
+    reportAdminError(
+      event.reason?.message || String(event.reason) || 'Unhandled promise rejection',
+      event.reason?.stack || ''
+    );
+    event.preventDefault();
+  });
+})();
+
 // Check authentication
 window.addEventListener('DOMContentLoaded', () => {
   console.log('Admin dashboard loading...');
@@ -1088,6 +1277,7 @@ window.addEventListener('DOMContentLoaded', () => {
   console.log('Loading dashboard data...');
   loadDashboardData().catch(err => {
     console.error('Dashboard load error:', err);
+    reportAdminError('Failed to load dashboard', err.stack);
   });
 
   initActivityLogFilters();
@@ -1138,6 +1328,7 @@ async function initAllTabsData() {
     await Promise.all([
       loadSubscribersTab().catch(e => console.error('Prefetch subscribers failed', e)),
       loadUsersTab().catch(e => console.error('Prefetch users failed', e)),
+      loadAppealsList().catch(e => console.error('Prefetch appeals failed', e)),
       loadPageViewsTable().catch(e => console.error('Prefetch pageviews failed', e)),
       loadPageStats().catch(e => console.error('Prefetch page stats failed', e)),
       loadDonationsTable().catch(e => console.error('Prefetch donations failed', e)),
@@ -1281,6 +1472,7 @@ function renderUsers(users) {
               <option value="Inactive" ${user.status === 'Inactive' ? 'selected' : ''}>Inactive</option>
             </select>
             ${!user.emailVerified ? `<button onclick="verifyUserEmail('${user.id}')" class="btn btn-primary" style="font-size: 0.85rem; padding: 0.4rem 0.8rem;">Verify Email</button>` : ''}
+            <button onclick="deleteUser('${user.id}', '${user.name}', '${user.email}')" class="btn btn-danger" style="font-size: 0.85rem; padding: 0.4rem 0.8rem; background: rgba(231, 76, 60, 0.2); border: 1px solid rgba(231, 76, 60, 0.3); color: #ff6b6b;">🗑️ Delete</button>
           </div>
         </div>
       </div>
@@ -1354,6 +1546,165 @@ async function verifyUserEmail(userId) {
   }
 }
 
+function deleteUser(userId, userName, userEmail) {
+  showAdminDeleteConfirmationModal(userId, userName, userEmail);
+}
+
+function showAdminDeleteConfirmationModal(userId, userName, userEmail) {
+  // Create modal overlay
+  const modal = document.createElement('div');
+  modal.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    animation: fadeIn 0.2s ease;
+  `;
+
+  // Create modal content
+  const modalContent = document.createElement('div');
+  modalContent.style.cssText = `
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border-radius: 20px;
+    padding: 2.5rem;
+    max-width: 480px;
+    width: 90%;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
+    border: 2px solid rgba(239, 68, 68, 0.3);
+    animation: slideUp 0.3s ease;
+  `;
+
+  modalContent.innerHTML = `
+    <style>
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      @keyframes slideUp {
+        from { transform: translateY(30px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+      .admin-delete-btn {
+        padding: 0.9rem 1.8rem;
+        border: none;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-family: inherit;
+      }
+      .admin-delete-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      }
+      .admin-delete-btn:active {
+        transform: translateY(0);
+      }
+    </style>
+    <div style="text-align: center; margin-bottom: 1.5rem;">
+      <div style="font-size: 3rem; margin-bottom: 0.5rem;">🛡️</div>
+      <h2 style="color: #ef4444; margin: 0 0 0.5rem 0; font-size: 1.8rem;">Delete User Account</h2>
+      <p style="color: #94a3b8; font-size: 0.95rem; line-height: 1.6; margin: 0;">
+        <strong>${userName}</strong> (${userEmail})
+      </p>
+    </div>
+
+    <div style="background: rgba(239, 68, 68, 0.1); border-left: 4px solid #ef4444; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+      <div style="color: #fca5a5; font-size: 0.9rem; line-height: 1.6;">
+        <div style="margin-bottom: 0.5rem;"><strong>⚠️ This will:</strong></div>
+        <div>• Copy all user data to DeletedUsers archive</div>
+        <div>• Remove user from active Users table</div>
+        <div>• Log the deletion in Activity Log</div>
+        <div>• Send Discord notification</div>
+        <div style="margin-top: 0.5rem; color: #fecaca;">Data is preserved and recoverable.</div>
+      </div>
+    </div>
+
+    <div style="background: rgba(96, 165, 250, 0.1); border-left: 4px solid #3b82f6; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+      <div style="color: #bfdbfe; font-size: 0.9rem; line-height: 1.6;">
+        <div style="margin-bottom: 0.5rem;"><strong>👤 User Account ID:</strong></div>
+        <div style="font-family: monospace; font-size: 0.85rem; word-break: break-all;">${userId}</div>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 1rem; justify-content: space-between;">
+      <button id="adminDeleteCancelBtn" class="admin-delete-btn" style="flex: 1; background: rgba(100, 116, 139, 0.3); color: #e2e8f0; border: 1px solid rgba(148, 163, 184, 0.3);">
+        Cancel
+      </button>
+      <button id="adminDeleteConfirmBtn" class="admin-delete-btn" style="flex: 1; background: #ef4444; color: white;">
+        ⚠️ Delete User
+      </button>
+    </div>
+  `;
+
+  modal.appendChild(modalContent);
+  document.body.appendChild(modal);
+
+  const confirmBtn = document.getElementById('adminDeleteConfirmBtn');
+  const cancelBtn = document.getElementById('adminDeleteCancelBtn');
+
+  // Handle cancel
+  const closeModal = () => {
+    modal.style.animation = 'fadeOut 0.2s ease';
+    setTimeout(() => modal.remove(), 200);
+  };
+
+  cancelBtn.addEventListener('click', closeModal);
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeModal();
+  });
+
+  // Handle confirm
+  const submitDelete = async () => {
+    confirmBtn.disabled = true;
+    confirmBtn.textContent = 'Processing...';
+    confirmBtn.style.opacity = '0.7';
+
+    try {
+      const token = localStorage.getItem('adminToken');
+      const response = await fetch('/.netlify/functions/delete-user', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ userId })
+      });
+      
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to delete user');
+      }
+      
+      closeModal();
+      showToast(`✅ User ${userEmail} deleted successfully`, 'success');
+      await loadUsersTab();
+
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      showToast('❌ Failed to delete user: ' + error.message, 'error');
+      confirmBtn.disabled = false;
+      confirmBtn.textContent = '⚠️ Delete User';
+      confirmBtn.style.opacity = '1';
+    }
+  };
+
+  confirmBtn.addEventListener('click', submitDelete);
+
+  // Add fadeOut animation
+  const style = document.createElement('style');
+  style.textContent = '@keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }';
+  document.head.appendChild(style);
+}
+
 function filterUsers() {
   const search = document.getElementById('userSearch').value.toLowerCase();
   const statusFilter = document.getElementById('userStatusFilter').value;
@@ -1411,6 +1762,508 @@ async function refreshUsers() {
   await loadUsersTab();
   btn.disabled = false;
   btn.textContent = '🔄 Refresh';
+}
+
+// Deleted Users Functions
+let deletedUsersData = [];
+
+async function loadDeletedUsers() {
+  console.log('🗑️ Loading deleted users...');
+  try {
+    const token = localStorage.getItem('adminToken');
+    if (!token) {
+      throw new Error('Admin token not found. Please log in again.');
+    }
+    
+    const response = await fetch('/.netlify/functions/get-deleted-users', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    
+    console.log('Response status:', response.status);
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      console.error('Server error:', errorData);
+      throw new Error(errorData.error || `Failed to load deleted users (${response.status})`);
+    }
+    
+    const data = await response.json();
+    console.log('Received data:', data);
+    
+    deletedUsersData = data.deletedUsers || [];
+    
+    // Update stats
+    document.getElementById('deletedUserStatsTotal').textContent = data.stats?.total || 0;
+    
+    // Render deleted users
+    renderDeletedUsers(deletedUsersData);
+    
+    console.log(`✅ Loaded ${deletedUsersData.length} deleted users`);
+  } catch (error) {
+    console.error('Error loading deleted users:', error);
+    document.getElementById('deletedUserList').innerHTML = `<div class="empty-state" style="color: #e74c3c;">Error loading deleted users: ${error.message}</div>`;
+  }
+}
+
+function renderDeletedUsers(users) {
+  const container = document.getElementById('deletedUserList');
+  
+  if (users.length === 0) {
+    container.innerHTML = '<div class="empty-state">No deleted users</div>';
+    return;
+  }
+  
+  container.innerHTML = users.map(user => {
+    const deletedDate = new Date(user.deletedAt);
+    const createdDate = user.createdAt ? new Date(user.createdAt) : null;
+    const lastLogin = user.lastLogin ? new Date(user.lastLogin) : null;
+    const deletionRequestedDate = user.deletionRequestedAt ? new Date(user.deletionRequestedAt) : null;
+    
+    // Parse original data if available
+    let originalDataHtml = '';
+    if (user.originalData) {
+      try {
+        const data = typeof user.originalData === 'string' ? JSON.parse(user.originalData) : user.originalData;
+        originalDataHtml = `
+          <details style="margin-top: 0.75rem;">
+            <summary style="cursor: pointer; color: #94a3b8; font-size: 0.85rem; user-select: none;">📋 View Original Data</summary>
+            <pre style="background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 6px; margin-top: 0.5rem; font-size: 0.75rem; overflow-x: auto; max-height: 200px; overflow-y: auto;">${JSON.stringify(data, null, 2)}</pre>
+          </details>
+        `;
+      } catch (e) {
+        originalDataHtml = `
+          <details style="margin-top: 0.75rem;">
+            <summary style="cursor: pointer; color: #94a3b8; font-size: 0.85rem; user-select: none;">📋 View Original Data</summary>
+            <pre style="background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 6px; margin-top: 0.5rem; font-size: 0.75rem; overflow-x: auto;">${user.originalData}</pre>
+          </details>
+        `;
+      }
+    }
+    
+    return `
+      <div style="background: rgba(255,255,255,0.05); border-radius: 10px; padding: 1rem; border: 1px solid rgba(255,255,255,0.1);">
+        <div style="display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; gap: 1rem;">
+          <div style="flex: 1; min-width: 200px;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <strong style="font-size: 1.1rem;">${user.name}</strong>
+              ${user.deletedBy === 'Admin' ? '<span style="background: #ef4444; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem;">🛡️ Admin Deleted</span>' : '<span style="background: #f59e0b; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem;">👤 User Request</span>'}
+              ${user.status ? `<span style="background: rgba(100,116,139,0.5); padding: 2px 8px; border-radius: 4px; font-size: 0.75rem;">${user.status}</span>` : ''}
+            </div>
+            <div style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 0.5rem;">
+              📧 ${user.email}
+            </div>
+            <div style="color: #64748b; font-size: 0.85rem; line-height: 1.6;">
+              <div><strong>Deleted:</strong> ${deletedDate.toLocaleDateString()} ${deletedDate.toLocaleTimeString()}</div>
+              <div><strong>Deleted By:</strong> ${user.deletedBy || 'Unknown'}</div>
+              ${createdDate ? `<div><strong>Originally Joined:</strong> ${createdDate.toLocaleDateString()}</div>` : ''}
+              ${lastLogin ? `<div><strong>Last Login:</strong> ${lastLogin.toLocaleDateString()}</div>` : ''}
+              ${user.deletionRequested ? `<div><strong>Deletion Requested:</strong> ${deletionRequestedDate ? deletionRequestedDate.toLocaleDateString() : 'Yes'}</div>` : ''}
+            </div>
+            ${originalDataHtml}
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function filterDeletedUsers() {
+  const search = document.getElementById('deletedUserSearch').value.toLowerCase();
+  const sortFilter = document.getElementById('deletedUserSortFilter').value;
+  
+  let filtered = deletedUsersData.filter(user => {
+    const matchesSearch = !search || 
+      user.name.toLowerCase().includes(search) || 
+      user.email.toLowerCase().includes(search);
+    
+    return matchesSearch;
+  });
+  
+  // Sort
+  filtered.sort((a, b) => {
+    switch (sortFilter) {
+      case 'newest':
+        return new Date(b.deletedAt) - new Date(a.deletedAt);
+      case 'oldest':
+        return new Date(a.deletedAt) - new Date(b.deletedAt);
+      case 'name':
+        return a.name.localeCompare(b.name);
+      case 'email':
+        return a.email.localeCompare(b.email);
+      default:
+        return new Date(b.deletedAt) - new Date(a.deletedAt);
+    }
+  });
+  
+  renderDeletedUsers(filtered);
+}
+
+// Deletion Requests Functions
+let deletionRequestsData = [];
+
+async function loadDeletionRequests() {
+  console.log('⚠️ Loading deletion requests...');
+  try {
+    const token = localStorage.getItem('adminToken');
+    if (!token) {
+      throw new Error('Admin token not found. Please log in again.');
+    }
+    
+    const response = await fetch('/.netlify/functions/get-deletion-requests', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    
+    console.log('Response status:', response.status);
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      console.error('Server error:', errorData);
+      throw new Error(errorData.error || `Failed to load deletion requests (${response.status})`);
+    }
+    
+    const data = await response.json();
+    console.log('Received data:', data);
+    
+    deletionRequestsData = data.requests || [];
+    
+    // Update stats
+    document.getElementById('deletionRequestStatsTotal').textContent = data.stats?.total || 0;
+    document.getElementById('deletionRequestStatsPending').textContent = data.stats?.pending || 0;
+    
+    // Render deletion requests
+    renderDeletionRequests(deletionRequestsData);
+    
+    console.log(`✅ Loaded ${deletionRequestsData.length} deletion requests`);
+  } catch (error) {
+    console.error('Error loading deletion requests:', error);
+    document.getElementById('deletionRequestList').innerHTML = `<div class="empty-state" style="color: #e74c3c;">Error loading deletion requests: ${error.message}</div>`;
+  }
+}
+
+function renderDeletionRequests(requests) {
+  const container = document.getElementById('deletionRequestList');
+  
+  if (requests.length === 0) {
+    container.innerHTML = '<div class="empty-state">No pending deletion requests</div>';
+    return;
+  }
+  
+  container.innerHTML = requests.map(req => {
+    const requestDate = new Date(req.deletionRequestedAt);
+    const createdDate = req.createdAt ? new Date(req.createdAt) : null;
+    const lastLogin = req.lastLogin ? new Date(req.lastLogin) : null;
+    
+    return `
+      <div style="background: rgba(255,255,255,0.05); border-radius: 10px; padding: 1rem; border: 1px solid rgba(255,255,255,0.1); border-left: 4px solid #f59e0b;">
+        <div style="display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; gap: 1rem;">
+          <div style="flex: 1; min-width: 200px;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <strong style="font-size: 1.1rem;">${req.name}</strong>
+              ${req.emailVerified ? '<span style="background: #10b981; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem;">✓ Verified</span>' : '<span style="background: #f59e0b; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem;">⚠ Unverified</span>'}
+              ${req.status === 'Pending Deletion' ? '<span style="background: #ef4444; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem;">🔴 Pending Deletion</span>' : ''}
+            </div>
+            <div style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 0.5rem;">
+              📧 ${req.email}
+            </div>
+            <div style="color: #64748b; font-size: 0.85rem; line-height: 1.6;">
+              <div><strong>Requested:</strong> ${requestDate.toLocaleDateString()} ${requestDate.toLocaleTimeString()}</div>
+              ${createdDate ? `<div><strong>Member Since:</strong> ${createdDate.toLocaleDateString()}</div>` : ''}
+              ${lastLogin ? `<div><strong>Last Login:</strong> ${lastLogin.toLocaleDateString()}</div>` : ''}
+            </div>
+          </div>
+          <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+            <button onclick="approveDeletionRequest('${req.id}', '${req.name}', '${req.email}')" class="btn btn-danger" style="font-size: 0.85rem; padding: 0.5rem 1rem; background: rgba(231, 76, 60, 0.2); border: 1px solid rgba(231, 76, 60, 0.3); color: #ff6b6b;">✓ Approve Deletion</button>
+            <button onclick="denyDeletionRequest('${req.id}', '${req.name}', '${req.email}')" class="btn btn-primary" style="font-size: 0.85rem; padding: 0.5rem 1rem;">✗ Deny Request</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+async function approveDeletionRequest(userId, userName, userEmail) {
+  if (!confirm(`⚠️ APPROVE DELETION REQUEST\n\nUser: ${userName}\nEmail: ${userEmail}\n\nThis will DELETE the user account and move all data to DeletedUsers table.\n\nContinue?`)) {
+    return;
+  }
+  
+  const confirmText = prompt(`Type "APPROVE" to confirm deletion of ${userEmail}`);
+  if (confirmText !== 'APPROVE') {
+    showToast('Deletion cancelled', 'info');
+    return;
+  }
+  
+  try {
+    const token = localStorage.getItem('adminToken');
+    const response = await fetch('/.netlify/functions/approve-deletion-request', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ userId, approve: true })
+    });
+    
+    const result = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(result.error || 'Failed to approve deletion');
+    }
+    
+    showToast(`✅ Deletion request approved for ${userEmail}`, 'success');
+    await loadDeletionRequests();
+  } catch (error) {
+    console.error('Error approving deletion:', error);
+    showToast('❌ Failed to approve deletion: ' + error.message, 'error');
+  }
+}
+
+async function denyDeletionRequest(userId, userName, userEmail) {
+  if (!confirm(`DENY DELETION REQUEST\n\nUser: ${userName}\nEmail: ${userEmail}\n\nThis will restore the account to Active status and clear the deletion request.\n\nContinue?`)) {
+    return;
+  }
+  
+  try {
+    const token = localStorage.getItem('adminToken');
+    const response = await fetch('/.netlify/functions/approve-deletion-request', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ userId, approve: false })
+    });
+    
+    const result = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(result.error || 'Failed to deny deletion');
+    }
+    
+    showToast(`✓ Deletion request denied for ${userEmail} - account restored`, 'success');
+    await loadDeletionRequests();
+  } catch (error) {
+    console.error('Error denying deletion:', error);
+    showToast('❌ Failed to deny deletion: ' + error.message, 'error');
+  }
+}
+
+function filterDeletionRequests() {
+  const search = document.getElementById('deletionRequestSearch').value.toLowerCase();
+  const sortFilter = document.getElementById('deletionRequestSortFilter').value;
+  
+  let filtered = deletionRequestsData.filter(req => {
+    const matchesSearch = !search || 
+      req.name.toLowerCase().includes(search) || 
+      req.email.toLowerCase().includes(search);
+    
+    return matchesSearch;
+  });
+  
+  // Sort
+  filtered.sort((a, b) => {
+    switch (sortFilter) {
+      case 'newest':
+        return new Date(b.deletionRequestedAt) - new Date(a.deletionRequestedAt);
+      case 'oldest':
+        return new Date(a.deletionRequestedAt) - new Date(b.deletionRequestedAt);
+      case 'name':
+        return a.name.localeCompare(b.name);
+      case 'email':
+        return a.email.localeCompare(b.email);
+      default:
+        return new Date(b.deletionRequestedAt) - new Date(a.deletionRequestedAt);
+    }
+  });
+  
+  renderDeletionRequests(filtered);
+}
+
+// Appeals Functions
+let appealsData = [];
+
+async function loadAppealsList() {
+  console.log('📝 Loading appeals...');
+  try {
+    const token = localStorage.getItem('adminToken');
+    console.log('Admin token:', token ? 'Set' : 'NOT SET');
+    
+    if (!token) {
+      throw new Error('No admin token found. Please log in again.');
+    }
+    
+    console.log('Making request to /.netlify/functions/get-appeals');
+    const response = await fetch('/.netlify/functions/get-appeals', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    
+    console.log('Response status:', response.status);
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      console.error('Server error response:', errorData);
+      throw new Error(errorData.error || `Failed to load appeals (${response.status})`);
+    }
+    
+    const data = await response.json();
+    console.log('Response data:', data);
+    
+    appealsData = data.appeals || [];
+    console.log('Appeals data length:', appealsData.length);
+    console.log('Appeals data:', appealsData);
+    
+    // Update stats
+    document.getElementById('appealsStatsTotal').textContent = data.stats?.total || 0;
+    document.getElementById('appealsStatsPending').textContent = data.stats?.pending || 0;
+    document.getElementById('appealsStatsApproved').textContent = data.stats?.approved || 0;
+    document.getElementById('appealsStatsDenied').textContent = data.stats?.denied || 0;
+    
+    // Render appeals
+    renderAppeals(appealsData);
+    
+    console.log(`✅ Loaded ${appealsData.length} appeals`);
+  } catch (error) {
+    console.error('Error loading appeals:', error);
+    document.getElementById('appealsList').innerHTML = `<div class="empty-state" style="color: #e74c3c;">❌ Error loading appeals: ${error.message}</div>`;
+  }
+}
+
+function renderAppeals(appeals) {
+  const container = document.getElementById('appealsList');
+  
+  if (appeals.length === 0) {
+    container.innerHTML = '<div class="empty-state">No appeals found</div>';
+    return;
+  }
+  
+  container.innerHTML = appeals.map(appeal => {
+    const submittedDate = new Date(appeal.submittedDate);
+    const statusColor = appeal.status === 'Pending' ? '#f39c12' : 
+                       appeal.status === 'Approved' ? '#27ae60' : 
+                       appeal.status === 'Denied' ? '#e74c3c' : '#95a5a6';
+    
+    const isAccountAppeal = appeal.appealType?.startsWith('Account_');
+    const appealLabel = isAccountAppeal ? appeal.appealType.replace('_', ' ') : 'IP Block';
+    
+    return `
+      <div style="background: rgba(255,255,255,0.05); border-radius: 10px; padding: 1.5rem; border: 1px solid rgba(255,255,255,0.1);">
+        <div style="display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
+          <div>
+            <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.5rem;">
+              <strong style="font-size: 1.05rem;">${appeal.email}</strong>
+              <span style="background: ${statusColor}; padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">${appeal.status}</span>
+            </div>
+            <div style="color: #bdc3c7; font-size: 0.9rem; margin-bottom: 0.25rem;">
+              ${isAccountAppeal ? '👤 Account Appeal - ' : '🔒 IP Block - '}<strong>${appealLabel}</strong>
+            </div>
+            <div style="color: #95a5a6; font-size: 0.85rem;">
+              ${isAccountAppeal ? '📧 ' : '🌐 '}<strong>${isAccountAppeal ? appeal.email : appeal.ip}</strong> • Submitted: ${submittedDate.toLocaleDateString()} ${submittedDate.toLocaleTimeString()}
+            </div>
+          </div>
+        </div>
+        
+        <div style="background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+          <div style="color: #bdc3c7; font-size: 0.85rem; margin-bottom: 0.5rem;">📝 Reason:</div>
+          <div style="color: #ecf0f1; line-height: 1.4;">${appeal.reason}</div>
+        </div>
+        
+        ${appeal.status === 'Pending' ? `
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <button class="btn btn-success" onclick="approveAppealAction('${appeal.id}')">✅ Approve</button>
+            <button class="btn btn-danger" onclick="denyAppealAction('${appeal.id}')">❌ Deny</button>
+          </div>
+        ` : `
+          <div style="color: #95a5a6; font-size: 0.9rem;">Resolved on ${new Date(appeal.submittedDate).toLocaleDateString()}</div>
+        `}
+      </div>
+    `;
+  }).join('');
+}
+
+function filterAppeals() {
+  const statusFilter = document.getElementById('appealStatusFilter').value;
+  const sortFilter = document.getElementById('appealSortFilter').value;
+  
+  let filtered = appealsData;
+  
+  if (statusFilter) {
+    filtered = filtered.filter(a => a.status === statusFilter);
+  }
+  
+  if (sortFilter === 'oldest') {
+    filtered = filtered.sort((a, b) => new Date(a.submittedDate) - new Date(b.submittedDate));
+  } else {
+    filtered = filtered.sort((a, b) => new Date(b.submittedDate) - new Date(a.submittedDate));
+  }
+  
+  renderAppeals(filtered);
+}
+
+function clearAppealFilters() {
+  document.getElementById('appealStatusFilter').value = '';
+  document.getElementById('appealSortFilter').value = 'newest';
+  filterAppeals();
+}
+
+async function approveAppealAction(appealId) {
+  if (!confirm('Approve this appeal? If it\'s an account appeal, the user\'s account will be unsuspended.')) {
+    return;
+  }
+  
+  try {
+    const token = localStorage.getItem('adminToken');
+    const response = await fetch('/.netlify/functions/approve-appeal', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ appealId })
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to approve appeal');
+    }
+    
+    showToast('Appeal approved successfully', '#27ae60');
+    await loadAppealsList();
+  } catch (error) {
+    console.error('Error approving appeal:', error);
+    showToast('Failed to approve appeal', '#e74c3c');
+  }
+}
+
+async function denyAppealAction(appealId) {
+  if (!confirm('Deny this appeal?')) {
+    return;
+  }
+  
+  try {
+    const token = localStorage.getItem('adminToken');
+    const response = await fetch('/.netlify/functions/deny-appeal', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ appealId })
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to deny appeal');
+    }
+    
+    showToast('Appeal denied', '#e74c3c');
+    await loadAppealsList();
+  } catch (error) {
+    console.error('Error denying appeal:', error);
+    showToast('Failed to deny appeal', '#c0392b');
+  }
 }
 
 
@@ -3166,11 +4019,17 @@ function showTab(tabName) {
       loadSubscribersTab();
     } else if (tabName === 'users') {
       loadUsersTab();
+    } else if (tabName === 'deleted-users') {
+      loadDeletedUsers();
+    } else if (tabName === 'deletion-requests') {
+      loadDeletionRequests();
     } else if (tabName === 'pageviews') {
       loadPageViewsTable();
       loadPageStats();
     } else if (tabName === 'donations') {
       loadDonationsTable();
+    } else if (tabName === 'appeals') {
+      loadAppealsList();
     } else if (tabName === 'activity') {
       loadActivityLog();
       loadRetryQueue();
@@ -3182,9 +4041,34 @@ function showTab(tabName) {
     }
   } catch (e) {
     console.error('Failed to load data for tab:', tabName, e);
+    showToast('❌ Failed to load tab data. Error reported.', '#e74c3c');
+    
+    // Report error to admin
+    reportAdminError(`Tab load failed (${tabName}): ${e.message}`, e.stack);
   }
   
   console.log('✅ Tab switch complete');
+}
+
+// Global error handler for admin dashboard
+async function reportAdminError(message, stack = '') {
+  try {
+    const adminEmail = localStorage.getItem('adminEmail') || 'admin@unknown.com';
+    await fetch('/.netlify/functions/report-error', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: `[ADMIN] ${message}`,
+        stack,
+        url: window.location.href,
+        timestamp: new Date().toISOString(),
+        userAgent: navigator.userAgent,
+        email: adminEmail
+      })
+    });
+  } catch (err) {
+    console.error('Failed to report admin error:', err);
+  }
 }
 
 function showToast(message, color = '#1abc9c') {

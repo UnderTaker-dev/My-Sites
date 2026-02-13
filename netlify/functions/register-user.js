@@ -1,5 +1,6 @@
 const Airtable = require('airtable');
 const { sendEmail } = require('./utils/send-email');
+const fetch = require('node-fetch');
 
 // Initialize Airtable
 const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(process.env.AIRTABLE_BASE_ID);
@@ -192,6 +193,21 @@ exports.handler = async (event) => {
     }
 
     console.log('New user registered:', email);
+
+    // Send Discord notification
+    try {
+      await fetch('/.netlify/functions/send-discord-notification', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'new_user_signup',
+          data: { name, email }
+        })
+      });
+    } catch (discordError) {
+      console.error('Failed to send Discord notification:', discordError);
+      // Don't fail registration if Discord notification fails
+    }
 
     return {
       statusCode: 201,

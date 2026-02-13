@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Something Went Wrong</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .error-container {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 3rem;
+      max-width: 600px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      animation: slideUp 0.6s ease-out;
+    }
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .error-icon {
+      font-size: 4rem;
+      margin-bottom: 1.5rem;
+      animation: bounce 2s ease-in-out infinite;
+    }
+    @keyframes bounce {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-20px);
+      }
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 1rem;
+      font-size: 2.2rem;
+    }
+    .error-code {
+      background: #f0f0f0;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      display: inline-block;
+      color: #e74c3c;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+    }
+    p {
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+      font-size: 1rem;
+    }
+    .error-details {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 1rem;
+      border-radius: 8px;
+      text-align: left;
+      margin-bottom: 2rem;
+      font-size: 0.85rem;
+      color: #856404;
+      max-height: 150px;
+      overflow-y: auto;
+    }
+    .error-details::-webkit-scrollbar {
+      width: 6px;
+    }
+    .error-details::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .error-details::-webkit-scrollbar-thumb {
+      background: #ffc107;
+      border-radius: 3px;
+    }
+    .actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    button, a {
+      padding: 0.9rem 1.8rem;
+      border-radius: 10px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.3s;
+      font-size: 1rem;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    }
+    .btn-secondary {
+      background: #e2e8f0;
+      color: #333;
+    }
+    .btn-secondary:hover {
+      background: #cbd5e0;
+    }
+    .note {
+      color: #999;
+      font-size: 0.85rem;
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #e2e8f0;
+    }
+  </style>
+</head>
+<body>
+  <div class="error-container">
+    <div class="error-icon">⚠️</div>
+    <h1>Something Went Wrong</h1>
+    <div class="error-code">ERROR DETECTED</div>
+    <p>We encountered an unexpected error while processing your request. Our team has been notified and is looking into it.</p>
+    
+    <div class="error-details" id="errorDetails" style="display: none;">
+      <strong>Error Details:</strong><br>
+      <span id="errorMessage"></span>
+    </div>
+    
+    <div class="actions">
+      <button class="btn-primary" onclick="window.location.href='/'">← Go Home</button>
+      <button class="btn-secondary" onclick="window.location.href='/'">🔄 Reload Page</button>
+    </div>
+    
+    <div class="note">
+      <strong>Reference:</strong> Error reported and logged. Check your email or support for updates.
+    </div>
+  </div>
+
+  <script>
+    // Show error details if they exist
+    const params = new URLSearchParams(window.location.search);
+    const errorMsg = params.get('error');
+    if (errorMsg) {
+      try {
+        const decoded = decodeURIComponent(errorMsg);
+        document.getElementById('errorMessage').textContent = decoded.slice(0, 300);
+        document.getElementById('errorDetails').style.display = 'block';
+      } catch (e) {
+        // Ignore decode errors
+      }
+    }
+  </script>
+</body>
+</html>

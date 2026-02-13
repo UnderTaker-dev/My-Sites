@@ -76,15 +76,7 @@ exports.handler = async (event) => {
 
     const user = users[0];
     const userFields = user.fields;
-
-    // Check account status
-    if (userFields.Status && userFields.Status !== 'Active') {
-      return {
-        statusCode: 403,
-        headers,
-        body: JSON.stringify({ error: 'Account is suspended or inactive' })
-      };
-    }
+    const accountStatus = userFields.Status || 'Active';
 
     // Verify password
     const isValidPassword = await verifyPassword(password, userFields.PasswordHash);
@@ -116,7 +108,8 @@ exports.handler = async (event) => {
         userId: user.id,
         name: userFields.Name,
         email: userFields.Email,
-        emailVerified: userFields.EmailVerified || false
+        emailVerified: userFields.EmailVerified || false,
+        status: accountStatus
       })
     };
 

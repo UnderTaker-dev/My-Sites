@@ -31,24 +31,57 @@ exports.handler = async (event, context) => {
 
     const base = new Airtable({ apiKey: process.env.AIRTABLE_TOKEN }).base(process.env.AIRTABLE_BASE_ID);
 
-    // Check if this IP is actually blocked
+    // Check if this is an IP block appeal or account suspension appeal
+    let appealType = 'IP_Block';
+    let isBlocked = false;
+    let userAccount = null;
+
+    // First, check if user account exists and is suspended/inactive
     try {
-      const blockedRecords = await base('BlockedIPs').select({
-        filterByFormula: `{IP} = '${ip}'`,
+      const userRecords = await base('Users').select({
+        filterByFormula: `LOWER({Email}) = '${email.toLowerCase()}'`,
         maxRecords: 1
       }).firstPage();
 
-      if (blockedRecords.length === 0) {
-        return {
-          statusCode: 404,
-          body: JSON.stringify({ 
-            error: 'Your IP is not blocked',
-            message: 'Your IP address is not currently blocked. If you\'re experiencing issues, please contact support.'
-          })
-        };
+      if (userRecords.length > 0) {
+        userAccount = userRecords[0];
+        const status = userAccount.fields.Status;
+        
+        if (status === 'Suspended' || status === 'Inactive') {
+          appealType = 'Account_' + status;
+          isBlocked = true; // Allow appeal for suspended/inactive accounts
+        }
       }
     } catch (e) {
-      console.error('Error checking blocked IP:', e);
+      console.error('Error checking user account:', e);
+    }
+
+    // If not a suspended account, check if IP is blocked
+    if (!isBlocked) {
+      try {
+        const blockedRecords = await base('BlockedIPs').select({
+          filterByFormula: `{IP} = '${ip}'`,
+          maxRecords: 1
+        }).firstPage();
+
+        if (blockedRecords.length > 0) {
+          isBlocked = true;
+          appealType = 'IP_Block';
+        }
+      } catch (e) {
+        console.error('Error checking blocked IP:', e);
+      }
+    }
+
+    // If neither account is suspended nor IP is blocked, reject appeal
+    if (!isBlocked) {
+      return {
+        statusCode: 404,
+        body: JSON.stringify({ 
+          error: 'No active restrictions found',
+          message: 'Your IP address is not blocked and your account is not suspended. If you\'re experiencing issues, please contact support.'
+        })
+      };
     }
 
     // Check how many times this IP has appealed before
@@ -70,20 +103,24 @@ exports.handler = async (event, context) => {
 
     // Save appeal to Airtable
     try {
-      await base('Appeals').create([{
+      const appealRecord = await base('Appeals').create([{
         fields: {
           IP: ip,
           Email: email,
           Reason: reason,
           Status: 'Pending',
+          AppealType: appealType,
           SubmittedDate: new Date().toISOString(),
           UserAgent: event.headers['user-agent'] || 'Unknown',
           TimesAppealed: timesAppealed,
           PreviousStatus: previousStatus
         }
       }]);
+      console.log('Appeal saved successfully:', appealRecord[0].id);
     } catch (e) {
-      console.log('Appeals table may not exist yet:', e.message);
+      console.error('Failed to save appeal to Airtable:', e.message);
+      console.error('Full error:', e);
+      // Log but don't fail - still return success to user
     }
 
     // Send Discord notification about the appeal
@@ -93,7 +130,7 @@ exports.handler = async (event, context) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           type: 'block_appeal',
-          data: { ip, email, reason }
+          data: { ip, email, reason, appealType }
         })
       });
     } catch (notifyError) {
@@ -104,7 +141,9 @@ exports.handler = async (event, context) => {
       statusCode: 200,
       body: JSON.stringify({
         success: true,
-        message: 'Appeal submitted successfully. An admin will review it shortly.',
+        message: appealType.startsWith('Account_') 
+          ? 'Account appeal submitted successfully. An admin will review your request shortly.'
+          : 'Appeal submitted successfully. An admin will review it shortly.',
         appealId: Date.now().toString(36)
       })
     };

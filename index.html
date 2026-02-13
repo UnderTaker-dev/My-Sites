@@ -2160,6 +2160,26 @@ body.theme-easter .floating-icon {
   filter: drop-shadow(0 0 10px rgba(255, 182, 255, 0.6)) !important;
 }
 </style>
+<script>
+// Blocking maintenance mode check - prevents FOUC (Flash of Unstyled Content)
+(function checkMaintenanceBlocking() {
+  try {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', '/.netlify/functions/check-maintenance', false); // synchronous
+    xhr.send();
+    
+    if (xhr.status === 200) {
+      const data = JSON.parse(xhr.responseText);
+      if (data.maintenanceMode) {
+        window.isMaintenanceMode = true;
+        document.documentElement.style.display = 'none'; // Hide page until maintenance loads
+      }
+    }
+  } catch (e) {
+    // Fail gracefully
+  }
+})();
+</script>
 </head>
 <body>
 
@@ -2422,38 +2442,130 @@ body.theme-easter .floating-icon {
 (async function() {
   try {
     const adminToken = localStorage.getItem('adminToken');
-    if (adminToken) return;
+    if (adminToken) {
+      document.documentElement.style.display = 'auto';
+      return;
+    }
 
-    const params = new URLSearchParams(window.location.search);
-    const bypassCode = params.get('bypass');
-    const maintenanceUrl = bypassCode
-      ? `/.netlify/functions/check-maintenance?bypass=${encodeURIComponent(bypassCode)}`
-      : '/.netlify/functions/check-maintenance';
-    const response = await fetch(maintenanceUrl);
-    const data = await response.json();
-    
-    if (data.maintenanceMode) {
+    // If blocking check found maintenance mode, render it now
+    if (window.isMaintenanceMode) {
+      const response = await fetch('/.netlify/functions/check-maintenance');
+      const data = await response.json();
       const endsAtText = data.maintenanceEndsAt ? new Date(data.maintenanceEndsAt).toLocaleString() : null;
       const message = data.maintenanceMessage || data.message || 'We\'re performing updates to improve your experience';
+      const endsAtHtml = endsAtText ? `<div style="background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; border: 1px solid rgba(255,255,255,0.2);"><p style="opacity: 0.8; font-size: 0.95rem; margin: 0 0 0.5rem 0; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Expected back</p><p style="font-size: 1.4rem; margin: 0; font-weight: 700;">${endsAtText}</p></div>` : '';
+      
+      document.documentElement.style.cssText = 'margin: 0 !important; padding: 0 !important; width: 100%; height: 100%; overflow: hidden !important; display: block !important;';
+      document.body.style.cssText = 'margin: 0 !important; padding: 0 !important; width: 100%; height: 100%; overflow: hidden !important; display: block !important;';
       document.body.innerHTML = `
-        <div style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-align: center; font-family: system-ui, -apple-system, sans-serif; padding: 2rem;">
-          <div>
-            <div style="font-size: 5rem; margin-bottom: 1rem;">🔧</div>
-            <h1 style="font-size: 3rem; margin-bottom: 1rem; font-weight: 900;">Under Maintenance</h1>
-            <p style="font-size: 1.3rem; opacity: 0.9; margin-bottom: 1.5rem;">${message}</p>
-            ${endsAtText ? `<p style=\"opacity: 0.85; font-size: 1rem; margin-bottom: 1.5rem;\">Expected back: ${endsAtText}</p>` : ''}
-            <p style="opacity: 0.7; font-size: 0.95rem;">We'll be back online shortly. Thanks for your patience!</p>
+        <div style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-align: center; font-family: system-ui, -apple-system, sans-serif; padding: 2rem; box-sizing: border-box; position: relative; overflow: hidden;">
+          <style>
+            @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-20px); } }
+            @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+            .maintenance-container { position: relative; z-index: 10; max-width: 600px; animation: fadeInScale 0.8s ease-out; }
+            @keyframes fadeInScale { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+          </style>
+          <div class="maintenance-container">
+            <div style="font-size: 6rem; margin-bottom: 1.5rem; animation: float 3s ease-in-out infinite;">🔧</div>
+            <h1 style="font-size: 3.5rem; margin-bottom: 1rem; font-weight: 900; letter-spacing: -1px;">Under Maintenance</h1>
+            <p style="font-size: 1.3rem; opacity: 0.95; margin-bottom: 1.5rem; line-height: 1.6; font-weight: 300;">${message}</p>
+            ${endsAtHtml}
+            <p style="opacity: 0.8; font-size: 1rem; margin-bottom: 2rem; animation: pulse 3s ease-in-out infinite;">We'll be back online shortly. Thanks for your patience! ⏳</p>
+            <div style="display: flex; gap: 1rem; justify-content: center; margin-bottom: 2rem; flex-wrap: wrap;">
+              <div style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border-radius: 10px; padding: 1rem; flex: 1; min-width: 120px; border: 1px solid rgba(255,255,255,0.2);">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">⚡</div>
+                <p style="font-size: 0.9rem; opacity: 0.9; margin: 0;">Improvements</p>
+              </div>
+              <div style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border-radius: 10px; padding: 1rem; flex: 1; min-width: 120px; border: 1px solid rgba(255,255,255,0.2);">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔒</div>
+                <p style="font-size: 0.9rem; opacity: 0.9; margin: 0;">Security</p>
+              </div>
+              <div style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border-radius: 10px; padding: 1rem; flex: 1; min-width: 120px; border: 1px solid rgba(255,255,255,0.2);">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">🚀</div>
+                <p style="font-size: 0.9rem; opacity: 0.9; margin: 0;">Performance</p>
+              </div>
+            </div>
           </div>
         </div>
       `;
-      throw new Error('Maintenance mode active');
+      return;
+    } else {
+      // Not in maintenance mode, show the main page
+      document.documentElement.style.display = 'auto';
     }
   } catch (error) {
-    if (error.message === 'Maintenance mode active') {
-      throw error; // Stop script execution
-    }
-    console.log('Maintenance check failed, continuing normally:', error);
+    // Show main page on error
+    document.documentElement.style.display = 'auto';
+    console.log('Maintenance check error:', error);
   }
+})();
+
+// ========== GLOBAL ERROR HANDLING ==========
+(function setupErrorHandling() {
+  let errorReported = false;
+  
+  // Report error helper function
+  async function reportError(message, stack, url) {
+    if (errorReported) return; // Prevent spam
+    errorReported = true;
+    
+    try {
+      const userEmail = localStorage.getItem('userEmail') || 'unknown@example.com';
+      await fetch('/.netlify/functions/report-error', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message,
+          stack,
+          url: url || window.location.href,
+          timestamp: new Date().toISOString(),
+          userAgent: navigator.userAgent,
+          email: userEmail
+        })
+      });
+    } catch (err) {
+      console.error('Failed to report error:', err);
+    }
+  }
+  
+  // Catch uncaught errors
+  window.addEventListener('error', (event) => {
+    console.error('Uncaught error:', event.error);
+    
+    // Don't report maintenance mode errors - they're intentional
+    if (event.error?.message === 'Maintenance mode active') {
+      return;
+    }
+    
+    reportError(
+      event.error?.message || event.message || 'Unknown error',
+      event.error?.stack || '',
+      window.location.href
+    );
+    
+    // Redirect to error page after a short delay
+    setTimeout(() => {
+      window.location.href = '/error.html?error=' + encodeURIComponent(event.error?.message || 'Unknown error');
+    }, 1000);
+  });
+  
+  // Catch unhandled promise rejections
+  window.addEventListener('unhandledrejection', (event) => {
+    console.error('Unhandled promise rejection:', event.reason);
+    reportError(
+      event.reason?.message || String(event.reason) || 'Unhandled promise rejection',
+      event.reason?.stack || '',
+      window.location.href
+    );
+    
+    // Prevent the browser default handling
+    event.preventDefault();
+    
+    // Redirect to error page after a short delay
+    setTimeout(() => {
+      window.location.href = '/error.html?error=' + encodeURIComponent(String(event.reason));
+    }, 1000);
+  });
 })();
 
 // ========== PARTICLE ANIMATION SYSTEM ==========
@@ -2567,6 +2679,8 @@ window.addEventListener('resize', () => {
 // ========== SCROLL PROGRESS BAR ==========
 window.addEventListener('scroll', () => {
   const scrollProgress = document.getElementById('scrollProgress');
+  if (!scrollProgress) return; // Element doesn't exist, skip
+  
   const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
   const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
   const progress = (scrollTop / scrollHeight) * 100;
@@ -2941,7 +3055,8 @@ function showEasterEgg() {
 }
 
 function closeEasterEgg() {
-  document.getElementById('easterEgg').classList.remove('show');
+  const egg = document.getElementById('easterEgg');
+  if (egg) egg.classList.remove('show');
 }
 
 // ========== SECRET MESSAGE EASTER EGG ==========
@@ -2951,6 +3066,7 @@ let headingClickTimer;
 
 document.addEventListener('DOMContentLoaded', () => {
   const heading = document.querySelector('.main-message h1');
+  if (!heading) return; // Element doesn't exist
   
   heading.addEventListener('click', () => {
     headingClicks++;
@@ -3046,13 +3162,19 @@ async function loadSkills() {
     { icon: '⚡', name: 'Next.js' }
   ];
   
+  // Check if skillsGrid element exists
+  const skillsGrid = document.getElementById('skillsGrid');
+  if (!skillsGrid) {
+    console.log('skillsGrid element not found, skipping skills loading');
+    return;
+  }
+  
   try {
     // Try to fetch tech stack from Airtable
     const response = await fetch('/.netlify/functions/db-get-tech-stack');
     if (response.ok) {
       const techStack = await response.json();
       if (techStack && techStack.length > 0) {
-        const skillsGrid = document.getElementById('skillsGrid');
         skillsGrid.innerHTML = techStack.map(skill => 
           `<span class="skill-badge">${skill.icon} ${skill.name}</span>`
         ).join('');
@@ -3064,7 +3186,6 @@ async function loadSkills() {
   }
   
   // Fallback to default skills if Airtable fails
-  const skillsGrid = document.getElementById('skillsGrid');
   skillsGrid.innerHTML = defaultSkills.map(skill => 
     `<span class="skill-badge">${skill.icon} ${skill.name}</span>`
   ).join('');
@@ -3081,7 +3202,8 @@ function showSecretMessage() {
 }
 
 function closeSecretMessage() {
-  document.getElementById('secretMessage').classList.remove('show');
+  const msg = document.getElementById('secretMessage');
+  if (msg) msg.classList.remove('show');
 }
 
 function createSpecialConfetti() {
@@ -3103,22 +3225,32 @@ function createSpecialConfetti() {
 
 // ========== ADMIN LOGIN ==========
 function openAdminLogin() {
-  document.getElementById('adminLoginModal').classList.add('active');
-  document.getElementById('adminUsername').focus();
+  const modal = document.getElementById('adminLoginModal');
+  const username = document.getElementById('adminUsername');
+  if (!modal || !username) return; // Elements don't exist (maintenance mode)
+  modal.classList.add('active');
+  username.focus();
 }
 
 function closeAdminLogin(event) {
+  const modal = document.getElementById('adminLoginModal');
+  if (!modal) return; // Element doesn't exist
   if (!event || event.target.id === 'adminLoginModal') {
-    document.getElementById('adminLoginModal').classList.remove('active');
+    modal.classList.remove('active');
   }
 }
 
 function handleAdminLogin(event) {
   event.preventDefault();
   
-  const username = document.getElementById('adminUsername').value;
-  const password = document.getElementById('adminPassword').value;
+  const usernameEl = document.getElementById('adminUsername');
+  const passwordEl = document.getElementById('adminPassword');
   const btn = document.getElementById('adminLoginBtn');
+  
+  if (!usernameEl || !passwordEl || !btn) return; // Elements don't exist
+  
+  const username = usernameEl.value;
+  const password = passwordEl.value;
   
   btn.disabled = true;
   btn.textContent = '⏳ Verifying...';

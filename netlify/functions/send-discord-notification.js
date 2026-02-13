@@ -107,10 +107,13 @@ exports.handler = async (event, context) => {
 
       case 'block_appeal':
         embed = {
-          title: '📝 Block Appeal Submitted',
-          description: 'Someone requested to unblock their IP',
+          title: '📝 Block/Suspension Appeal Submitted',
+          description: data.appealType?.startsWith('Account_') 
+            ? 'A suspended account submitted an appeal' 
+            : 'Someone requested to unblock their IP',
           color: 15844367, // Orange
           fields: [
+            { name: 'Type', value: data.appealType?.replace('_', ' ') || 'IP Block', inline: true },
             { name: 'IP Address', value: data.ip || 'Unknown', inline: true },
             { name: 'Email', value: data.email || 'Not provided', inline: true },
             { name: 'Reason', value: data.reason || 'No reason provided', inline: false }
@@ -119,6 +122,42 @@ exports.handler = async (event, context) => {
           footer: { text: 'Appeal System' }
         };
         // Ping for appeals so admin sees it
+        if (!mention) {
+          content = process.env.DISCORD_MENTION_ID || '';
+        }
+        break;
+
+      case 'new_user_signup':
+        embed = {
+          title: '👤 New User Signup',
+          description: 'A new user just registered to your site',
+          color: 3447003, // Blue
+          fields: [
+            { name: 'Name', value: data.name || 'Unknown', inline: true },
+            { name: 'Email', value: data.email || 'Not provided', inline: true },
+            { name: 'Signup Time', value: new Date().toLocaleString(), inline: false }
+          ],
+          timestamp: new Date().toISOString(),
+          footer: { text: 'User Registration' }
+        };
+        break;
+
+      case 'deletion_request':
+        embed = {
+          title: '🗑️ Account Deletion Request',
+          description: 'A user has requested account deletion',
+          color: 15158332, // Red
+          fields: [
+            { name: 'Name', value: data.name || 'Unknown', inline: true },
+            { name: 'Email', value: data.email || 'Not provided', inline: true },
+            { name: 'User ID', value: data.userId || 'N/A', inline: true },
+            { name: 'Request Time', value: new Date().toLocaleString(), inline: false },
+            { name: 'Action Required', value: 'Review and process deletion in Admin Panel', inline: false }
+          ],
+          timestamp: new Date().toISOString(),
+          footer: { text: 'Account Deletion System' }
+        };
+        // Ping for deletion requests so admin sees it
         if (!mention) {
           content = process.env.DISCORD_MENTION_ID || '';
         }

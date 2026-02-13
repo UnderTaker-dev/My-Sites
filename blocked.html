@@ -224,7 +224,34 @@
         const urlParams = new URLSearchParams(window.location.search);
         const reason = urlParams.get('reason');
         if (reason) {
-            document.getElementById('blockReason').textContent = decodeURIComponent(reason);
+            let displayReason = decodeURIComponent(reason);
+            
+            // Handle account status reasons
+            if (reason.startsWith('account_')) {
+                const status = reason.replace('account_', '');
+                if (status === 'suspended') {
+                    displayReason = 'Your account has been suspended by an administrator. You can submit an appeal below to request reinstatement.';
+                    document.querySelector('h1').textContent = 'Account Suspended';
+                    document.querySelector('.subtitle').textContent = 'Your account has been temporarily suspended.';
+                    document.querySelector('.icon').textContent = '⚠️';
+                } else if (status === 'inactive') {
+                    displayReason = 'Your account has been marked as inactive. Please submit an appeal to reactivate your account.';
+                    document.querySelector('h1').textContent = 'Account Inactive';
+                    document.querySelector('.subtitle').textContent = 'Your account is currently inactive.';
+                    document.querySelector('.icon').textContent = '⏸️';
+                }
+            }
+            
+            document.getElementById('blockReason').textContent = displayReason;
+        }
+
+        // Pre-fill email if available (from login)
+        const userEmail = localStorage.getItem('userEmail');
+        if (userEmail) {
+            const emailInput = document.getElementById('email');
+            if (emailInput) {
+                emailInput.value = userEmail;
+            }
         }
 
         // Display user's IP
